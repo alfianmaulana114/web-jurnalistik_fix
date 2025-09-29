@@ -2,34 +2,44 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class News extends Model
 {
-    use HasFactory;
-
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var array<int, string>
-     */
     protected $fillable = [
-        'user_id',
         'title',
         'slug',
-        'category',
-        'subcategory',
         'content',
         'image',
+        'meta_description',
+        'tags',
+        'keyword',
+        'views',
+        'user_id',
+        'news_category_id',
+        'news_type_id'
     ];
 
-    /**
-     * Get the user that owns the news.
-     */
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function category(): BelongsTo
+    {
+        return $this->belongsTo(NewsCategory::class, 'news_category_id');
+    }
+
+    public function type(): BelongsTo
+    {
+        return $this->belongsTo(NewsType::class, 'news_type_id');
+    }
+
+    public function genres(): BelongsToMany
+    {
+        return $this->belongsToMany(NewsGenre::class, 'news_genre_pivot', 'news_id', 'news_genres_id')
+                    ->withTimestamps();
     }
 }

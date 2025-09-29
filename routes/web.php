@@ -5,6 +5,7 @@ use App\Http\Controllers\CommentController;
 use App\Http\Controllers\NewsController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\TempImageController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -18,9 +19,8 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-
 // Public Routes
-Route::get('/', [NewsController::class, 'index'])->name('home');
+Route::get('/', [HomeController::class, 'index'])->name('home');
 Route::get('/berita/{slug}', [NewsController::class, 'show'])->name('news.show');
 Route::post('/berita/{news}/komentar', [CommentController::class, 'store'])->name('comments.store');
 
@@ -33,7 +33,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
     Route::resource('users', UserController::class);
 
     // News Management
-    Route::get('/berita', [NewsController::class, 'dashboard'])->name('news.index');
+    Route::get('/berita', [NewsController::class, 'index'])->name('news.index');
     Route::get('/berita/create', [NewsController::class, 'create'])->name('news.create');
     Route::post('/berita', [NewsController::class, 'store'])->name('news.store');
     Route::get('/berita/{news}/edit', [NewsController::class, 'edit'])->name('news.edit');
@@ -44,4 +44,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
     // Comment Management
     Route::get('/komentar', [CommentController::class, 'index'])->name('comments.index');
     Route::delete('/komentar/{comment}', [CommentController::class, 'destroy'])->name('comments.destroy');
+    // Di dalam group admin
+    Route::post('/temp-images', [TempImageController::class, 'store'])->name('temp-images.store');
+    Route::post('/temp-images/crop', [TempImageController::class, 'crop'])->name('temp-images.crop');
 });

@@ -18,6 +18,9 @@
                 <thead class="bg-gray-50">
                     <tr>
                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Judul</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Kategori</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tipe</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Genre</th>
                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Penulis</th>
                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Views</th>
                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tanggal</th>
@@ -29,10 +32,21 @@
                     <tr>
                         <td class="px-6 py-4">
                             <div class="text-sm font-medium text-gray-900">{{ $item->title }}</div>
-                            <div class="text-xs text-gray-500 mt-1">{{ Str::limit($item->content, 50) }}</div>
+                            <div class="text-xs text-gray-500 mt-1">{{ Str::limit(strip_tags($item->content), 50) }}</div>
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap">
-                            <div class="text-sm text-gray-500">{{ $item->user->name }}</div>
+                            <div class="text-sm text-gray-500">{{ $item->category?->name ?? 'Tidak ada kategori' }}</div>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <div class="text-sm text-gray-500">{{ $item->type?->name ?? 'Tidak ada tipe' }}</div>
+                        </td>
+                        <td class="px-6 py-4">
+                            <div class="text-sm text-gray-500">
+                                {{ $item->genres->pluck('name')->implode(', ') ?: 'Tidak ada genre' }}
+                            </div>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <div class="text-sm text-gray-500">{{ $item->user?->name ?? 'Tidak ada penulis' }}</div>
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap">
                             <div class="text-sm text-gray-500">{{ $item->views }}</div>

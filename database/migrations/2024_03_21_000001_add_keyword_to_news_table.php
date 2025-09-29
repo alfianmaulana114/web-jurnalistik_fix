@@ -9,15 +9,14 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('news', function (Blueprint $table) {
-            $table->string('category')->nullable()->after('user_id');
-            $table->string('subcategory')->nullable()->after('category');
+            $table->string('keyword')->nullable()->after('tags');
         });
     }
 
     public function down(): void
     {
         Schema::table('news', function (Blueprint $table) {
-            $table->dropColumn(['category', 'subcategory']);
+            $table->dropColumn('keyword');
         });
     }
 };

@@ -5,40 +5,24 @@
 @section('header', 'Tambah Berita Baru')
 
 @push('styles')
+{!! $editorStyles !!}
+{!! $cropperStyles !!}
 <style>
-    .editor-container {
-        background: #fff;
-        border: 1px solid #e5e7eb;
-        border-radius: 0.5rem;
-        box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
-    }
-    .custom-file-input:hover + .custom-file-label {
-        background-color: #f3f4f6;
-    }
     .preview-container {
         transition: all 0.3s ease;
     }
     .preview-container:hover {
         transform: scale(1.02);
     }
-    .editor-btn {
-        padding: 0.25rem 0.75rem;
-        border-radius: 0.25rem;
-        transition: background-color 0.2s;
+    .cropper-container {
+        z-index: 10001 !important;
     }
-    .editor-btn:hover {
-        background-color: #f3f4f6;
+    .cropper-modal {
+        z-index: 10000 !important;
     }
-    #editor {
-        border: 1px solid #e5e7eb;
-        border-radius: 0.5rem;
-        min-height: 300px;
-        padding: 1rem;
-    }
-    #editor:focus {
-        outline: none;
-        border-color: #a78bfa;
-        box-shadow: 0 0 0 3px rgba(167, 139, 250, 0.2);
+    .cropper-view-box {
+        outline: 2px solid #fff !important;
+        outline-color: rgba(255, 255, 255, 0.75) !important;
     }
 </style>
 @endpush
@@ -64,38 +48,109 @@
                 @enderror
             </div>
 
-            <!-- Kategori dan Sub Kategori -->
+            <!-- Kategori, Tipe, dan Genre -->
             <div class="bg-white p-6 rounded-lg shadow-sm space-y-6">
                 <!-- Kategori -->
+                <!-- Kategori -->
                 <div>
-                    <label for="category" class="block text-lg font-semibold text-gray-800 mb-2">Kategori</label>
-                    <select name="category" id="category" class="w-full px-4 py-3 rounded-lg border-2 border-purple-100 focus:border-purple-300 focus:ring focus:ring-purple-200 focus:ring-opacity-50 transition duration-200" required>
+                    <label for="news_category_id" class="block text-lg font-semibold text-gray-800 mb-2">Kategori</label>
+                    <select name="news_category_id" id="news_category_id" class="w-full px-4 py-3 rounded-lg border-2 border-purple-100 focus:border-purple-300 focus:ring focus:ring-purple-200 focus:ring-opacity-50 transition duration-200" required>
                         <option value="">Pilih Kategori</option>
-                        <option value="Berita Nasional" {{ old('category') == 'Berita Nasional' ? 'selected' : '' }}>Berita Nasional</option>
-                        <option value="Berita Internasional" {{ old('category') == 'Berita Internasional' ? 'selected' : '' }}>Berita Internasional</option>
-                        <option value="Berita Internal" {{ old('category') == 'Berita Internal' ? 'selected' : '' }}>Berita Internal</option>
+                        @foreach($categories as $category)
+                            <option value="{{ $category->id }}" {{ old('news_category_id') == $category->id ? 'selected' : '' }}>
+                                {{ $category->name }}
+                            </option>
+                        @endforeach
                     </select>
-                    @error('category')
+                    @error('news_category_id')
                         <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
                     @enderror
                 </div>
-            
-                <!-- Sub Kategori -->
+
+                <!-- Tipe -->
                 <div>
-                    <label for="subcategory" class="block text-lg font-semibold text-gray-800 mb-2">Sub Kategori</label>
-                    <select name="subcategory" id="subcategory" class="w-full px-4 py-3 rounded-lg border-2 border-purple-100 focus:border-purple-300 focus:ring focus:ring-purple-200 focus:ring-opacity-50 transition duration-200" required>
-                        <option value="">Pilih Sub Kategori</option>
-                        <option value="Berita Harian" {{ old('subcategory') == 'Berita Harian' ? 'selected' : '' }}>Berita Harian</option>
-                        <option value="Berita Terkini" {{ old('subcategory') == 'Berita Terkini' ? 'selected' : '' }}>Berita Terkini</option>
-                        <option value="Press Release" {{ old('subcategory') == 'Press Release' ? 'selected' : '' }}>Press Release</option>
-                        <option value="Media Partner" {{ old('subcategory') == 'Media Partner' ? 'selected' : '' }}>Media Partner</option>
+                    <label for="news_type_id" class="block text-lg font-semibold text-gray-800 mb-2">Tipe Berita</label>
+                    <select name="news_type_id" id="news_type_id" class="w-full px-4 py-3 rounded-lg border-2 border-purple-100 focus:border-purple-300 focus:ring focus:ring-purple-200 focus:ring-opacity-50 transition duration-200" required>
+                        <option value="">Pilih Tipe</option>
+                        @foreach($types as $type)
+                            <option value="{{ $type->id }}" {{ old('news_type_id') == $type->id ? 'selected' : '' }}>
+                                {{ $type->name }}
+                            </option>
+                        @endforeach
                     </select>
-                    @error('subcategory')
+                    @error('news_type_id')
+                        <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
+                    @enderror
+                </div>
+
+                <!-- Genre -->
+                <div>
+                    <label class="block text-lg font-semibold text-gray-800 mb-2">Genre Berita</label>
+                    <div class="grid grid-cols-2 gap-4">
+                        @foreach($genres as $genre)
+                            <div class="flex items-center">
+                                <input type="checkbox" 
+                                       name="genre_ids[]" 
+                                       value="{{ $genre->id }}"
+                                       id="genre_{{ $genre->id }}"
+                                       class="rounded border-gray-300 text-purple-600 focus:border-purple-300 focus:ring focus:ring-purple-200 focus:ring-opacity-50"
+                                       {{ in_array($genre->id, old('genre_ids', [])) ? 'checked' : '' }}>
+                                <label for="genre_{{ $genre->id }}" class="ml-2 text-sm text-gray-700">
+                                    {{ $genre->name }}
+                                </label>
+                            </div>
+                        @endforeach
+                    </div>
+                    @error('genre_ids')
                         <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
                     @enderror
                 </div>
             </div>
-            
+
+            <!-- Meta Description, Tags, dan Keyword -->
+            <div class="bg-white p-6 rounded-lg shadow-sm space-y-6">
+                <div>
+                    <label for="meta_description" class="block text-lg font-semibold text-gray-800 mb-2">Meta Description</label>
+                    <textarea name="meta_description" 
+                              id="meta_description" 
+                              class="w-full px-4 py-3 rounded-lg border-2 border-purple-100 focus:border-purple-300 focus:ring focus:ring-purple-200 focus:ring-opacity-50 transition duration-200"
+                              rows="3"
+                              maxlength="160"
+                              required>{{ old('meta_description') }}</textarea>
+                    <p class="text-sm text-gray-500 mt-1">Maksimal 160 karakter</p>
+                    @error('meta_description')
+                        <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
+                    @enderror
+                </div>
+
+                <div>
+                    <label for="tags" class="block text-lg font-semibold text-gray-800 mb-2">Tags</label>
+                    <input type="text" 
+                           name="tags" 
+                           id="tags" 
+                           class="w-full px-4 py-3 rounded-lg border-2 border-purple-100 focus:border-purple-300 focus:ring focus:ring-purple-200 focus:ring-opacity-50 transition duration-200"
+                           value="{{ old('tags') }}"
+                           placeholder="Pisahkan dengan koma"
+                           required>
+                    @error('tags')
+                        <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
+                    @enderror
+                </div>
+
+                <div>
+                    <label for="keyword" class="block text-lg font-semibold text-gray-800 mb-2">Keyword</label>
+                    <input type="text" 
+                           name="keyword" 
+                           id="keyword" 
+                           class="w-full px-4 py-3 rounded-lg border-2 border-purple-100 focus:border-purple-300 focus:ring focus:ring-purple-200 focus:ring-opacity-50 transition duration-200"
+                           value="{{ old('keyword') }}"
+                           placeholder="Kata kunci untuk SEO">
+                    @error('keyword')
+                        <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
+                    @enderror
+                </div>
+            </div>
+
             <!-- Image Upload -->
             <div class="bg-white p-6 rounded-lg shadow-sm">
                 <label class="block text-lg font-semibold text-gray-800 mb-4">Gambar Utama</label>
@@ -114,13 +169,15 @@
                         </div>
                     </div>
                     <div class="flex-1">
-                        <input type="file" name="image" id="image" class="hidden" accept="image/*" onchange="previewImage(this)" required>
+                        <!-- Di dalam form, tambahkan input hidden untuk temp_image_id -->
+                        <input type="hidden" name="temp_image_id" id="temp_image_id">
+                        <input type="file" name="image" id="image" class="hidden" accept="image/*" onchange="openCropModal(this)" required>
                         <div class="bg-gray-50 rounded-lg p-4 text-sm text-gray-600">
                             <h4 class="font-medium text-gray-800 mb-2">Panduan Unggah Gambar:</h4>
                             <ul class="space-y-2">
                                 <li><i class="fas fa-check-circle text-green-500 mr-2"></i>Format: JPG, PNG, GIF</li>
                                 <li><i class="fas fa-check-circle text-green-500 mr-2"></i>Ukuran maksimal: 2MB</li>
-                                <li><i class="fas fa-check-circle text-green-500 mr-2"></i>Rasio yang disarankan: 16:9</li>
+                                <li><i class="fas fa-check-circle text-green-500 mr-2"></i>Rasio yang disarankan: 16:9 (1200x675 piksel)</li>
                             </ul>
                         </div>
                     </div>
@@ -130,19 +187,35 @@
                 @enderror
             </div>
 
+            <!-- Crop Modal -->
+            <!-- Crop Modal -->
+            <div id="cropModal" class="fixed inset-0 bg-black bg-opacity-50 z-[9999] hidden">
+                <div class="bg-white rounded-lg shadow-xl max-w-4xl mx-auto mt-10 p-6 relative z-[10000]">
+                    <div class="flex justify-between items-center mb-4">
+                        <h3 class="text-lg font-semibold">Potong Gambar</h3>
+                        <button type="button" class="text-gray-500 hover:text-gray-700 closeModal">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                    <div class="preview-container mb-4">
+                        <img id="cropImage" src="" alt="Preview" class="max-w-full">
+                    </div>
+                    <div class="flex justify-end space-x-2">
+                        <button type="button" class="px-4 py-2 bg-gray-200 text-gray-700 rounded hover:bg-gray-300 closeModal">
+                            Batal
+                        </button>
+                        <button type="button" class="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600" id="cropBtn">
+                            Simpan
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <!-- Hidden Input for Temp Image ID -->
+            <input type="hidden" name="temp_image_id" id="temp_image_id">
             <!-- Content Editor -->
             <div class="bg-white p-6 rounded-lg shadow-sm">
-                <label for="content-area" class="block text-lg font-semibold text-gray-800 mb-4">Konten Berita</label>
-                
-                <!-- Gunakan textarea biasa untuk menghindari masalah -->
-                <textarea 
-                    name="content" 
-                    id="content-area" 
-                    class="w-full px-4 py-3 rounded-lg border-2 border-purple-100 focus:border-purple-300 focus:ring focus:ring-purple-200 focus:ring-opacity-50 transition duration-200 min-h-[300px]" 
-                    required
-                    placeholder="Tulis konten berita di sini..."
-                >{{ old('content') }}</textarea>
-                
+                <label for="content" class="block text-lg font-semibold text-gray-800 mb-4">Konten Berita</label>
+                <textarea name="content" id="content" required>{{ old('content') }}</textarea>
                 @error('content')
                     <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
                 @enderror
@@ -164,35 +237,151 @@
 </div>
 
 @push('scripts')
+{!! $editorScripts !!}
+{!! $cropperScripts !!}
 <script>
-    // Image Preview Function
-    function previewImage(input) {
+let cropper = null;
+
+document.addEventListener('DOMContentLoaded', function() {
+    // Event listener untuk tombol file input
+    document.getElementById('image').addEventListener('change', function(e) {
+        openCropModal(this);
+    });
+
+    // Event listeners untuk tombol-tombol modal
+    document.querySelectorAll('.closeModal').forEach(button => {
+        button.addEventListener('click', closeCropModal);
+    });
+
+    document.getElementById('cropBtn').addEventListener('click', cropImage);
+
+    function openCropModal(input) {
         if (input.files && input.files[0]) {
             const reader = new FileReader();
-            const preview = document.getElementById('preview');
-            
+            const modal = document.getElementById('cropModal');
+            const cropImage = document.getElementById('cropImage');
+
             reader.onload = function(e) {
-                preview.style.opacity = '0';
-                setTimeout(() => {
-                    preview.src = e.target.result;
-                    preview.style.opacity = '1';
-                }, 200);
-            }
-            
+                cropImage.src = e.target.result;
+                modal.classList.remove('hidden');
+
+                if (cropper) {
+                    cropper.destroy();
+                }
+
+                // Tunggu gambar dimuat sebelum inisialisasi cropper
+                cropImage.onload = function() {
+                    cropper = new Cropper(cropImage, {
+                        aspectRatio: 16 / 9,
+                        viewMode: 2,
+                        dragMode: 'move',
+                        autoCropArea: 1,
+                        restore: false,
+                        guides: true,
+                        center: true,
+                        highlight: false,
+                        cropBoxMovable: true,
+                        cropBoxResizable: true,
+                        toggleDragModeOnDblclick: false,
+                        minContainerWidth: 600,
+                        minContainerHeight: 400
+                    });
+                };
+
+                // Upload gambar asli
+                const formData = new FormData();
+                formData.append('image', input.files[0]);
+
+                fetch('/admin/temp-images', {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+                    },
+                    body: formData
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status === 'success') {
+                        document.getElementById('temp_image_id').value = data.image_id;
+                    } else {
+                        throw new Error(data.message || 'Gagal mengunggah gambar');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('Gagal mengunggah gambar. Silakan coba lagi.');
+                    closeCropModal();
+                });
+            };
+
             reader.readAsDataURL(input.files[0]);
         }
     }
 
-    // Pastikan gambar preview ditampilkan dengan benar
-    document.addEventListener('DOMContentLoaded', function() {
-        const preview = document.getElementById('preview');
-        const img = new Image();
-        img.onload = function() {
-            preview.src = preview.src;
-        };
-        img.src = preview.src;
-    });
-Illuminate\Database\QueryException
-SQLSTATE[23000]: Integrity constraint violation: 1048 Column 'user_id' cannot be null (Connection: mysql, SQL: insert into `news` (`user_id`, `title`, `slug`, `category`, `subcategory`, `content`, `image`, `updated_at`, `created_at`) values (?, wadad, wadad, Berita Internasional, Berita Terkini, adadasdasdawd, images/news/1758865811.png, 2025-09-26 05:50:11, 2025-09-26 05:50:11))</script>
+    function closeCropModal() {
+        const modal = document.getElementById('cropModal');
+        modal.classList.add('hidden');
+        if (cropper) {
+            cropper.destroy();
+            cropper = null;
+        }
+    }
+
+    function cropImage() {
+        if (!cropper) return;
+
+        const canvas = cropper.getCroppedCanvas({
+            width: 1200,
+            height: 675
+        });
+
+        const tempImageId = document.getElementById('temp_image_id').value;
+        if (!tempImageId) {
+            alert('Terjadi kesalahan. Silakan coba lagi.');
+            return;
+        }
+
+        // Tampilkan loading
+        const loadingEl = document.createElement('div');
+        loadingEl.className = 'fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[10002]';
+        loadingEl.innerHTML = '<div class="bg-white p-4 rounded-lg"><i class="fas fa-spinner fa-spin mr-2"></i>Menyimpan gambar...</div>';
+        document.body.appendChild(loadingEl);
+
+        fetch('/admin/temp-images/crop', {
+            method: 'POST',
+            headers: {
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                image: canvas.toDataURL('image/jpeg', 0.8),
+                temp_image_id: tempImageId
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            loadingEl.remove();
+            if (data.status === 'success') {
+                document.getElementById('preview').src = data.path;
+                closeCropModal();
+                
+                // Tampilkan notifikasi sukses
+                const notification = document.createElement('div');
+                notification.className = 'fixed bottom-4 right-4 bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg z-[10002]';
+                notification.innerHTML = '<i class="fas fa-check-circle mr-2"></i>Gambar berhasil disimpan';
+                document.body.appendChild(notification);
+                setTimeout(() => notification.remove(), 3000);
+            } else {
+                throw new Error(data.message || 'Gagal menyimpan gambar');
+            }
+        })
+        .catch(error => {
+            loadingEl.remove();
+            console.error('Error:', error);
+            alert('Gagal menyimpan gambar. Silakan coba lagi.');
+        });
+    }
+});
+</script>
 @endpush
 @endsection

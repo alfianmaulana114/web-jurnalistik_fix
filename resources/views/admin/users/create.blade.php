@@ -1,58 +1,153 @@
 @extends('layouts.admin')
 
-@section('title', 'Tambah User')
+// ... existing code ...
 
-@section('header', 'Tambah User')
+@push('scripts')
+{!! $editorScripts !!}
+{!! $cropperScripts !!}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    let cropper = null;
+    const modal = document.getElementById('cropModal');
+    const cropImage = document.getElementById('cropImage');
+    const fileInput = document.getElementById('image');
+    const preview = document.getElementById('preview');
+    const tempImageIdInput = document.getElementById('temp_image_id');
+    const cropBtn = document.getElementById('cropBtn');
+    const csrfToken = document.querySelector('meta[name="csrf-token"]').content;
 
-@section('content')
-<div class="bg-white rounded-lg shadow-md">
-    <div class="p-4 border-b">
-        <h2 class="text-lg font-semibold text-gray-700">Form Tambah User</h2>
-    </div>
-    <div class="p-4">
-        <form action="{{ route('admin.users.store') }}" method="POST">
-            @csrf
+    // File input change handler
+    fileInput.addEventListener('change', function(e) {
+        if (this.files && this.files[0]) {
+            const reader = new FileReader();
             
-            <div class="mb-4">
-                <label for="name" class="block text-sm font-medium text-gray-700 mb-1">Nama</label>
-                <input type="text" name="name" id="name" value="{{ old('name') }}" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500" required>
-                @error('name')
-                    <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
-                @enderror
-            </div>
-            
-            <div class="mb-4">
-                <label for="email" class="block text-sm font-medium text-gray-700 mb-1">Email</label>
-                <input type="email" name="email" id="email" value="{{ old('email') }}" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500" required>
-                @error('email')
-                    <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
-                @enderror
-            </div>
-            
-            <div class="mb-4">
-                <label for="password" class="block text-sm font-medium text-gray-700 mb-1">Password</label>
-                <input type="password" name="password" id="password" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500" required>
-                @error('password')
-                    <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
-                @enderror
-            </div>
-            
-            <div class="mb-4">
-                <label for="role" class="block text-sm font-medium text-gray-700 mb-1">Role</label>
-                <select name="role" id="role" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500" required>
-                    <option value="admin" {{ old('role') === 'admin' ? 'selected' : '' }}>Admin</option>
-                    <option value="member" {{ old('role') === 'member' ? 'selected' : '' }}>Member</option>
-                </select>
-                @error('role')
-                    <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
-                @enderror
-            </div>
-            
-            <div class="flex items-center justify-end">
-                <a href="{{ route('admin.users.index') }}" class="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded-md text-sm font-medium mr-2">Batal</a>
-                <button type="submit" class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-md text-sm font-medium">Simpan</button>
-            </div>
-        </form>
-    </div>
-</div>
+            reader.onload = function(e) {
+                cropImage.src = e.target.result;
+                modal.classList.remove('hidden');
+                
+                // Destroy existing cropper if any
+                if (cropper) {
+                    cropper.destroy();
+                }
+                
+                // Initialize cropper after image loads
+                cropImage.onload = function() {
+                    cropper = new Cropper(cropImage, {
+                        aspectRatio: 16 / 9,
+                        viewMode: 2,
+                        dragMode: 'move',
+                        autoCropArea: 1,
+                        restore: false,
+                        guides: true,
+                        center: true,
+                        highlight: false,
+                        cropBoxMovable: true,
+                        cropBoxResizable: true,
+                        toggleDragModeOnDblclick: false,
+                        minContainerWidth: 600,
+                        minContainerHeight: 400,
+                        zoomable: true
+                    });
+                };
+
+                // Upload original image
+                const formData = new FormData();
+                formData.append('image', fileInput.files[0]);
+                formData.append('_token', csrfToken);
+
+                fetch('/admin/temp-images', {
+                    method: 'POST',
+                    body: formData
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status === 'success') {
+                        tempImageIdInput.value = data.image_id;
+                    } else {
+                        throw new Error(data.message || 'Gagal mengunggah gambar');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('Gagal mengunggah gambar. Silakan coba lagi.');
+                    closeCropModal();
+                });
+            };
+
+            reader.readAsDataURL(this.files[0]);
+        }
+    });
+
+    // Close modal handlers
+    document.querySelectorAll('.closeModal').forEach(button => {
+        button.addEventListener('click', closeCropModal);
+    });
+
+    // Crop button handler
+    cropBtn.addEventListener('click', function() {
+        if (!cropper) return;
+
+        const canvas = cropper.getCroppedCanvas({
+            width: 1200,
+            height: 675
+        });
+
+        const tempImageId = tempImageIdInput.value;
+        if (!tempImageId) {
+            alert('Terjadi kesalahan. Silakan coba lagi.');
+            return;
+        }
+
+        // Show loading indicator
+        const loadingEl = document.createElement('div');
+        loadingEl.className = 'fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[10002]';
+        loadingEl.innerHTML = '<div class="bg-white p-4 rounded-lg"><i class="fas fa-spinner fa-spin mr-2"></i>Menyimpan gambar...</div>';
+        document.body.appendChild(loadingEl);
+
+        // Convert canvas to blob
+        canvas.toBlob(function(blob) {
+            const formData = new FormData();
+            formData.append('image', blob, 'cropped.jpg');
+            formData.append('temp_image_id', tempImageId);
+            formData.append('_token', csrfToken);
+
+            fetch('/admin/temp-images/crop', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                loadingEl.remove();
+                if (data.status === 'success') {
+                    preview.src = data.path;
+                    closeCropModal();
+                    
+                    // Show success notification
+                    const notification = document.createElement('div');
+                    notification.className = 'fixed bottom-4 right-4 bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg z-[10002]';
+                    notification.innerHTML = '<i class="fas fa-check-circle mr-2"></i>Gambar berhasil disimpan';
+                    document.body.appendChild(notification);
+                    setTimeout(() => notification.remove(), 3000);
+                } else {
+                    throw new Error(data.message || 'Gagal menyimpan gambar');
+                }
+            })
+            .catch(error => {
+                loadingEl.remove();
+                console.error('Error:', error);
+                alert('Gagal menyimpan gambar. Silakan coba lagi.');
+            });
+        }, 'image/jpeg', 0.8);
+    });
+
+    function closeCropModal() {
+        modal.classList.add('hidden');
+        if (cropper) {
+            cropper.destroy();
+            cropper = null;
+        }
+    }
+});
+</script>
+@endpush
 @endsection
