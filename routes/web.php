@@ -40,6 +40,8 @@ Route::prefix('admin')->name('admin.')->group(function () {
     Route::put('/berita/{news}', [NewsController::class, 'update'])->name('news.update');
     Route::delete('/berita/{news}', [NewsController::class, 'destroy'])->name('news.destroy');
     Route::post('/upload-image', [NewsController::class, 'uploadImage'])->name('upload.image');
+    Route::post('/admin/temp-images', [TempImageController::class, 'store'])->name('admin.temp-images.store');
+    
 
     // Comment Management
     Route::get('/komentar', [CommentController::class, 'index'])->name('comments.index');

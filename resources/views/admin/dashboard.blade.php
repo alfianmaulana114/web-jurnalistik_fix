@@ -61,7 +61,7 @@
 </div>
 
 <!-- Grafik dan Tabel -->
-<div class="grid grid-cols-1  gap-6 mb-6">
+<div class="grid grid-cols-1 gap-6 mb-6">
     <!-- Grafik Statistik -->
     <div class="bg-white rounded-lg shadow-sm p-6 transition-all duration-300 hover:shadow-md w-full">
         <h2 class="text-lg font-semibold text-gray-800 mb-4">Statistik Berita & Komentar</h2>
@@ -70,6 +70,99 @@
         </div>
     </div>
 </div>
+
+@push('scripts')
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const statsCtx = document.getElementById('statsChart').getContext('2d');
+        new Chart(statsCtx, {
+            type: 'line',
+            data: {
+                labels: ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des'],
+                datasets: [{
+                    label: 'Berita',
+                    data: {!! json_encode($newsData) !!},
+                    backgroundColor: 'rgba(59, 130, 246, 0.1)',
+                    borderColor: 'rgba(59, 130, 246, 1)',
+                    borderWidth: 2,
+                    tension: 0.4,
+                    fill: true
+                }, {
+                    label: 'Komentar',
+                    data: {!! json_encode($commentData) !!},
+                    backgroundColor: 'rgba(16, 185, 129, 0.1)',
+                    borderColor: 'rgba(16, 185, 129, 1)',
+                    borderWidth: 2,
+                    tension: 0.4,
+                    fill: true
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'top',
+                        labels: {
+                            usePointStyle: true,
+                            padding: 20,
+                            font: {
+                                size: 12,
+                                family: "'Inter', sans-serif"
+                            }
+                        }
+                    },
+                    tooltip: {
+                        mode: 'index',
+                        intersect: false,
+                        backgroundColor: 'rgba(255, 255, 255, 0.9)',
+                        titleColor: '#1f2937',
+                        bodyColor: '#4b5563',
+                        borderColor: '#e5e7eb',
+                        borderWidth: 1,
+                        padding: 12,
+                        bodyFont: {
+                            size: 12,
+                            family: "'Inter', sans-serif"
+                        },
+                        titleFont: {
+                            size: 14,
+                            family: "'Inter', sans-serif",
+                            weight: 'bold'
+                        }
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        grid: {
+                            drawBorder: false,
+                            color: '#f3f4f6'
+                        },
+                        ticks: {
+                            font: {
+                                size: 11,
+                                family: "'Inter', sans-serif"
+                            }
+                        }
+                    },
+                    x: {
+                        grid: {
+                            display: false
+                        },
+                        ticks: {
+                            font: {
+                                size: 11,
+                                family: "'Inter', sans-serif"
+                            }
+                        }
+                    }
+                }
+            }
+        });
+    });
+</script>
+@endpush
 
 
 <!-- Recent News -->
@@ -154,96 +247,4 @@
         </div>
     </div>
 </div>
-@endsection
-
-@section('scripts')
-<script>
-    // Data untuk grafik statistik
-    const statsCtx = document.getElementById('statsChart').getContext('2d');
-    const statsChart = new Chart(statsCtx, {
-        type: 'line',
-        data: {
-            labels: ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des'],
-            datasets: [{
-                label: 'Berita',
-                data: {{ json_encode($newsData) }},
-                backgroundColor: 'rgba(59, 130, 246, 0.1)',
-                borderColor: 'rgba(59, 130, 246, 1)',
-                borderWidth: 2,
-                tension: 0.4,
-                fill: true
-            }, {
-                label: 'Komentar',
-                data: {{ json_encode($commentData) }},
-                backgroundColor: 'rgba(16, 185, 129, 0.1)',
-                borderColor: 'rgba(16, 185, 129, 1)',
-                borderWidth: 2,
-                tension: 0.4,
-                fill: true
-            }]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: {
-                legend: {
-                    position: 'top',
-                    labels: {
-                        usePointStyle: true,
-                        padding: 20,
-                        font: {
-                            size: 12,
-                            family: "'Inter', sans-serif"
-                        }
-                    }
-                },
-                tooltip: {
-                    mode: 'index',
-                    intersect: false,
-                    backgroundColor: 'rgba(255, 255, 255, 0.9)',
-                    titleColor: '#1f2937',
-                    bodyColor: '#4b5563',
-                    borderColor: '#e5e7eb',
-                    borderWidth: 1,
-                    padding: 12,
-                    bodyFont: {
-                        size: 12,
-                        family: "'Inter', sans-serif"
-                    },
-                    titleFont: {
-                        size: 14,
-                        family: "'Inter', sans-serif",
-                        weight: 'bold'
-                    }
-                }
-            },
-            scales: {
-                y: {
-                    beginAtZero: true,
-                    grid: {
-                        drawBorder: false,
-                        color: '#f3f4f6'
-                    },
-                    ticks: {
-                        font: {
-                            size: 11,
-                            family: "'Inter', sans-serif"
-                        }
-                    }
-                },
-                x: {
-                    grid: {
-                        display: false
-                    },
-                    ticks: {
-                        font: {
-                            size: 11,
-                            family: "'Inter', sans-serif"
-                        }
-                    }
-                }
-            }
-        }
-    });
-</script>
 @endsection
