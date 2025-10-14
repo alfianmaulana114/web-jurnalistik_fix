@@ -13,6 +13,10 @@ class DatabaseSeeder extends Seeder
             UserSeeder::class,
             NewsSeeder::class,
             CommentSeeder::class,
+            ProkerSeeder::class,
+            BriefSeeder::class,
+            ContentSeeder::class,
+            DesignSeeder::class,
         ]);
     }
 }

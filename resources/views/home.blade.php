@@ -2,6 +2,16 @@
 
 @push('styles')
     <style>
+        .debug-info {
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 0.375rem;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            font-family: monospace;
+            font-size: 0.875rem;
+        }
+        
         .news-item {
             position: relative;
             overflow: hidden;
@@ -65,6 +75,39 @@
 @endpush
 
 @section('content')
+    <!-- Debug Information -->
+    @if(session('debug_info') || session('login_debug') || session('login_attempt') || session('login_failed'))
+        <div class="debug-info">
+            <h4><strong>🔍 Login Debug Information:</strong></h4>
+            
+            @if(session('login_attempt'))
+                <p><strong>Login Attempt:</strong> {{ session('login_attempt')['email'] }} at {{ session('login_attempt')['timestamp'] }}</p>
+            @endif
+            
+            @if(session('login_failed'))
+                <p style="color: red;"><strong>Login Failed:</strong> {{ session('login_failed') }}</p>
+            @endif
+            
+            @if(session('login_debug'))
+                <p><strong>Message:</strong> {{ session('login_debug') }}</p>
+            @endif
+            
+            @if(session('debug_info'))
+                <p><strong>User ID:</strong> {{ session('debug_info')['user_id'] }}</p>
+                <p><strong>Email:</strong> {{ session('debug_info')['email'] }}</p>
+                <p><strong>Role:</strong> {{ session('debug_info')['role'] }}</p>
+                <p><strong>isKoordinatorJurnalistik():</strong> {{ session('debug_info')['isKoordinatorJurnalistik'] ? 'true' : 'false' }}</p>
+                <p><strong>isBendahara():</strong> {{ session('debug_info')['isBendahara'] ? 'true' : 'false' }}</p>
+                <p><strong>Available Roles:</strong></p>
+                <ul>
+                    @foreach(session('debug_info')['all_roles'] as $role_name => $role_value)
+                        <li>{{ $role_name }}: {{ $role_value }}</li>
+                    @endforeach
+                </ul>
+            @endif
+        </div>
+    @endif
+
     <!-- Top Navigation -->
     <nav class="bg-white border-b">
         <div class="max-w-7xl mx-auto px-4">
