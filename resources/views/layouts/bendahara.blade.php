@@ -61,6 +61,11 @@
                     <i class="fas fa-arrow-down mr-3 w-5 text-center"></i>Pengeluaran
                 </a>
                 
+                <!-- Riwayat Kas Anggota -->
+                <a href="{{ route('bendahara.kas-anggota.riwayat') }}" class="flex items-center py-2.5 px-4 rounded-lg transition duration-200 hover:bg-green-50 hover:text-green-600 {{ request()->routeIs('bendahara.kas-anggota.riwayat') ? 'bg-green-50 text-green-600 font-medium' : 'text-gray-600' }}">
+                    <i class="fas fa-history mr-3 w-5 text-center"></i>Riwayat Kas Anggota
+                </a>
+
                 <!-- Laporan Keuangan -->
                 <a href="{{ route('bendahara.laporan.keuangan') }}" class="flex items-center py-2.5 px-4 rounded-lg transition duration-200 hover:bg-green-50 hover:text-green-600 {{ request()->routeIs('bendahara.laporan.*') ? 'bg-green-50 text-green-600 font-medium' : 'text-gray-600' }}">
                     <i class="fas fa-chart-line mr-3 w-5 text-center"></i>Laporan Keuangan
@@ -72,6 +77,14 @@
                 <a href="{{ route('home') }}" class="flex items-center py-2.5 px-4 rounded-lg transition duration-200 hover:bg-green-50 hover:text-green-600 text-gray-600">
                     <i class="fas fa-globe mr-3 w-5 text-center"></i>Lihat Website
                 </a>
+
+                <!-- Logout -->
+                <form method="POST" action="{{ route('logout') }}">
+                    @csrf
+                    <button type="submit" class="w-full text-left flex items-center py-2.5 px-4 rounded-lg transition duration-200 hover:bg-red-50 text-gray-600 hover:text-red-600">
+                        <i class="fas fa-sign-out-alt mr-3 w-5 text-center"></i>Logout
+                    </button>
+                </form>
             </nav>
         </div>
 

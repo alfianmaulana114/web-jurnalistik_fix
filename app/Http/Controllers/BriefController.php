@@ -3,29 +3,27 @@
 namespace App\Http\Controllers;
 
 use App\Models\Brief;
-use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\View\View;
-use Illuminate\Validation\Rule;
+use App\Services\KoordinatorJurnalistik\BriefService;
 
 class BriefController extends Controller
 {
+    private BriefService $briefService;
+
+    public function __construct(BriefService $briefService)
+    {
+        $this->briefService = $briefService;
+    }
+
     /**
      * Display a listing of briefs.
      */
     public function index(): View
     {
-        $briefs = Brief::with(['contents'])
-            ->latest()
-            ->paginate(10);
-            
-        $totalBriefs = Brief::count();
-            
-        return view('koordinator-jurnalistik.briefs.index', compact(
-            'briefs', 
-            'totalBriefs'
-        ));
+        $data = $this->briefService->index();
+        return view('koordinator-jurnalistik.briefs.index', $data);
     }
 
     /**
@@ -33,7 +31,8 @@ class BriefController extends Controller
      */
     public function create(): View
     {
-        return view('koordinator-jurnalistik.briefs.create');
+        $data = $this->briefService->create();
+        return view('koordinator-jurnalistik.briefs.create', $data);
     }
 
     /**
@@ -41,17 +40,7 @@ class BriefController extends Controller
      */
     public function store(Request $request): RedirectResponse
     {
-        $validated = $request->validate([
-            'judul' => 'required|string|max:255',
-            'tanggal' => 'required|date',
-            'isi_brief' => 'required|string',
-            'link_referensi' => 'nullable|string',
-        ]);
-
-        Brief::create($validated);
-
-        return redirect()->route('koordinator-jurnalistik.briefs.index')
-            ->with('success', 'Brief berhasil ditambahkan.');
+        return $this->briefService->store($request);
     }
 
     /**
@@ -59,8 +48,8 @@ class BriefController extends Controller
      */
     public function show(Brief $brief): View
     {
-        $brief->load(['contents']);
-        return view('koordinator-jurnalistik.briefs.show', compact('brief'));
+        $data = $this->briefService->show($brief);
+        return view('koordinator-jurnalistik.briefs.show', $data);
     }
 
     /**
@@ -68,7 +57,8 @@ class BriefController extends Controller
      */
     public function edit(Brief $brief): View
     {
-        return view('koordinator-jurnalistik.briefs.edit', compact('brief'));
+        $data = $this->briefService->edit($brief);
+        return view('koordinator-jurnalistik.briefs.edit', $data);
     }
 
     /**
@@ -76,17 +66,7 @@ class BriefController extends Controller
      */
     public function update(Request $request, Brief $brief): RedirectResponse
     {
-        $validated = $request->validate([
-            'judul' => 'required|string|max:255',
-            'tanggal' => 'required|date',
-            'isi_brief' => 'required|string',
-            'link_referensi' => 'nullable|string',
-        ]);
-
-        $brief->update($validated);
-
-        return redirect()->route('koordinator-jurnalistik.briefs.index')
-            ->with('success', 'Brief berhasil diperbarui.');
+        return $this->briefService->update($request, $brief);
     }
 
     /**
@@ -94,9 +74,6 @@ class BriefController extends Controller
      */
     public function destroy(Brief $brief): RedirectResponse
     {
-        $brief->delete();
-
-        return redirect()->route('koordinator-jurnalistik.briefs.index')
-            ->with('success', 'Brief berhasil dihapus.');
+        return $this->briefService->destroy($brief);
     }
 }

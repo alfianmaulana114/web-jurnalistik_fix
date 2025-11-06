@@ -37,62 +37,8 @@
                                         </span>
                                     </div>
 
-                                    <!-- Media Information (for Creative Media Captions) -->
-                                    @if($content->isCaptionMediaKreatif())
-                                        <div class="card mb-3">
-                                            <div class="card-header">
-                                                <h5 class="card-title mb-0">
-                                                    <i class="fas fa-photo-video"></i> Informasi Media
-                                                </h5>
-                                            </div>
-                                            <div class="card-body">
-                                                @if($content->media_type)
-                                                    <div class="mb-2">
-                                                        <strong>Tipe Media:</strong>
-                                                        <span class="badge badge-secondary ml-2">
-                                                            {{ $content->getMediaTypeLabel() }}
-                                                        </span>
-                                                    </div>
-                                                @endif
-
-                                                @if($content->media_path)
-                                                    <div class="mb-2">
-                                                        <strong>File Media:</strong>
-                                                        <div class="mt-2">
-                                                            @if($content->isPhoto())
-                                                                <img src="{{ asset('storage/' . $content->media_path) }}" 
-                                                                     alt="Media" 
-                                                                     class="img-fluid rounded" 
-                                                                     style="max-height: 300px;">
-                                                            @elseif($content->isVideo())
-                                                                <video controls class="img-fluid rounded" style="max-height: 300px;">
-                                                                    <source src="{{ asset('storage/' . $content->media_path) }}" type="video/mp4">
-                                                                    Browser Anda tidak mendukung video.
-                                                                </video>
-                                                            @endif
-                                                            <div class="mt-2">
-                                                                <a href="{{ asset('storage/' . $content->media_path) }}" 
-                                                                   target="_blank" 
-                                                                   class="btn btn-sm btn-outline-primary">
-                                                                    <i class="fas fa-download"></i> Download File
-                                                                </a>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                @endif
-
-                                                @if($content->media_description)
-                                                    <div class="mb-2">
-                                                        <strong>Deskripsi Media:</strong>
-                                                        <p class="mt-1">{{ $content->media_description }}</p>
-                                                    </div>
-                                                @endif
-                                            </div>
-                                        </div>
-                                    @endif
-
                                     <!-- News Reference (for News Captions) -->
-                                    @if($content->isCaptionBerita() && $content->berita_referensi)
+                                    @if($content->isCaptionBerita() && $content->berita)
                                         <div class="card mb-3">
                                             <div class="card-header">
                                                 <h5 class="card-title mb-0">
@@ -100,7 +46,43 @@
                                                 </h5>
                                             </div>
                                             <div class="card-body">
-                                                <p>{{ $content->berita_referensi }}</p>
+                                                <h6>{{ $content->berita->judul }}</h6>
+                                                <p class="text-muted">{{ Str::limit($content->berita->isi, 150) }}</p>
+                                                <a href="{{ route('koordinator-jurnalistik.beritas.show', $content->berita) }}" 
+                                                   target="_blank" 
+                                                   class="btn btn-sm btn-outline-primary">
+                                                    <i class="fas fa-eye"></i> Lihat Berita Lengkap
+                                                </a>
+                                            </div>
+                                        </div>
+                                    @endif
+
+                                    <!-- Design Reference (for Design Captions) -->
+                                    @if($content->isCaptionDesain() && $content->desain)
+                                        <div class="card mb-3">
+                                            <div class="card-header">
+                                                <h5 class="card-title mb-0">
+                                                    <i class="fas fa-palette"></i> Referensi Desain
+                                                </h5>
+                                            </div>
+                                            <div class="card-body">
+                                                <h6>{{ $content->desain->judul }}</h6>
+                                                @if($content->desain->deskripsi)
+                                                    <p class="text-muted">{{ Str::limit($content->desain->deskripsi, 150) }}</p>
+                                                @endif
+                                                @if($content->desain->file_path)
+                                                    <div class="mt-2">
+                                                        <img src="{{ asset('storage/' . $content->desain->file_path) }}" 
+                                                             alt="Desain Referensi" 
+                                                             class="img-fluid rounded" 
+                                                             style="max-height: 200px;">
+                                                    </div>
+                                                @endif
+                                                <a href="{{ route('koordinator-jurnalistik.designs.show', $content->desain) }}" 
+                                                   target="_blank" 
+                                                   class="btn btn-sm btn-outline-primary mt-2">
+                                                    <i class="fas fa-eye"></i> Lihat Desain Lengkap
+                                                </a>
                                             </div>
                                         </div>
                                     @endif
@@ -145,6 +127,26 @@
                                             <td><strong>Terakhir Diupdate:</strong></td>
                                             <td>{{ $content->updated_at->format('d/m/Y H:i') }}</td>
                                         </tr>
+                                        
+                                        <!-- Reference Information -->
+                                        @if($content->isCaptionBerita() && $content->berita)
+                                            <tr>
+                                                <td><strong>Referensi:</strong></td>
+                                                <td>
+                                                    <span class="badge badge-info">Berita</span>
+                                                    {{ $content->berita->judul }}
+                                                </td>
+                                            </tr>
+                                        @elseif($content->isCaptionDesain() && $content->desain)
+                                            <tr>
+                                                <td><strong>Referensi:</strong></td>
+                                                <td>
+                                                    <span class="badge badge-primary">Desain</span>
+                                                    {{ $content->desain->judul }}
+                                                </td>
+                                            </tr>
+                                        @endif
+                                        
                                         @if($content->reviewer)
                                             <tr>
                                                 <td><strong>Reviewer:</strong></td>
@@ -157,48 +159,13 @@
                                                 <td>{{ $content->published_at->format('d/m/Y H:i') }}</td>
                                             </tr>
                                         @endif
-                                        @if($content->sumber)
-                                            <tr>
-                                                <td><strong>Sumber:</strong></td>
-                                                <td>{{ $content->sumber }}</td>
-                                            </tr>
-                                        @endif
                                     </table>
                                 </div>
                             </div>
 
-                            <!-- Brief Information -->
-                            @if($content->brief)
-                                <div class="card mt-3">
-                                    <div class="card-header">
-                                        <h5 class="card-title mb-0">
-                                            <i class="fas fa-clipboard-list"></i> Brief Terkait
-                                        </h5>
-                                    </div>
-                                    <div class="card-body">
-                                        <h6>{{ $content->brief->judul }}</h6>
-                                        <p class="text-muted small">{{ Str::limit($content->brief->deskripsi, 100) }}</p>
-                                        <a href="{{ route('koordinator-jurnalistik.briefs.show', $content->brief) }}" 
-                                           class="btn btn-sm btn-outline-primary">
-                                            <i class="fas fa-eye"></i> Lihat Brief
-                                        </a>
-                                    </div>
-                                </div>
-                            @endif
 
-                            <!-- Editor Notes -->
-                            @if($content->catatan_editor)
-                                <div class="card mt-3">
-                                    <div class="card-header">
-                                        <h5 class="card-title mb-0">
-                                            <i class="fas fa-sticky-note"></i> Catatan Editor
-                                        </h5>
-                                    </div>
-                                    <div class="card-body">
-                                        <p>{{ $content->catatan_editor }}</p>
-                                    </div>
-                                </div>
-                            @endif
+
+
 
                             <!-- Actions -->
                             <div class="card mt-3">

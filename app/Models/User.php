@@ -208,11 +208,35 @@ class User extends Authenticatable
     }
 
     /**
+     * Check if user is sekretaris
+     */
+    public function isSekretaris(): bool
+    {
+        return $this->role === self::ROLE_SEKRETARIS;
+    }
+
+    /**
      * Get all kas anggota records for this user
      */
     public function kasAnggota(): HasMany
     {
         return $this->hasMany(KasAnggota::class, 'user_id');
+    }
+
+    /**
+     * Get all notulensi records created by this user
+     */
+    public function createdNotulensi(): HasMany
+    {
+        return $this->hasMany(Notulensi::class, 'created_by');
+    }
+
+    /**
+     * Get all absen records for this user
+     */
+    public function absens(): HasMany
+    {
+        return $this->hasMany(Absen::class, 'user_id');
     }
 
     /**

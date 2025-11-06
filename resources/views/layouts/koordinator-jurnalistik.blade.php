@@ -82,6 +82,14 @@
                 <a href="{{ route('home') }}" class="flex items-center py-2.5 px-4 rounded-lg transition duration-200 hover:bg-blue-50 hover:text-blue-600 text-gray-600">
                     <i class="fas fa-globe mr-3 w-5 text-center"></i>Lihat Website
                 </a>
+
+                <!-- Logout -->
+                <form method="POST" action="{{ route('logout') }}">
+                    @csrf
+                    <button type="submit" class="w-full text-left flex items-center py-2.5 px-4 rounded-lg transition duration-200 hover:bg-red-50 text-gray-600 hover:text-red-600">
+                        <i class="fas fa-sign-out-alt mr-3 w-5 text-center"></i>Logout
+                    </button>
+                </form>
             </nav>
         </div>
 

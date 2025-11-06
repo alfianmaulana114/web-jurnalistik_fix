@@ -36,7 +36,7 @@ class DesignSeeder extends Seeder
             'dimensi' => '1080x1350',
             'status' => Design::STATUS_PUBLISHED,
             'catatan_revisi' => 'Desain sudah sesuai dengan brand guideline',
-            'content_id' => $content1->id,
+            'content_id' => null,
             'proker_id' => null,
             'created_by' => $anggotaMediaKreatif1->id,
             'reviewed_by' => $koordinatorMediaKreatif->id,
@@ -70,7 +70,7 @@ class DesignSeeder extends Seeder
             'dimensi' => '1080x1920',
             'status' => Design::STATUS_REVIEW,
             'catatan_revisi' => 'Perlu penyesuaian warna sesuai brand guideline',
-            'content_id' => $content2->id,
+            'content_id' => null,
             'proker_id' => null,
             'created_by' => $anggotaMediaKreatif1->id,
             'reviewed_by' => $koordinatorMediaKreatif->id,
@@ -97,7 +97,7 @@ class DesignSeeder extends Seeder
         Design::create([
             'judul' => 'Flyer Pelatihan Fotografi',
             'deskripsi' => 'Flyer promosi untuk pelatihan fotografi jurnalistik',
-            'jenis_desain' => Design::TYPE_FLYER,
+            'jenis_desain' => Design::TYPE_POSTER,
             'file_path' => 'designs/flyers/flyer-fotografi-draft.psd',
             'file_name' => 'flyer-fotografi-draft.psd',
             'file_size' => 4096000, // 4MB
@@ -131,7 +131,7 @@ class DesignSeeder extends Seeder
         Design::create([
             'judul' => 'Template Instagram Story UKM',
             'deskripsi' => 'Template untuk Instagram story UKM Jurnalistik',
-            'jenis_desain' => Design::TYPE_TEMPLATE,
+            'jenis_desain' => Design::TYPE_ILUSTRASI,
             'file_path' => 'designs/templates/ig-story-template.fig',
             'file_name' => 'ig-story-template.fig',
             'file_size' => 2560000, // 2.5MB

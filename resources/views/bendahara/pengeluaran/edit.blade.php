@@ -17,33 +17,49 @@
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
                 <!-- Left Column -->
                 <div class="space-y-4">
-                    <!-- Tanggal -->
+                    <!-- Tanggal Pengeluaran -->
                     <div>
-                        <label for="tanggal" class="block text-sm font-medium text-gray-700 mb-1">
+                        <label for="tanggal_pengeluaran" class="block text-sm font-medium text-gray-700 mb-1">
                             Tanggal <span class="text-red-500">*</span>
                         </label>
                         <input type="date" 
-                               id="tanggal" 
-                               name="tanggal" 
-                               value="{{ old('tanggal', $pengeluaran->tanggal->format('Y-m-d')) }}"
-                               class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent @error('tanggal') border-red-500 @enderror"
+                               id="tanggal_pengeluaran" 
+                               name="tanggal_pengeluaran" 
+                               value="{{ old('tanggal_pengeluaran', optional($pengeluaran->tanggal)->format('Y-m-d')) }}"
+                               class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent @error('tanggal_pengeluaran') border-red-500 @enderror"
                                required>
-                        @error('tanggal')
+                        @error('tanggal_pengeluaran')
                             <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
                         @enderror
                     </div>
 
-                    <!-- Deskripsi -->
+                    <!-- Keperluan -->
+                    <div>
+                        <label for="keperluan" class="block text-sm font-medium text-gray-700 mb-1">
+                            Keperluan <span class="text-red-500">*</span>
+                        </label>
+                        <input type="text"
+                               id="keperluan"
+                               name="keperluan"
+                               value="{{ old('keperluan', $pengeluaran->keperluan) }}"
+                               class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent @error('keperluan') border-red-500 @enderror"
+                               placeholder="Contoh: Pembelian alat tulis, sewa tempat, dll"
+                               required>
+                        @error('keperluan')
+                            <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+                        @enderror
+                    </div>
+
+                    <!-- Deskripsi (opsional) -->
                     <div>
                         <label for="deskripsi" class="block text-sm font-medium text-gray-700 mb-1">
-                            Deskripsi <span class="text-red-500">*</span>
+                            Deskripsi
                         </label>
                         <textarea id="deskripsi" 
                                   name="deskripsi" 
                                   rows="3"
                                   class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent @error('deskripsi') border-red-500 @enderror"
-                                  placeholder="Masukkan deskripsi pengeluaran..."
-                                  required>{{ old('deskripsi', $pengeluaran->deskripsi) }}</textarea>
+                                  placeholder="Rincian tambahan (opsional)">{{ old('deskripsi', $pengeluaran->deskripsi) }}</textarea>
                         @error('deskripsi')
                             <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
                         @enderror
@@ -64,6 +80,7 @@
                             <option value="peralatan" {{ old('kategori', $pengeluaran->kategori) === 'peralatan' ? 'selected' : '' }}>Peralatan</option>
                             <option value="konsumsi" {{ old('kategori', $pengeluaran->kategori) === 'konsumsi' ? 'selected' : '' }}>Konsumsi</option>
                             <option value="transport" {{ old('kategori', $pengeluaran->kategori) === 'transport' ? 'selected' : '' }}>Transport</option>
+                            <option value="administrasi" {{ old('kategori', $pengeluaran->kategori) === 'administrasi' ? 'selected' : '' }}>Administrasi</option>
                             <option value="lainnya" {{ old('kategori', $pengeluaran->kategori) === 'lainnya' ? 'selected' : '' }}>Lainnya</option>
                         </select>
                         @error('kategori')
@@ -88,17 +105,7 @@
                         @enderror
                     </div>
 
-                    <!-- Tujuan -->
-                    <div>
-                        <label for="tujuan" class="block text-sm font-medium text-gray-700 mb-1">
-                            Tujuan
-                        </label>
-                        <textarea id="tujuan" 
-                                  name="tujuan" 
-                                  rows="2"
-                                  class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                                  placeholder="Tujuan atau keperluan pengeluaran">{{ old('tujuan', $pengeluaran->tujuan) }}</textarea>
-                    </div>
+                    
                 </div>
 
                 <!-- Right Column -->
@@ -135,21 +142,22 @@
                                 class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
                             <option value="">Pilih Metode</option>
                             <option value="tunai" {{ old('metode_pembayaran', $pengeluaran->metode_pembayaran) === 'tunai' ? 'selected' : '' }}>Tunai</option>
-                            <option value="transfer" {{ old('metode_pembayaran', $pengeluaran->metode_pembayaran) === 'transfer' ? 'selected' : '' }}>Transfer Bank</option>
+                            <option value="transfer_bank" {{ old('metode_pembayaran', $pengeluaran->metode_pembayaran) === 'transfer_bank' ? 'selected' : '' }}>Transfer Bank</option>
                             <option value="e_wallet" {{ old('metode_pembayaran', $pengeluaran->metode_pembayaran) === 'e_wallet' ? 'selected' : '' }}>E-Wallet</option>
+                            <option value="cek" {{ old('metode_pembayaran', $pengeluaran->metode_pembayaran) === 'cek' ? 'selected' : '' }}>Cek</option>
                             <option value="lainnya" {{ old('metode_pembayaran', $pengeluaran->metode_pembayaran) === 'lainnya' ? 'selected' : '' }}>Lainnya</option>
                         </select>
                     </div>
 
-                    <!-- Bukti Pembayaran -->
+                    <!-- Bukti Pengeluaran -->
                     <div>
-                        <label for="bukti_pembayaran" class="block text-sm font-medium text-gray-700 mb-1">
-                            Bukti Pembayaran
+                        <label for="bukti_pengeluaran" class="block text-sm font-medium text-gray-700 mb-1">
+                            Bukti Pengeluaran
                         </label>
-                        @if($pengeluaran->bukti_pembayaran)
+                        @if($pengeluaran->bukti_pengeluaran)
                             <div class="mb-2 p-3 bg-blue-50 rounded-md">
-                                <p class="text-sm text-blue-700 mb-2">File saat ini: {{ basename($pengeluaran->bukti_pembayaran) }}</p>
-                                <a href="{{ asset('storage/' . $pengeluaran->bukti_pembayaran) }}" 
+                                <p class="text-sm text-blue-700 mb-2">File saat ini: {{ basename($pengeluaran->bukti_pengeluaran) }}</p>
+                                <a href="{{ asset('storage/' . $pengeluaran->bukti_pengeluaran) }}" 
                                    target="_blank" 
                                    class="text-blue-600 hover:text-blue-800 text-sm">
                                     <i class="fas fa-external-link-alt mr-1"></i>Lihat File
@@ -157,58 +165,16 @@
                             </div>
                         @endif
                         <input type="file" 
-                               id="bukti_pembayaran" 
-                               name="bukti_pembayaran" 
-                               class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent @error('bukti_pembayaran') border-red-500 @enderror"
+                               id="bukti_pengeluaran" 
+                               name="bukti_pengeluaran" 
+                               class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent @error('bukti_pengeluaran') border-red-500 @enderror"
                                accept="image/*,.pdf">
                         <p class="text-xs text-gray-500 mt-1">Format: JPG, PNG, PDF. Maksimal 2MB. Kosongkan jika tidak ingin mengubah.</p>
-                        @error('bukti_pembayaran')
+                        @error('bukti_pengeluaran')
                             <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
                         @enderror
                     </div>
 
-                    <!-- Nota/Kwitansi -->
-                    <div>
-                        <label for="nota_kwitansi" class="block text-sm font-medium text-gray-700 mb-1">
-                            Nota/Kwitansi
-                        </label>
-                        @if($pengeluaran->nota_kwitansi)
-                            <div class="mb-2 p-3 bg-blue-50 rounded-md">
-                                <p class="text-sm text-blue-700 mb-2">File saat ini: {{ basename($pengeluaran->nota_kwitansi) }}</p>
-                                <a href="{{ asset('storage/' . $pengeluaran->nota_kwitansi) }}" 
-                                   target="_blank" 
-                                   class="text-blue-600 hover:text-blue-800 text-sm">
-                                    <i class="fas fa-external-link-alt mr-1"></i>Lihat File
-                                </a>
-                            </div>
-                        @endif
-                        <input type="file" 
-                               id="nota_kwitansi" 
-                               name="nota_kwitansi" 
-                               class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent @error('nota_kwitansi') border-red-500 @enderror"
-                               accept="image/*,.pdf">
-                        <p class="text-xs text-gray-500 mt-1">Format: JPG, PNG, PDF. Maksimal 2MB. Kosongkan jika tidak ingin mengubah.</p>
-                        @error('nota_kwitansi')
-                            <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
-                        @enderror
-                    </div>
-
-                    <!-- Status -->
-                    <div>
-                        <label for="status" class="block text-sm font-medium text-gray-700 mb-1">
-                            Status <span class="text-red-500">*</span>
-                        </label>
-                        <select id="status" 
-                                name="status" 
-                                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent @error('status') border-red-500 @enderror"
-                                required>
-                            <option value="pending" {{ old('status', $pengeluaran->status) === 'pending' ? 'selected' : '' }}>Pending</option>
-                            <option value="verified" {{ old('status', $pengeluaran->status) === 'verified' ? 'selected' : '' }}>Terverifikasi</option>
-                        </select>
-                        @error('status')
-                            <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
-                        @enderror
-                    </div>
 
                     <!-- Keterangan -->
                     <div>

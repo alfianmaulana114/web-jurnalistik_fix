@@ -126,7 +126,7 @@
                 <div>
                     <h4 class="font-medium text-gray-900 mb-3">Ringkasan Per Divisi</h4>
                     <div class="space-y-2">
-                        @foreach($ringkasanPerDivisi as $divisi => $data)
+                        @foreach($ringkasanDivisi as $divisi => $data)
                         <div class="flex items-center justify-between p-3 bg-gray-50 rounded">
                             <div class="flex items-center">
                                 <div class="p-2 rounded-full bg-green-100 text-green-600 mr-3">
@@ -242,7 +242,7 @@
                             </div>
                             <div>
                                 <p class="font-medium text-gray-900">{{ $kas->user->name }}</p>
-                                <p class="text-sm text-gray-600">{{ ucfirst(str_replace('_', ' ', $kas->user->division)) }}</p>
+                                <p class="text-sm text-gray-600">{{ ucfirst(str_replace('_', ' ', $kas->user->getDivision())) }}</p>
                             </div>
                         </div>
                         <div class="text-right">

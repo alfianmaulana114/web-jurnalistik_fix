@@ -12,11 +12,11 @@ class DatabaseSeeder extends Seeder
             NewsCategoryTypeGenreSeeder::class,
             UserSeeder::class,
             NewsSeeder::class,
+            ProkerSeeder::class, // Moved up
+            DesignSeeder::class, 
             CommentSeeder::class,
-            ProkerSeeder::class,
             BriefSeeder::class,
             ContentSeeder::class,
-            DesignSeeder::class,
         ]);
     }
 }

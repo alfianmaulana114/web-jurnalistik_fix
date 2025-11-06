@@ -343,4 +343,42 @@ class Pengeluaran extends Model
             }
         });
     }
+
+    /**
+     * Accessor tanggal generic agar konsisten di blade
+     */
+    public function getTanggalAttribute()
+    {
+        return $this->tanggal_pengeluaran;
+    }
+
+    /**
+     * Label status user-friendly
+     */
+    public function getStatusLabel(): string
+    {
+        $map = [
+            self::STATUS_PENDING => 'Pending',
+            self::STATUS_APPROVED => 'Approved',
+            self::STATUS_REJECTED => 'Rejected',
+            self::STATUS_PAID => 'Paid',
+        ];
+        return $map[$this->status] ?? $this->status;
+    }
+
+    /**
+     * Label kategori user-friendly
+     */
+    public function getKategoriLabel(): string
+    {
+        return self::getAllKategori()[$this->kategori] ?? $this->kategori;
+    }
+
+    /**
+     * Label metode pembayaran user-friendly
+     */
+    public function getMetodePembayaranLabel(): string
+    {
+        return self::getAllMetodePembayaran()[$this->metode_pembayaran] ?? $this->metode_pembayaran;
+    }
 }

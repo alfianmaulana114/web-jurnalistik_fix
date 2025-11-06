@@ -15,10 +15,10 @@
                     <div>
                         <!-- Tanggal -->
                         <div class="mb-4">
-                            <label for="tanggal" class="block text-sm font-medium text-gray-700 mb-1">Tanggal <span class="text-red-500">*</span></label>
-                            <input type="date" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 @error('tanggal') border-red-500 @enderror" 
-                                   id="tanggal" name="tanggal" value="{{ old('tanggal', date('Y-m-d')) }}" required>
-                            @error('tanggal')
+                            <label for="tanggal_pemasukan" class="block text-sm font-medium text-gray-700 mb-1">Tanggal <span class="text-red-500">*</span></label>
+                            <input type="date" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 @error('tanggal_pemasukan') border-red-500 @enderror" 
+                                   id="tanggal_pemasukan" name="tanggal_pemasukan" value="{{ old('tanggal_pemasukan', date('Y-m-d')) }}" required>
+                            @error('tanggal_pemasukan')
                                 <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
                             @enderror
                         </div>
@@ -67,11 +67,11 @@
 
                         <!-- Sumber -->
                         <div class="mb-4">
-                            <label for="sumber" class="block text-sm font-medium text-gray-700 mb-1">Sumber <span class="text-red-500">*</span></label>
-                            <input type="text" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 @error('sumber') border-red-500 @enderror" 
-                                   id="sumber" name="sumber" value="{{ old('sumber') }}" 
+                            <label for="sumber_pemasukan" class="block text-sm font-medium text-gray-700 mb-1">Sumber <span class="text-red-500">*</span></label>
+                            <input type="text" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 @error('sumber_pemasukan') border-red-500 @enderror" 
+                                   id="sumber_pemasukan" name="sumber_pemasukan" value="{{ old('sumber_pemasukan') }}" 
                                    placeholder="Sumber pemasukan..." required>
-                            @error('sumber')
+                            @error('sumber_pemasukan')
                                 <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
                             @enderror
                         </div>

@@ -24,13 +24,14 @@ class Content extends Model
         'media_path',
         'media_description',
         'berita_referensi',
+        'desain_id',
+        'berita_id',
         'sumber',
         'catatan_editor',
-        'status',
         'brief_id',
         'created_by',
-        'reviewed_by',
         'published_at',
+        'platform_upload',
     ];
 
     /**
@@ -47,6 +48,7 @@ class Content extends Model
      */
     const TYPE_CAPTION_BERITA = 'caption_berita';
     const TYPE_CAPTION_MEDIA_KREATIF = 'caption_media_kreatif';
+    const TYPE_CAPTION_DESAIN = 'caption_desain';
 
     /**
      * Media type constants
@@ -71,6 +73,7 @@ class Content extends Model
         return [
             self::TYPE_CAPTION_BERITA => 'Caption Berita Redaksi',
             self::TYPE_CAPTION_MEDIA_KREATIF => 'Caption Media Kreatif',
+            self::TYPE_CAPTION_DESAIN => 'Caption Desain',
         ];
     }
 
@@ -129,6 +132,22 @@ class Content extends Model
     public function designs(): HasMany
     {
         return $this->hasMany(Design::class);
+    }
+
+    /**
+     * Get the design related to this content (for caption desain)
+     */
+    public function desain(): BelongsTo
+    {
+        return $this->belongsTo(Design::class, 'desain_id');
+    }
+
+    /**
+     * Get the news related to this content (for caption berita)
+     */
+    public function berita(): BelongsTo
+    {
+        return $this->belongsTo(News::class, 'berita_id');
     }
 
     /**
@@ -208,6 +227,14 @@ class Content extends Model
     public function isCaptionBerita(): bool
     {
         return $this->jenis_konten === self::TYPE_CAPTION_BERITA;
+    }
+
+    /**
+     * Check if this is a design caption
+     */
+    public function isCaptionDesain(): bool
+    {
+        return $this->jenis_konten === self::TYPE_CAPTION_DESAIN;
     }
 
     /**

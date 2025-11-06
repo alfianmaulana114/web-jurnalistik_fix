@@ -7,10 +7,16 @@
     <div class="bg-white rounded-lg shadow-md">
         <div class="flex justify-between items-center p-6 border-b border-gray-200">
             <h3 class="text-xl font-semibold text-gray-800">Daftar Caption</h3>
-            <a href="{{ route('koordinator-jurnalistik.contents.create') }}" 
-               class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md text-sm font-medium transition duration-200 flex items-center">
-                <i class="fas fa-plus mr-2"></i> Buat Caption Baru
-            </a>
+            <div class="flex space-x-3">
+                <a href="{{ route('koordinator-jurnalistik.contents.create') }}" 
+                   class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md text-sm font-medium transition duration-200 flex items-center">
+                    <i class="fas fa-plus mr-2"></i> Buat Caption Baru
+                </a>
+                <button onclick="openNewsSelectionModal()" 
+                        class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-md text-sm font-medium transition duration-200 flex items-center">
+                    <i class="fas fa-newspaper mr-2"></i> Pilih Berita untuk Caption
+                </button>
+            </div>
         </div>
         
         <div class="p-6">
@@ -37,15 +43,7 @@
                             <option value="caption_media_kreatif">Caption Media Kreatif</option>
                         </select>
                     </div>
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-2">Status</label>
-                        <select id="statusFilter" class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500">
-                            <option value="">Semua Status</option>
-                            <option value="draft">Draft</option>
-                            <option value="sedang_direview">Sedang Direview</option>
-                            <option value="dipublikasi">Dipublikasi</option>
-                        </select>
-                    </div>
+
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-2">Tipe Media</label>
                         <select id="mediaFilter" class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500">
@@ -72,8 +70,7 @@
                                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-12">#</th>
                                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Judul Caption</th>
                                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Jenis Caption</th>
-                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Media</th>
-                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Nama Berita/Design</th>
                                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Pembuat</th>
                                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tanggal</th>
                                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Aksi</th>
@@ -85,8 +82,19 @@
                                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ $loop->iteration + ($contents->currentPage() - 1) * $contents->perPage() }}</td>
                                         <td class="px-6 py-4 whitespace-nowrap">
                                             <div class="text-sm font-medium text-gray-900">{{ $content->judul }}</div>
-                                            @if($content->brief)
-                                                <div class="text-sm text-gray-500">Brief: {{ $content->brief->judul }}</div>
+                                            
+                                            <!-- News Reference -->
+                                            @if($content->isCaptionBerita() && $content->berita()->exists())
+                                                <div class="text-sm text-blue-600">
+                                                    <i class="fas fa-newspaper mr-1"></i> Berita: {{ $content->berita->title }}
+                                                </div>
+                                            @endif
+                                            
+                                            <!-- Design Reference -->
+                                            @if(($content->isCaptionMediaKreatif() || $content->isCaptionDesain()) && $content->desain()->exists())
+                                                <div class="text-sm text-purple-600">
+                                                    <i class="fas fa-palette mr-1"></i> Desain: {{ $content->desain->judul }}
+                                                </div>
                                             @endif
                                         </td>
                                         <td class="px-6 py-4 whitespace-nowrap">
@@ -95,32 +103,17 @@
                                             </span>
                                         </td>
                                         <td class="px-6 py-4 whitespace-nowrap">
-                                            @if($content->isCaptionMediaKreatif())
-                                                @if($content->media_type)
-                                                    <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-gray-100 text-gray-800">
-                                                        {{ $content->getMediaTypeLabel() }}
-                                                    </span>
-                                                @endif
-                                                @if($content->media_path)
-                                                    <div class="text-xs text-green-600 mt-1">
-                                                        <i class="fas fa-file"></i> File tersedia
-                                                    </div>
-                                                @endif
-                                            @elseif($content->isCaptionBerita() && $content->berita_referensi)
-                                                <div class="text-xs text-blue-600">
-                                                    <i class="fas fa-link"></i> Ada referensi
+                                            @if($content->isCaptionBerita() && $content->berita()->exists())
+                                                <div class="text-sm text-blue-600">
+                                                    <i class="fas fa-newspaper mr-1"></i> {{ $content->berita->title }}
+                                                </div>
+                                            @elseif(($content->isCaptionMediaKreatif() || $content->isCaptionDesain()) && $content->desain()->exists())
+                                                <div class="text-sm text-purple-600">
+                                                    <i class="fas fa-palette mr-1"></i> {{ $content->desain->judul }}
                                                 </div>
                                             @else
                                                 <span class="text-sm text-gray-400">-</span>
                                             @endif
-                                        </td>
-                                        <td class="px-6 py-4 whitespace-nowrap">
-                                            <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full 
-                                                @if($content->status == 'dipublikasi') bg-green-100 text-green-800
-                                                @elseif($content->status == 'sedang_direview') bg-yellow-100 text-yellow-800
-                                                @else bg-gray-100 text-gray-800 @endif">
-                                                {{ $content->getStatusLabel() }}
-                                            </span>
                                         </td>
                                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                                             {{ $content->creator->name ?? 'Unknown' }}
@@ -181,19 +174,142 @@
     </div>
 </div>
 
+<!-- Modal untuk memilih berita -->
+<div id="newsSelectionModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center hidden z-50">
+    <div class="bg-white rounded-lg shadow-lg w-full max-w-4xl max-h-[80vh] overflow-hidden">
+        <!-- Modal Header -->
+        <div class="bg-blue-600 px-6 py-4">
+            <h3 class="text-lg font-semibold text-white">Pilih Berita untuk Caption</h3>
+        </div>
+        
+        <!-- Search Bar -->
+        <div class="px-6 py-4 border-b">
+            <input 
+                type="text" 
+                id="newsSearch" 
+                placeholder="Cari berita..." 
+                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                onkeyup="filterNews()"
+            >
+        </div>
+        
+        <!-- News List -->
+        <div class="overflow-y-auto max-h-96">
+            <div class="px-6 py-4 space-y-3">
+                @forelse($availableNews as $news)
+                <div class="news-item border border-gray-200 rounded-lg p-4 cursor-pointer hover:bg-gray-50 transition-colors"
+                     data-news-id="{{ $news->id }}"
+                     onclick="selectNews(this)">
+                    <h4 class="font-semibold text-gray-800">{{ $news->title }}</h4>
+                            <p class="text-sm text-gray-600 mt-1">{{ Str::limit(strip_tags($news->content), 150) }}</p>
+                            <div class="flex items-center justify-between mt-2">
+                                <span class="text-xs text-gray-500">{{ $news->created_at->format('d M Y') }}</span>
+                                <span class="text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded">{{ $news->category->name ?? 'Uncategorized' }}</span>
+                            </div>
+                </div>
+                @empty
+                <div class="text-center py-8 text-gray-500">
+                    <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                    </svg>
+                    <p class="mt-2">Tidak ada berita yang tersedia untuk caption</p>
+                    <p class="text-sm">Semua berita sudah memiliki caption</p>
+                </div>
+                @endforelse
+            </div>
+        </div>
+        
+        <!-- Modal Footer -->
+        <div class="bg-gray-50 px-6 py-4 border-t flex justify-end space-x-3">
+            <button type="button" 
+                    onclick="closeNewsSelectionModal()" 
+                    class="px-4 py-2 text-gray-600 border border-gray-300 rounded-lg hover:bg-gray-100 transition-colors">
+                Batal
+            </button>
+            <button type="button" 
+                    id="createCaptionBtn"
+                    onclick="createCaptionForSelectedNews()" 
+                    class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors disabled:bg-gray-400 disabled:cursor-not-allowed"
+                    disabled>
+                Buat Caption
+            </button>
+        </div>
+    </div>
+</div>
+
 @push('scripts')
 <script>
+let selectedNewsId = null;
+
+function openNewsSelectionModal() {
+    document.getElementById('newsSelectionModal').classList.remove('hidden');
+    document.body.classList.add('overflow-hidden');
+}
+
+function closeNewsSelectionModal() {
+    document.getElementById('newsSelectionModal').classList.add('hidden');
+    document.body.classList.remove('overflow-hidden');
+    selectedNewsId = null;
+    document.getElementById('createCaptionBtn').disabled = true;
+    
+    // Reset selection
+    document.querySelectorAll('.news-item').forEach(item => {
+        item.classList.remove('border-blue-500', 'bg-blue-50');
+    });
+}
+
+function filterNews() {
+    const searchTerm = document.getElementById('newsSearch').value.toLowerCase();
+    const newsItems = document.querySelectorAll('.news-item');
+    
+    newsItems.forEach(item => {
+        const title = item.querySelector('h4').textContent.toLowerCase();
+        const content = item.querySelector('p').textContent.toLowerCase();
+        
+        if (title.includes(searchTerm) || content.includes(searchTerm)) {
+            item.style.display = 'block';
+        } else {
+            item.style.display = 'none';
+        }
+    });
+}
+
+function selectNews(element) {
+    // Remove previous selection
+    document.querySelectorAll('.news-item').forEach(item => {
+        item.classList.remove('border-blue-500', 'bg-blue-50');
+    });
+    
+    // Add selection to clicked item
+    element.classList.add('border-blue-500', 'bg-blue-50');
+    selectedNewsId = element.getAttribute('data-news-id');
+    document.getElementById('createCaptionBtn').disabled = false;
+}
+
+function createCaptionForSelectedNews() {
+    if (selectedNewsId) {
+        // Get the selected news title
+        const selectedNews = document.querySelector(`.news-item[data-news-id="${selectedNewsId}"]`);
+        const newsTitle = selectedNews.querySelector('h4').textContent;
+        
+        // Redirect to create page with news_id and news_title parameters
+        window.location.href = `{{ route('koordinator-jurnalistik.contents.create') }}?news_id=${selectedNewsId}&news_title=${encodeURIComponent(newsTitle)}`;
+    }
+}
+
+// Close modal when clicking outside
+document.addEventListener('click', function(event) {
+    const modal = document.getElementById('newsSelectionModal');
+    if (event.target === modal) {
+        closeNewsSelectionModal();
+    }
+});
+
 function toggleFilter() {
     const filterSection = document.getElementById('filterSection');
     const filterButtons = document.getElementById('filterButtons');
-    
-    if (filterSection.classList.contains('hidden')) {
-        filterSection.classList.remove('hidden');
-        filterButtons.classList.remove('hidden');
-    } else {
-        filterSection.classList.add('hidden');
-        filterButtons.classList.add('hidden');
-    }
+    filterSection.classList.toggle('hidden');
+    filterButtons.classList.toggle('hidden');
 }
 
 function applyFilter() {

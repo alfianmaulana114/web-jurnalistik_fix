@@ -28,7 +28,7 @@
     <!-- Filter Section -->
     <div class="bg-white rounded-lg shadow-sm p-4 mb-6">
         <h3 class="text-lg font-semibold text-gray-700 mb-4">Filter Laporan</h3>
-        <form id="filterForm" class="grid grid-cols-1 md:grid-cols-4 gap-4">
+        <form id="filterForm" class="grid grid-cols-1 md:grid-cols-6 gap-4">
             <!-- Periode -->
             <div>
                 <label for="periode" class="block text-sm font-medium text-gray-700 mb-1">Periode</label>
@@ -41,6 +41,32 @@
                     <option value="tahun_lalu">Tahun Lalu</option>
                     <option value="custom">Custom</option>
                 </select>
+            </div>
+
+            <!-- Bulan -->
+            <div>
+                <label for="bulan" class="block text-sm font-medium text-gray-700 mb-1">Bulan</label>
+                <select id="bulan" name="bulan" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500">
+                    <option value="1">Januari</option>
+                    <option value="2">Februari</option>
+                    <option value="3">Maret</option>
+                    <option value="4">April</option>
+                    <option value="5">Mei</option>
+                    <option value="6">Juni</option>
+                    <option value="7">Juli</option>
+                    <option value="8">Agustus</option>
+                    <option value="9">September</option>
+                    <option value="10">Oktober</option>
+                    <option value="11">November</option>
+                    <option value="12">Desember</option>
+                </select>
+            </div>
+
+            <!-- Tahun -->
+            <div>
+                <label for="tahun" class="block text-sm font-medium text-gray-700 mb-1">Tahun</label>
+                <input type="number" id="tahun" name="tahun" min="2020" max="2100" 
+                       class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500" />
             </div>
 
             <!-- Tanggal Mulai -->
@@ -92,7 +118,7 @@
                     <span class="font-medium">Total Terkumpul:</span>
                     <span class="text-green-600 font-bold">Rp 15.750.000</span>
                 </div>
-                <div class="flex space-x-2">
+            <div class="flex space-x-2">
                     <button onclick="viewReport('kas-anggota')" 
                             class="px-3 py-1 bg-blue-600 text-white text-sm rounded hover:bg-blue-700">
                         <i class="fas fa-eye mr-1"></i>Lihat
@@ -167,67 +193,7 @@
             </div>
         </div>
 
-        <!-- Laporan Laba Rugi -->
-        <div class="bg-white rounded-lg shadow-sm p-6 hover:shadow-md transition-shadow">
-            <div class="flex items-center justify-between mb-4">
-                <div class="flex items-center">
-                    <div class="bg-purple-100 p-3 rounded-lg">
-                        <i class="fas fa-chart-line text-purple-600 text-xl"></i>
-                    </div>
-                    <div class="ml-4">
-                        <h3 class="text-lg font-semibold text-gray-800">Laporan Laba Rugi</h3>
-                        <p class="text-sm text-gray-600">Analisis keuangan periode</p>
-                    </div>
-                </div>
-            </div>
-            <div class="flex justify-between items-center">
-                <div class="text-sm text-gray-600">
-                    <span class="font-medium">Saldo Bersih:</span>
-                    <span class="text-green-600 font-bold">Rp 5.750.000</span>
-                </div>
-                <div class="flex space-x-2">
-                    <button onclick="viewReport('laba-rugi')" 
-                            class="px-3 py-1 bg-blue-600 text-white text-sm rounded hover:bg-blue-700">
-                        <i class="fas fa-eye mr-1"></i>Lihat
-                    </button>
-                    <button onclick="exportReport('laba-rugi')" 
-                            class="px-3 py-1 bg-green-600 text-white text-sm rounded hover:bg-green-700">
-                        <i class="fas fa-download mr-1"></i>Export
-                    </button>
-                </div>
-            </div>
-        </div>
-
-        <!-- Laporan Neraca -->
-        <div class="bg-white rounded-lg shadow-sm p-6 hover:shadow-md transition-shadow">
-            <div class="flex items-center justify-between mb-4">
-                <div class="flex items-center">
-                    <div class="bg-yellow-100 p-3 rounded-lg">
-                        <i class="fas fa-balance-scale text-yellow-600 text-xl"></i>
-                    </div>
-                    <div class="ml-4">
-                        <h3 class="text-lg font-semibold text-gray-800">Laporan Neraca</h3>
-                        <p class="text-sm text-gray-600">Posisi keuangan organisasi</p>
-                    </div>
-                </div>
-            </div>
-            <div class="flex justify-between items-center">
-                <div class="text-sm text-gray-600">
-                    <span class="font-medium">Total Aset:</span>
-                    <span class="text-blue-600 font-bold">Rp 25.000.000</span>
-                </div>
-                <div class="flex space-x-2">
-                    <button onclick="viewReport('neraca')" 
-                            class="px-3 py-1 bg-blue-600 text-white text-sm rounded hover:bg-blue-700">
-                        <i class="fas fa-eye mr-1"></i>Lihat
-                    </button>
-                    <button onclick="exportReport('neraca')" 
-                            class="px-3 py-1 bg-green-600 text-white text-sm rounded hover:bg-green-700">
-                        <i class="fas fa-download mr-1"></i>Export
-                    </button>
-                </div>
-            </div>
-        </div>
+        
 
         <!-- Laporan Arus Kas -->
         <div class="bg-white rounded-lg shadow-sm p-6 hover:shadow-md transition-shadow">
@@ -290,6 +256,13 @@ document.addEventListener('DOMContentLoaded', function() {
     const periodeSelect = document.getElementById('periode');
     const tanggalMulaiContainer = document.getElementById('tanggal_mulai_container');
     const tanggalSelesaiContainer = document.getElementById('tanggal_selesai_container');
+    const bulanSelect = document.getElementById('bulan');
+    const tahunInput = document.getElementById('tahun');
+
+    // Set default bulan/tahun sekarang
+    const now = new Date();
+    bulanSelect.value = (now.getMonth() + 1).toString();
+    tahunInput.value = now.getFullYear().toString();
 
     // Toggle custom date inputs
     periodeSelect.addEventListener('change', function() {
@@ -314,32 +287,30 @@ document.addEventListener('DOMContentLoaded', function() {
 
 function viewReport(type) {
     // Get current filter values
-    const periode = document.getElementById('periode').value;
-    const divisi = document.getElementById('divisi').value;
-    const tanggalMulai = document.getElementById('tanggal_mulai').value;
-    const tanggalSelesai = document.getElementById('tanggal_selesai').value;
-    
-    // Build URL with parameters
-    let url = `/bendahara/laporan/${type}?periode=${periode}`;
-    if (divisi) url += `&divisi=${divisi}`;
-    if (tanggalMulai) url += `&tanggal_mulai=${tanggalMulai}`;
-    if (tanggalSelesai) url += `&tanggal_selesai=${tanggalSelesai}`;
-    
+    const bulan = document.getElementById('bulan').value;
+    const tahun = document.getElementById('tahun').value;
+
+    let url = '';
+    if (type === 'kas-anggota') {
+        url = `/bendahara/laporan/kas-anggota?bulan=${bulan}&tahun=${tahun}`;
+    } else if (type === 'pemasukan') {
+        url = `/bendahara/pemasukan?bulan=${bulan}&tahun=${tahun}`;
+    } else if (type === 'pengeluaran') {
+        url = `/bendahara/pengeluaran?bulan=${bulan}&tahun=${tahun}`;
+    } else {
+        url = `/bendahara/laporan/keuangan?bulan=${bulan}&tahun=${tahun}`;
+    }
+
     window.location.href = url;
 }
 
 function exportReport(type) {
     // Get current filter values
-    const periode = document.getElementById('periode').value;
-    const divisi = document.getElementById('divisi').value;
-    const tanggalMulai = document.getElementById('tanggal_mulai').value;
-    const tanggalSelesai = document.getElementById('tanggal_selesai').value;
-    
-    // Build export URL
-    let url = `/bendahara/laporan/${type}/export?periode=${periode}`;
-    if (divisi) url += `&divisi=${divisi}`;
-    if (tanggalMulai) url += `&tanggal_mulai=${tanggalMulai}`;
-    if (tanggalSelesai) url += `&tanggal_selesai=${tanggalSelesai}`;
+    const bulan = document.getElementById('bulan').value;
+    const tahun = document.getElementById('tahun').value;
+
+    // Build export URL (controller exportExcel expects type, bulan, tahun)
+    let url = `/bendahara/laporan/export-excel?type=${type}&bulan=${bulan}&tahun=${tahun}`;
     
     // Create temporary link and trigger download
     const link = document.createElement('a');
@@ -351,15 +322,11 @@ function exportReport(type) {
 }
 
 function exportAllReports() {
-    const periode = document.getElementById('periode').value;
-    const divisi = document.getElementById('divisi').value;
-    const tanggalMulai = document.getElementById('tanggal_mulai').value;
-    const tanggalSelesai = document.getElementById('tanggal_selesai').value;
+    const bulan = document.getElementById('bulan').value;
+    const tahun = document.getElementById('tahun').value;
     
-    let url = `/bendahara/laporan/export-all?periode=${periode}`;
-    if (divisi) url += `&divisi=${divisi}`;
-    if (tanggalMulai) url += `&tanggal_mulai=${tanggalMulai}`;
-    if (tanggalSelesai) url += `&tanggal_selesai=${tanggalSelesai}`;
+    // Optional: implement export-all zip on backend jika dibutuhkan
+    let url = `/bendahara/laporan/export-excel?type=kas-anggota&bulan=${bulan}&tahun=${tahun}`;
     
     const link = document.createElement('a');
     link.href = url;

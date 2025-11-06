@@ -42,4 +42,5 @@ class News extends Model
         return $this->belongsToMany(NewsGenre::class, 'news_genre_pivot', 'news_id', 'news_genres_id')
                     ->withTimestamps();
     }
+
 }

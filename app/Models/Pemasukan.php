@@ -158,6 +158,14 @@ class Pemasukan extends Model
     }
 
     /**
+     * Mendapatkan opsi metode pembayaran untuk dropdown
+     */
+    public static function getMetodePembayaranOptions(): array
+    {
+        return self::getAllMetodePembayaran();
+    }
+
+    /**
      * Mendapatkan semua status yang tersedia
      */
     public static function getAllStatus(): array
@@ -303,5 +311,49 @@ class Pemasukan extends Model
                 $model->kode_transaksi = self::generateKodeTransaksi();
             }
         });
+    }
+
+    /**
+     * Mendapatkan opsi kategori untuk dropdown
+     */
+    public static function getKategoriOptions(): array
+    {
+        return self::getAllKategori();
+    }
+
+    /**
+     * Mendapatkan opsi status untuk dropdown
+     */
+    public static function getStatusOptions(): array
+    {
+        return [
+            self::STATUS_PENDING => 'Menunggu Verifikasi',
+            self::STATUS_VERIFIED => 'Terverifikasi',
+            self::STATUS_REJECTED => 'Ditolak',
+        ];
+    }
+
+    /**
+     * Mendapatkan label status yang lebih user-friendly
+     */
+    public function getStatusLabel(): string
+    {
+        return self::getStatusOptions()[$this->status] ?? $this->status;
+    }
+
+    /**
+     * Mendapatkan label kategori yang lebih user-friendly
+     */
+    public function getKategoriLabel(): string
+    {
+        return self::getAllKategori()[$this->kategori] ?? $this->kategori;
+    }
+
+    /**
+     * Accessor untuk mendapatkan tanggal dari tanggal_pemasukan
+     */
+    public function getTanggalAttribute()
+    {
+        return $this->tanggal_pemasukan;
     }
 }

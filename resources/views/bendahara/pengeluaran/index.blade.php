@@ -167,63 +167,63 @@
                     </tr>
                 </thead>
                 <tbody class="bg-white divide-y divide-gray-200">
-                    @forelse($pengeluarans as $index => $pengeluaran)
+                    @forelse($pengeluaran as $index => $item)
                         <tr class="hover:bg-gray-50">
                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                                {{ $pengeluarans->firstItem() + $index }}
+                                {{ $pengeluaran->firstItem() + $index }}
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                                {{ $pengeluaran->tanggal->format('d/m/Y') }}
+                                {{ optional($item->tanggal)->format('d/m/Y') ?? '-' }}
                             </td>
                             <td class="px-6 py-4 text-sm text-gray-900">
                                 <div class="max-w-xs">
-                                    <p class="font-medium">{{ Str::limit($pengeluaran->deskripsi, 50) }}</p>
-                                    <p class="text-xs text-gray-500">{{ $pengeluaran->kode_transaksi }}</p>
+                                    <p class="font-medium">{{ Str::limit($item->deskripsi, 50) }}</p>
+                                    <p class="text-xs text-gray-500">{{ $item->kode_transaksi }}</p>
                                 </div>
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap">
                                 <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-purple-100 text-purple-800">
-                                    {{ $pengeluaran->getKategoriLabel() }}
+                                    {{ $item->getKategoriLabel() }}
                                 </span>
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-red-600">
-                                Rp {{ number_format($pengeluaran->jumlah, 0, ',', '.') }}
+                                Rp {{ number_format($item->jumlah, 0, ',', '.') }}
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                                {{ $pengeluaran->penerima }}
+                                {{ $item->penerima }}
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap">
                                 <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full 
-                                    {{ $pengeluaran->status === 'verified' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800' }}">
-                                    {{ $pengeluaran->getStatusLabel() }}
+                                    {{ in_array($item->status, ['approved','paid']) ? 'bg-green-100 text-green-800' : ($item->status === 'rejected' ? 'bg-red-100 text-red-800' : 'bg-yellow-100 text-yellow-800') }}">
+                                    {{ $item->getStatusLabel() }}
                                 </span>
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                                {{ $pengeluaran->createdBy->name ?? 'Sistem' }}
+                                {{ optional($item->creator)->name ?? 'Sistem' }}
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
                                 <div class="flex space-x-2">
-                                    <a href="{{ route('bendahara.pengeluaran.show', $pengeluaran) }}" 
+                                    <a href="{{ route('bendahara.pengeluaran.show', $item) }}" 
                                        class="text-blue-600 hover:text-blue-900" title="Lihat Detail">
                                         <i class="fas fa-eye"></i>
                                     </a>
-                                    <a href="{{ route('bendahara.pengeluaran.edit', $pengeluaran) }}" 
+                                    <a href="{{ route('bendahara.pengeluaran.edit', $item) }}" 
                                        class="text-yellow-600 hover:text-yellow-900" title="Edit">
                                         <i class="fas fa-edit"></i>
                                     </a>
-                                    @if($pengeluaran->status === 'pending')
-                                        <form action="{{ route('bendahara.pengeluaran.verify', $pengeluaran) }}" method="POST" class="inline">
+                                    @if($item->status === 'pending')
+                                        <form action="{{ route('bendahara.pengeluaran.approve', $item) }}" method="POST" class="inline">
                                             @csrf
                                             @method('PATCH')
                                             <button type="submit" 
                                                     class="text-green-600 hover:text-green-900" 
-                                                    title="Verifikasi"
-                                                    onclick="return confirm('Apakah Anda yakin ingin memverifikasi pengeluaran ini?')">
+                                                    title="Setujui"
+                                                    onclick="return confirm('Setujui pengeluaran ini?')">
                                                 <i class="fas fa-check"></i>
                                             </button>
                                         </form>
                                     @endif
-                                    <form action="{{ route('bendahara.pengeluaran.destroy', $pengeluaran) }}" method="POST" class="inline">
+                                    <form action="{{ route('bendahara.pengeluaran.destroy', $item) }}" method="POST" class="inline">
                                         @csrf
                                         @method('DELETE')
                                         <button type="submit" 
@@ -250,9 +250,9 @@
         </div>
 
         <!-- Pagination -->
-        @if($pengeluarans->hasPages())
+        @if($pengeluaran->hasPages())
             <div class="px-6 py-3 border-t border-gray-200">
-                {{ $pengeluarans->appends(request()->query())->links() }}
+                {{ $pengeluaran->appends(request()->query())->links() }}
             </div>
         @endif
     </div>

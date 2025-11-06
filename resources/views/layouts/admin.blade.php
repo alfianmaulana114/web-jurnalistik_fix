@@ -72,13 +72,19 @@
                     <!-- Admin dropdown -->
                     <div class="relative">
                         <button id="user-menu-button" class="flex items-center space-x-2 focus:outline-none">
-                            <span class="text-gray-700">Admin</span>
+                            <span class="text-gray-700">{{ auth()->user()->name ?? 'Admin' }}</span>
                             <i class="fas fa-chevron-down text-gray-600 text-sm"></i>
                         </button>
                         <!-- Dropdown menu -->
                         <div id="user-menu" class="hidden absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg py-1 z-50">
                             <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Profil</a>
-                            <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Logout</a>
+                            <hr class="my-1">
+                            <form method="POST" action="{{ route('logout') }}" class="block">
+                                @csrf
+                                <button type="submit" class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                                    <i class="fas fa-sign-out-alt mr-2"></i>Logout
+                                </button>
+                            </form>
                         </div>
                     </div>
                 </div>

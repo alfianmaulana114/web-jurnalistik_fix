@@ -13,12 +13,12 @@
                 @csrf
                 <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
                     <div class="lg:col-span-2">
-                        <!-- Judul Caption -->
+                        <!-- Judul Caption (Optional) -->
                         <div class="mb-4">
-                            <label for="judul" class="block text-sm font-medium text-gray-700 mb-1">Judul Caption <span class="text-red-500">*</span></label>
+                            <label for="judul" class="block text-sm font-medium text-gray-700 mb-1">Judul Caption</label>
                             <input type="text" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 @error('judul') border-red-500 @enderror" 
                                    id="judul" name="judul" value="{{ old('judul') }}" 
-                                   placeholder="Masukkan judul caption">
+                                   placeholder="Masukkan judul caption (opsional)">
                             @error('judul')
                                 <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
                             @enderror
@@ -41,54 +41,36 @@
                             @enderror
                         </div>
 
-                        <!-- Media Type (for Media Kreatif) -->
-                        <div class="mb-4" id="media_type_group" style="display: none;">
-                            <label for="media_type" class="block text-sm font-medium text-gray-700 mb-1">Tipe Media</label>
-                            <select class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 @error('media_type') border-red-500 @enderror" 
-                                    id="media_type" name="media_type">
-                                <option value="">Pilih Tipe Media</option>
-                                @foreach(App\Models\Content::getMediaTypes() as $key => $value)
-                                    <option value="{{ $key }}" {{ old('media_type') == $key ? 'selected' : '' }}>
-                                        {{ $value }}
+                        <!-- Berita Referensi (for Caption Berita) -->
+                        <div class="mb-4" id="berita_group" style="display: none;">
+                            <label for="berita_id" class="block text-sm font-medium text-gray-700 mb-1">Berita Referensi <span class="text-red-500">*</span></label>
+                            <select class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 @error('berita_id') border-red-500 @enderror" 
+                                    id="berita_id" name="berita_id">
+                                <option value="">Pilih Berita</option>
+                                @foreach($beritas as $berita)
+                                    <option value="{{ $berita->id }}" {{ old('berita_id') == $berita->id ? 'selected' : '' }} {{ $selectedNews && $selectedNews->id == $berita->id ? 'selected' : '' }}>
+                                        {{ $berita->title }}
                                     </option>
                                 @endforeach
                             </select>
-                            @error('media_type')
+                            @error('berita_id')
                                 <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
                             @enderror
                         </div>
 
-                        <!-- Media File Upload -->
-                        <div class="mb-4" id="media_file_group" style="display: none;">
-                            <label for="media_file" class="block text-sm font-medium text-gray-700 mb-1">File Media</label>
-                            <input type="file" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 @error('media_file') border-red-500 @enderror" 
-                                   id="media_file" name="media_file" accept="image/*,video/*">
-                            <p class="text-gray-500 text-xs mt-1">
-                                Upload foto (JPG, PNG, GIF) atau video (MP4, MOV, AVI). Maksimal 20MB.
-                            </p>
-                            @error('media_file')
-                                <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
-                            @enderror
-                        </div>
-
-                        <!-- Media Description -->
-                        <div class="mb-4" id="media_description_group" style="display: none;">
-                            <label for="media_description" class="block text-sm font-medium text-gray-700 mb-1">Deskripsi Media</label>
-                            <textarea class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 @error('media_description') border-red-500 @enderror" 
-                                      id="media_description" name="media_description" rows="3" 
-                                      placeholder="Deskripsi singkat tentang media">{{ old('media_description') }}</textarea>
-                            @error('media_description')
-                                <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
-                            @enderror
-                        </div>
-
-                        <!-- Referensi Berita (for Caption Berita) -->
-                        <div class="mb-4" id="berita_referensi_group" style="display: none;">
-                            <label for="berita_referensi" class="block text-sm font-medium text-gray-700 mb-1">Referensi Berita</label>
-                            <textarea class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 @error('berita_referensi') border-red-500 @enderror" 
-                                      id="berita_referensi" name="berita_referensi" rows="3" 
-                                      placeholder="Link atau referensi berita yang dijadikan dasar caption">{{ old('berita_referensi') }}</textarea>
-                            @error('berita_referensi')
+                        <!-- Desain Referensi (for Caption Media Kreatif) -->
+                        <div class="mb-4" id="desain_group" style="display: none;">
+                            <label for="desain_id" class="block text-sm font-medium text-gray-700 mb-1">Desain Referensi <span class="text-red-500">*</span></label>
+                            <select class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 @error('desain_id') border-red-500 @enderror" 
+                                    id="desain_id" name="desain_id">
+                                <option value="">Pilih Desain</option>
+                                @foreach($desains as $desain)
+                                    <option value="{{ $desain->id }}" {{ old('desain_id') == $desain->id ? 'selected' : '' }}>
+                                        {{ $desain->judul }}
+                                    </option>
+                                @endforeach
+                            </select>
+                            @error('desain_id')
                                 <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
                             @enderror
                         </div>
@@ -105,80 +87,29 @@
                             @enderror
                         </div>
 
-                        <!-- Sumber -->
+                        <!-- Platform Upload -->
                         <div class="mb-4">
-                            <label for="sumber" class="block text-sm font-medium text-gray-700 mb-1">Sumber</label>
-                            <input type="text" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 @error('sumber') border-red-500 @enderror" 
-                                   id="sumber" name="sumber" value="{{ old('sumber') }}" 
-                                   placeholder="Sumber informasi atau media">
-                            @error('sumber')
+                            <label for="platform_upload" class="block text-sm font-medium text-gray-700 mb-1">Platform Upload</label>
+                            <select class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 @error('platform_upload') border-red-500 @enderror" 
+                                    id="platform_upload" name="platform_upload">
+                                <option value="">Pilih Platform Upload</option>
+                                <option value="tiktok" {{ old('platform_upload') == 'tiktok' ? 'selected' : '' }}>TikTok</option>
+                                <option value="instagram_feed" {{ old('platform_upload') == 'instagram_feed' ? 'selected' : '' }}>Instagram Feed</option>
+                                <option value="instagram_story" {{ old('platform_upload') == 'instagram_story' ? 'selected' : '' }}>Instagram Story</option>
+                                <option value="youtube" {{ old('platform_upload') == 'youtube' ? 'selected' : '' }}>YouTube</option>
+                            </select>
+                            <p class="text-gray-500 text-xs mt-1">Pilih platform untuk mengupload caption ini.</p>
+                            @error('platform_upload')
                                 <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
                             @enderror
                         </div>
 
-                        <!-- Catatan Editor -->
-                        <div class="mb-4">
-                            <label for="catatan_editor" class="block text-sm font-medium text-gray-700 mb-1">Catatan Editor</label>
-                            <textarea class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 @error('catatan_editor') border-red-500 @enderror" 
-                                      id="catatan_editor" name="catatan_editor" rows="3" 
-                                      placeholder="Catatan khusus untuk editor">{{ old('catatan_editor') }}</textarea>
-                            @error('catatan_editor')
-                                <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
-                            @enderror
-                        </div>
+
+
+
                     </div>
 
                     <div class="lg:col-span-1">
-                        <!-- Brief -->
-                        <div class="mb-4">
-                            <label for="brief_id" class="block text-sm font-medium text-gray-700 mb-1">Brief Terkait</label>
-                            <select class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 @error('brief_id') border-red-500 @enderror" 
-                                    id="brief_id" name="brief_id">
-                                <option value="">Pilih Brief (Opsional)</option>
-                                @foreach($briefs as $brief)
-                                    <option value="{{ $brief->id }}" {{ old('brief_id') == $brief->id ? 'selected' : '' }}>
-                                        {{ $brief->judul }}
-                                    </option>
-                                @endforeach
-                            </select>
-                            @error('brief_id')
-                                <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
-                            @enderror
-                        </div>
-
-                        <!-- Status -->
-                        <div class="mb-4">
-                            <label for="status" class="block text-sm font-medium text-gray-700 mb-1">Status <span class="text-red-500">*</span></label>
-                            <select class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 @error('status') border-red-500 @enderror" 
-                                    id="status" name="status">
-                                @foreach(App\Models\Content::getAllStatuses() as $key => $value)
-                                    <option value="{{ $key }}" {{ old('status', 'draft') == $key ? 'selected' : '' }}>
-                                        {{ $value }}
-                                    </option>
-                                @endforeach
-                            </select>
-                            @error('status')
-                                <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
-                            @enderror
-                        </div>
-
-                        <!-- Reviewer -->
-                        <div class="mb-4">
-                            <label for="reviewed_by" class="block text-sm font-medium text-gray-700 mb-1">Reviewer</label>
-                            <select class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 @error('reviewed_by') border-red-500 @enderror" 
-                                    id="reviewed_by" name="reviewed_by">
-                                <option value="">Pilih Reviewer (Opsional)</option>
-                                @foreach($users as $user)
-                                    <option value="{{ $user->id }}" {{ old('reviewed_by') == $user->id ? 'selected' : '' }}>
-                                        {{ $user->name }}
-                                    </option>
-                                @endforeach
-                            </select>
-                            @error('reviewed_by')
-                                <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
-                            @enderror
-                        </div>
-
                         <!-- Published At -->
                         <div class="mb-4">
                             <label for="published_at" class="block text-sm font-medium text-gray-700 mb-1">Tanggal Publikasi</label>
@@ -208,32 +139,30 @@
 <script>
 function toggleMediaFields() {
     const jenisKonten = document.getElementById('jenis_konten').value;
-    const mediaTypeGroup = document.getElementById('media_type_group');
-    const mediaFileGroup = document.getElementById('media_file_group');
-    const mediaDescriptionGroup = document.getElementById('media_description_group');
-    const beritaReferensiGroup = document.getElementById('berita_referensi_group');
+    const beritaGroup = document.getElementById('berita_group');
+    const desainGroup = document.getElementById('desain_group');
     
-    if (jenisKonten === 'caption_media_kreatif') {
-        mediaTypeGroup.style.display = 'block';
-        mediaFileGroup.style.display = 'block';
-        mediaDescriptionGroup.style.display = 'block';
-        beritaReferensiGroup.style.display = 'none';
-    } else if (jenisKonten === 'caption_berita') {
-        mediaTypeGroup.style.display = 'none';
-        mediaFileGroup.style.display = 'none';
-        mediaDescriptionGroup.style.display = 'none';
-        beritaReferensiGroup.style.display = 'block';
+    if (jenisKonten === 'caption_berita') {
+        beritaGroup.style.display = 'block';
+        desainGroup.style.display = 'none';
+    } else if (jenisKonten === 'caption_media_kreatif') {
+        beritaGroup.style.display = 'none';
+        desainGroup.style.display = 'block';
     } else {
-        mediaTypeGroup.style.display = 'none';
-        mediaFileGroup.style.display = 'none';
-        mediaDescriptionGroup.style.display = 'none';
-        beritaReferensiGroup.style.display = 'none';
+        beritaGroup.style.display = 'none';
+        desainGroup.style.display = 'none';
     }
 }
 
 // Initialize on page load
 document.addEventListener('DOMContentLoaded', function() {
     toggleMediaFields();
+    
+    // Auto-select caption_berita and show berita group if news is selected
+    @if($selectedNews)
+        document.getElementById('jenis_konten').value = 'caption_berita';
+        toggleMediaFields();
+    @endif
 });
 </script>
 @endsection

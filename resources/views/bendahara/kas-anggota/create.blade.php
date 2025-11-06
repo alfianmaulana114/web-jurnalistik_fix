@@ -106,7 +106,7 @@
                             <div class="relative">
                                 <span class="absolute left-3 top-2 text-gray-500">Rp</span>
                                 <input type="number" class="w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 @error('jumlah_dibayar') border-red-500 @enderror" 
-                                       id="jumlah_dibayar" name="jumlah_dibayar" value="{{ old('jumlah_dibayar', 0) }}" 
+                                       id="jumlah_dibayar" name="jumlah_dibayar" value="{{ old('jumlah_dibayar', 15000) }}" 
                                        min="0" max="{{ \App\Models\KasSetting::getValue('jumlah_kas_anggota', 15000) }}" step="1000" placeholder="0">
                             </div>
                             <p class="text-gray-500 text-xs mt-1">Kosongkan jika belum ada pembayaran</p>

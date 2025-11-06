@@ -10,6 +10,8 @@ use App\Http\Controllers\ProkerController;
 use App\Http\Controllers\BriefController;
 use App\Http\Controllers\ContentController;
 use App\Http\Controllers\DesignController;
+use App\Http\Controllers\SekretarisController;
+use App\Http\Controllers\AbsenController;
 use App\Http\Controllers\TempImageController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
@@ -47,33 +49,37 @@ Route::post('/login', function (\Illuminate\Http\Request $request) {
         'timestamp' => now()->format('Y-m-d H:i:s')
     ]);
 
-    if (Auth::attempt($credentials)) {
-        $request->session()->regenerate();
-        
-        $user = Auth::user();
-        
-        // Debug: Show user role information
-        session()->flash('debug_info', [
-            'user_id' => $user->id,
-            'email' => $user->email,
-            'role' => $user->role,
-            'isKoordinatorJurnalistik' => $user->isKoordinatorJurnalistik(),
-            'isBendahara' => $user->isBendahara(),
-            'all_roles' => [
-                'ROLE_KOORDINATOR_JURNALISTIK' => \App\Models\User::ROLE_KOORDINATOR_JURNALISTIK,
-                'ROLE_BENDAHARA' => \App\Models\User::ROLE_BENDAHARA,
-            ]
-        ]);
+        if (Auth::attempt($credentials)) {
+            $request->session()->regenerate();
+            
+            $user = Auth::user();
+            
+            // Debug: Show user role information
+            session()->flash('debug_info', [
+                'user_id' => $user->id,
+                'email' => $user->email,
+                'role' => $user->role,
+                'isKoordinatorJurnalistik' => $user->isKoordinatorJurnalistik(),
+                'isBendahara' => $user->isBendahara(),
+                'isSekretaris' => $user->isSekretaris(),
+                'all_roles' => [
+                    'ROLE_KOORDINATOR_JURNALISTIK' => \App\Models\User::ROLE_KOORDINATOR_JURNALISTIK,
+                    'ROLE_BENDAHARA' => \App\Models\User::ROLE_BENDAHARA,
+                    'ROLE_SEKRETARIS' => \App\Models\User::ROLE_SEKRETARIS,
+                ]
+            ]);
 
-        if ($user->isKoordinatorJurnalistik()) {
-            return redirect('/koordinator-jurnalistik/dashboard')->with('success', 'Login berhasil sebagai Koordinator Jurnalistik');
-        } elseif ($user->isBendahara()) {
-            return redirect('/bendahara/dashboard')->with('success', 'Login berhasil sebagai Bendahara');
+            if ($user->isKoordinatorJurnalistik()) {
+                return redirect('/koordinator-jurnalistik/dashboard')->with('success', 'Login berhasil sebagai Koordinator Jurnalistik');
+            } elseif ($user->isBendahara()) {
+                return redirect('/bendahara/dashboard')->with('success', 'Login berhasil sebagai Bendahara');
+            } elseif ($user->isSekretaris()) {
+                return redirect('/sekretaris/dashboard')->with('success', 'Login berhasil sebagai Sekretaris');
+            }
+
+            // If no specific role matches, redirect to home with debug info
+            return redirect('/')->with('login_debug', 'User role: ' . $user->role . ' - No specific dashboard found');
         }
-
-        // If no specific role matches, redirect to home with debug info
-        return redirect('/')->with('login_debug', 'User role: ' . $user->role . ' - No specific dashboard found');
-    }
 
     return back()->withErrors([
         'email' => 'The provided credentials do not match our records.',
@@ -123,6 +129,15 @@ Route::prefix('koordinator-jurnalistik')->name('koordinator-jurnalistik.')->midd
     
     // Design management
     Route::resource('designs', DesignController::class);
+    
+    // Absen management
+    Route::prefix('absen')->name('absen.')->group(function () {
+        Route::get('/', [AbsenController::class, 'index'])->name('index');
+        Route::post('/', [AbsenController::class, 'store'])->name('store');
+        Route::post('/bulk', [AbsenController::class, 'storeBulk'])->name('store-bulk');
+        Route::put('/{absen}', [AbsenController::class, 'update'])->name('update');
+        Route::delete('/{absen}', [AbsenController::class, 'destroy'])->name('destroy');
+    });
 });
 
 // Bendahara routes
@@ -134,6 +149,7 @@ Route::prefix('bendahara')->name('bendahara.')->group(function () {
     Route::prefix('kas-anggota')->name('kas-anggota.')->group(function () {
         Route::get('/', [BendaharaController::class, 'kasAnggotaIndex'])->name('index');
         Route::get('/create', [BendaharaController::class, 'kasAnggotaCreate'])->name('create');
+        Route::get('/riwayat', [BendaharaController::class, 'kasAnggotaRiwayat'])->name('riwayat');
         Route::post('/', [BendaharaController::class, 'kasAnggotaStore'])->name('store');
         Route::get('/{kasAnggota}', [BendaharaController::class, 'kasAnggotaShow'])->name('show');
         Route::get('/{kasAnggota}/edit', [BendaharaController::class, 'kasAnggotaEdit'])->name('edit');
@@ -177,5 +193,41 @@ Route::prefix('bendahara')->name('bendahara.')->group(function () {
         Route::get('/keuangan', [BendaharaController::class, 'laporanKeuangan'])->name('keuangan');
         Route::get('/kas-anggota', [BendaharaController::class, 'laporanKasAnggota'])->name('kas-anggota');
         Route::get('/export-excel', [BendaharaController::class, 'exportExcel'])->name('export-excel');
+    });
+});
+
+// Sekretaris routes
+Route::prefix('sekretaris')->name('sekretaris.')->middleware(['auth'])->group(function () {
+    Route::get('/dashboard', [SekretarisController::class, 'dashboard'])->name('dashboard');
+    
+    // Notulensi management
+    Route::prefix('notulensi')->name('notulensi.')->group(function () {
+        Route::get('/', [SekretarisController::class, 'notulensiIndex'])->name('index');
+        Route::get('/create', [SekretarisController::class, 'notulensiCreate'])->name('create');
+        Route::post('/', [SekretarisController::class, 'notulensiStore'])->name('store');
+        Route::get('/{notulensi}', [SekretarisController::class, 'notulensiShow'])->name('show');
+        Route::get('/{notulensi}/edit', [SekretarisController::class, 'notulensiEdit'])->name('edit');
+        Route::put('/{notulensi}', [SekretarisController::class, 'notulensiUpdate'])->name('update');
+        Route::delete('/{notulensi}', [SekretarisController::class, 'notulensiDestroy'])->name('destroy');
+    });
+    
+    // Proker management
+    Route::prefix('proker')->name('proker.')->group(function () {
+        Route::get('/', [SekretarisController::class, 'prokerIndex'])->name('index');
+        Route::get('/create', [SekretarisController::class, 'prokerCreate'])->name('create');
+        Route::post('/', [SekretarisController::class, 'prokerStore'])->name('store');
+        Route::get('/{proker}', [SekretarisController::class, 'prokerShow'])->name('show');
+        Route::get('/{proker}/edit', [SekretarisController::class, 'prokerEdit'])->name('edit');
+        Route::put('/{proker}', [SekretarisController::class, 'prokerUpdate'])->name('update');
+        Route::delete('/{proker}', [SekretarisController::class, 'prokerDestroy'])->name('destroy');
+    });
+    
+    // Absen management
+    Route::prefix('absen')->name('absen.')->group(function () {
+        Route::get('/', [AbsenController::class, 'index'])->name('index');
+        Route::post('/', [AbsenController::class, 'store'])->name('store');
+        Route::post('/bulk', [AbsenController::class, 'storeBulk'])->name('store-bulk');
+        Route::put('/{absen}', [AbsenController::class, 'update'])->name('update');
+        Route::delete('/{absen}', [AbsenController::class, 'destroy'])->name('destroy');
     });
 });
