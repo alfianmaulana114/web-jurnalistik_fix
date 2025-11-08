@@ -1,107 +1,43 @@
 <?php
 
-use App\Http\Controllers\CommentController;
-use App\Http\Controllers\HomeController;
-use App\Http\Controllers\NewsController;
-use App\Http\Controllers\UserController;
-use App\Http\Controllers\KoordinatorJurnalistikController;
-use App\Http\Controllers\BendaharaController;
-use App\Http\Controllers\ProkerController;
-use App\Http\Controllers\BriefController;
-use App\Http\Controllers\ContentController;
-use App\Http\Controllers\DesignController;
-use App\Http\Controllers\SekretarisController;
-use App\Http\Controllers\AbsenController;
+use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\KoordinatorJurnalistik\KoordinatorJurnalistikController;
+use App\Http\Controllers\KoordinatorJurnalistik\ProkerController;
+use App\Http\Controllers\KoordinatorJurnalistik\BriefController;
+use App\Http\Controllers\KoordinatorJurnalistik\ContentController;
+use App\Http\Controllers\KoordinatorJurnalistik\DesignController;
+use App\Http\Controllers\KoordinatorJurnalistik\UserController;
+use App\Http\Controllers\KoordinatorJurnalistik\CommentController;
+use App\Http\Controllers\KoordinatorJurnalistik\FunfactController as KoordinatorJurnalistikFunfactController;
+use App\Http\Controllers\KoordinatorRedaksi\KoordinatorRedaksiController;
+use App\Http\Controllers\KoordinatorRedaksi\PenjadwalanController;
+use App\Http\Controllers\KoordinatorRedaksi\FunfactController as KoordinatorRedaksiFunfactController;
+use App\Http\Controllers\Sekretaris\SekretarisController;
+use App\Http\Controllers\Sekretaris\AbsenController;
+use App\Http\Controllers\Bendahara\BendaharaController;
+use App\Http\Controllers\Public\HomeController;
 use App\Http\Controllers\TempImageController;
+use App\Models\News;
 use Illuminate\Support\Facades\Route;
-use Illuminate\Support\Facades\Auth;
 
-/*
-|--------------------------------------------------------------------------
-| Web Routes
-|--------------------------------------------------------------------------
-|
-| Here is where you can register web routes for your application. These
-| routes are loaded by the RouteServiceProvider and all of them will
-| be assigned to the "web" middleware group. Make something great!
-|
-*/
-
-// Public routes
+// Home Route - Menggunakan HomeController seperti sebelumnya
 Route::get('/', [HomeController::class, 'index'])->name('home');
-Route::get('/news/{news}', [HomeController::class, 'show'])->name('news.show');
-Route::post('/comments', [CommentController::class, 'store'])->name('comments.store');
 
-// Authentication Routes
-Route::get('/login', function () {
-    return view('auth.login');
-})->name('login');
+// Authentication Routes - Using Laravel Breeze
+require __DIR__.'/auth.php';
 
-Route::post('/login', function (\Illuminate\Http\Request $request) {
-    $credentials = $request->validate([
-        'email' => ['required', 'email'],
-        'password' => ['required'],
-    ]);
+// Profile Routes
+Route::middleware('auth')->group(function () {
+    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
+    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
+    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+});
 
-    // Always show debug info for login attempts
-    session()->flash('login_attempt', [
-        'email' => $request->email,
-        'timestamp' => now()->format('Y-m-d H:i:s')
-    ]);
-
-        if (Auth::attempt($credentials)) {
-            $request->session()->regenerate();
-            
-            $user = Auth::user();
-            
-            // Debug: Show user role information
-            session()->flash('debug_info', [
-                'user_id' => $user->id,
-                'email' => $user->email,
-                'role' => $user->role,
-                'isKoordinatorJurnalistik' => $user->isKoordinatorJurnalistik(),
-                'isBendahara' => $user->isBendahara(),
-                'isSekretaris' => $user->isSekretaris(),
-                'all_roles' => [
-                    'ROLE_KOORDINATOR_JURNALISTIK' => \App\Models\User::ROLE_KOORDINATOR_JURNALISTIK,
-                    'ROLE_BENDAHARA' => \App\Models\User::ROLE_BENDAHARA,
-                    'ROLE_SEKRETARIS' => \App\Models\User::ROLE_SEKRETARIS,
-                ]
-            ]);
-
-            if ($user->isKoordinatorJurnalistik()) {
-                return redirect('/koordinator-jurnalistik/dashboard')->with('success', 'Login berhasil sebagai Koordinator Jurnalistik');
-            } elseif ($user->isBendahara()) {
-                return redirect('/bendahara/dashboard')->with('success', 'Login berhasil sebagai Bendahara');
-            } elseif ($user->isSekretaris()) {
-                return redirect('/sekretaris/dashboard')->with('success', 'Login berhasil sebagai Sekretaris');
-            }
-
-            // If no specific role matches, redirect to home with debug info
-            return redirect('/')->with('login_debug', 'User role: ' . $user->role . ' - No specific dashboard found');
-        }
-
-    return back()->withErrors([
-        'email' => 'The provided credentials do not match our records.',
-    ])->onlyInput('email')->with('login_failed', 'Login gagal - kredensial tidak cocok');
-})->name('login.post');
-
-Route::post('/logout', function (\Illuminate\Http\Request $request) {
-    Auth::logout();
-    $request->session()->invalidate();
-    $request->session()->regenerateToken();
-    return redirect('/');
-})->name('logout');
-
-// Koordinator Jurnalistik routes (previously admin routes)
-Route::prefix('koordinator-jurnalistik')->name('koordinator-jurnalistik.')->middleware(['auth'])->group(function () {
-    // Dashboard
+// Koordinator Jurnalistik Routes
+Route::prefix('koordinator-jurnalistik')->name('koordinator-jurnalistik.')->middleware(['auth', 'role:koordinator_jurnalistik'])->group(function () {
     Route::get('/dashboard', [KoordinatorJurnalistikController::class, 'dashboard'])->name('dashboard');
     
-    // User management
-    Route::resource('users', UserController::class);
-    
-    // News management - using KoordinatorJurnalistikController methods
+    // News Routes
     Route::get('/news', [KoordinatorJurnalistikController::class, 'newsIndex'])->name('news.index');
     Route::get('/news/create', [KoordinatorJurnalistikController::class, 'newsCreate'])->name('news.create');
     Route::post('/news', [KoordinatorJurnalistikController::class, 'newsStore'])->name('news.store');
@@ -111,123 +47,157 @@ Route::prefix('koordinator-jurnalistik')->name('koordinator-jurnalistik.')->midd
     Route::delete('/news/{id}', [KoordinatorJurnalistikController::class, 'newsDestroy'])->name('news.destroy');
     Route::post('/news/upload-image', [KoordinatorJurnalistikController::class, 'uploadImage'])->name('news.upload-image');
     
-    // Temp images route for cropping functionality
-    Route::post('/temp-images', [TempImageController::class, 'store'])->name('temp-images.store');
+    // Proker Routes
+    Route::resource('prokers', ProkerController::class);
     
-    // Comment management
+    // Brief Routes
+    Route::resource('briefs', BriefController::class);
+    
+    // Content Routes
+    Route::resource('contents', ContentController::class);
+    
+    // Design Routes
+    Route::resource('designs', DesignController::class);
+    
+    // User Routes
+    Route::resource('users', UserController::class);
+    
+    // User Management Routes (Register & Password Reset)
+    Route::get('/users/register', [\App\Http\Controllers\Auth\RegisteredUserController::class, 'create'])->name('users.register');
+    Route::post('/users/register', [\App\Http\Controllers\Auth\RegisteredUserController::class, 'store'])->name('users.register.store');
+    Route::get('/users/forgot-password', [\App\Http\Controllers\Auth\PasswordResetLinkController::class, 'create'])->name('users.forgot-password');
+    Route::post('/users/forgot-password', [\App\Http\Controllers\Auth\PasswordResetLinkController::class, 'store'])->name('users.forgot-password.store');
+    Route::post('/users/{user}/reset-password', [UserController::class, 'resetPassword'])->name('users.reset-password');
+    
+    // Funfact Routes
+    Route::resource('funfacts', KoordinatorJurnalistikFunfactController::class);
+    
+    // Comments Routes
     Route::get('/comments', [CommentController::class, 'index'])->name('comments.index');
     Route::delete('/comments/{comment}', [CommentController::class, 'destroy'])->name('comments.destroy');
     
-    // Proker management
-    Route::resource('prokers', ProkerController::class);
-    
-    // Brief management
-    Route::resource('briefs', BriefController::class);
-    
-    // Content management
-    Route::resource('contents', ContentController::class);
-    
-    // Design management
-    Route::resource('designs', DesignController::class);
-    
-    // Absen management
-    Route::prefix('absen')->name('absen.')->group(function () {
-        Route::get('/', [AbsenController::class, 'index'])->name('index');
-        Route::post('/', [AbsenController::class, 'store'])->name('store');
-        Route::post('/bulk', [AbsenController::class, 'storeBulk'])->name('store-bulk');
-        Route::put('/{absen}', [AbsenController::class, 'update'])->name('update');
-        Route::delete('/{absen}', [AbsenController::class, 'destroy'])->name('destroy');
-    });
+    // Temp Image Routes
+    Route::post('/temp-images', [TempImageController::class, 'store'])->name('temp-images.store');
+    Route::delete('/temp-images/{tempImage}', [TempImageController::class, 'destroy'])->name('temp-images.destroy');
 });
 
-// Bendahara routes
-Route::prefix('bendahara')->name('bendahara.')->group(function () {
-    // Dashboard
-    Route::get('/dashboard', [BendaharaController::class, 'dashboard'])->name('dashboard');
+// Koordinator Redaksi Routes
+Route::prefix('koordinator-redaksi')->name('koordinator-redaksi.')->middleware(['auth', 'role:koordinator_redaksi'])->group(function () {
+    Route::get('/dashboard', [KoordinatorRedaksiController::class, 'dashboard'])->name('dashboard');
     
-    // Kas Anggota management
-    Route::prefix('kas-anggota')->name('kas-anggota.')->group(function () {
-        Route::get('/', [BendaharaController::class, 'kasAnggotaIndex'])->name('index');
-        Route::get('/create', [BendaharaController::class, 'kasAnggotaCreate'])->name('create');
-        Route::get('/riwayat', [BendaharaController::class, 'kasAnggotaRiwayat'])->name('riwayat');
-        Route::post('/', [BendaharaController::class, 'kasAnggotaStore'])->name('store');
-        Route::get('/{kasAnggota}', [BendaharaController::class, 'kasAnggotaShow'])->name('show');
-        Route::get('/{kasAnggota}/edit', [BendaharaController::class, 'kasAnggotaEdit'])->name('edit');
-        Route::put('/{kasAnggota}', [BendaharaController::class, 'kasAnggotaUpdate'])->name('update');
-        Route::delete('/{kasAnggota}', [BendaharaController::class, 'kasAnggotaDestroy'])->name('destroy');
-    });
+    // News Routes
+    Route::get('/news', [KoordinatorRedaksiController::class, 'newsIndex'])->name('news.index');
+    Route::get('/news/create', [KoordinatorRedaksiController::class, 'newsCreate'])->name('news.create');
+    Route::post('/news', [KoordinatorRedaksiController::class, 'newsStore'])->name('news.store');
+    Route::get('/news/{id}', [KoordinatorRedaksiController::class, 'newsShow'])->name('news.show');
+    Route::get('/news/{id}/edit', [KoordinatorRedaksiController::class, 'newsEdit'])->name('news.edit');
+    Route::put('/news/{id}', [KoordinatorRedaksiController::class, 'newsUpdate'])->name('news.update');
+    Route::delete('/news/{id}', [KoordinatorRedaksiController::class, 'newsDestroy'])->name('news.destroy');
     
-    // Pemasukan management
-    Route::prefix('pemasukan')->name('pemasukan.')->group(function () {
-        Route::get('/', [BendaharaController::class, 'pemasukanIndex'])->name('index');
-        Route::get('/create', [BendaharaController::class, 'pemasukanCreate'])->name('create');
-        Route::post('/', [BendaharaController::class, 'pemasukanStore'])->name('store');
-        Route::get('/{pemasukan}', [BendaharaController::class, 'pemasukanShow'])->name('show');
-        Route::get('/{pemasukan}/edit', [BendaharaController::class, 'pemasukanEdit'])->name('edit');
-        Route::put('/{pemasukan}', [BendaharaController::class, 'pemasukanUpdate'])->name('update');
-        Route::delete('/{pemasukan}', [BendaharaController::class, 'pemasukanDestroy'])->name('destroy');
-        Route::patch('/{pemasukan}/verify', [BendaharaController::class, 'pemasukanVerify'])->name('verify');
-    });
+    // Penjadwalan Routes
+    Route::resource('penjadwalan', PenjadwalanController::class);
     
-    // Pengeluaran management
-    Route::prefix('pengeluaran')->name('pengeluaran.')->group(function () {
-        Route::get('/', [BendaharaController::class, 'pengeluaranIndex'])->name('index');
-        Route::get('/create', [BendaharaController::class, 'pengeluaranCreate'])->name('create');
-        Route::post('/', [BendaharaController::class, 'pengeluaranStore'])->name('store');
-        Route::get('/{pengeluaran}', [BendaharaController::class, 'pengeluaranShow'])->name('show');
-        Route::get('/{pengeluaran}/edit', [BendaharaController::class, 'pengeluaranEdit'])->name('edit');
-        Route::put('/{pengeluaran}', [BendaharaController::class, 'pengeluaranUpdate'])->name('update');
-        Route::delete('/{pengeluaran}', [BendaharaController::class, 'pengeluaranDestroy'])->name('destroy');
-        Route::patch('/{pengeluaran}/approve', [BendaharaController::class, 'pengeluaranApprove'])->name('approve');
-        Route::patch('/{pengeluaran}/pay', [BendaharaController::class, 'pengeluaranPay'])->name('pay');
-    });
+    // Funfact Routes
+    Route::resource('funfacts', KoordinatorRedaksiFunfactController::class);
     
-    // Kas Settings management
-    Route::prefix('kas-settings')->name('kas-settings.')->group(function () {
-        Route::get('/', [BendaharaController::class, 'kasSettingsIndex'])->name('index');
-        Route::put('/', [BendaharaController::class, 'kasSettingsUpdate'])->name('update');
-    });
-    
-    // Laporan keuangan
-    Route::prefix('laporan')->name('laporan.')->group(function () {
-        Route::get('/keuangan', [BendaharaController::class, 'laporanKeuangan'])->name('keuangan');
-        Route::get('/kas-anggota', [BendaharaController::class, 'laporanKasAnggota'])->name('kas-anggota');
-        Route::get('/export-excel', [BendaharaController::class, 'exportExcel'])->name('export-excel');
-    });
+    // Temp Image Routes
+    Route::post('/temp-images', [TempImageController::class, 'store'])->name('temp-images.store');
+    Route::delete('/temp-images/{tempImage}', [TempImageController::class, 'destroy'])->name('temp-images.destroy');
 });
 
-// Sekretaris routes
-Route::prefix('sekretaris')->name('sekretaris.')->middleware(['auth'])->group(function () {
+// Sekretaris Routes
+Route::prefix('sekretaris')->name('sekretaris.')->middleware(['auth', 'role:sekretaris'])->group(function () {
     Route::get('/dashboard', [SekretarisController::class, 'dashboard'])->name('dashboard');
     
-    // Notulensi management
-    Route::prefix('notulensi')->name('notulensi.')->group(function () {
-        Route::get('/', [SekretarisController::class, 'notulensiIndex'])->name('index');
-        Route::get('/create', [SekretarisController::class, 'notulensiCreate'])->name('create');
-        Route::post('/', [SekretarisController::class, 'notulensiStore'])->name('store');
-        Route::get('/{notulensi}', [SekretarisController::class, 'notulensiShow'])->name('show');
-        Route::get('/{notulensi}/edit', [SekretarisController::class, 'notulensiEdit'])->name('edit');
-        Route::put('/{notulensi}', [SekretarisController::class, 'notulensiUpdate'])->name('update');
-        Route::delete('/{notulensi}', [SekretarisController::class, 'notulensiDestroy'])->name('destroy');
-    });
+    // Notulensi Routes
+    Route::get('/notulensi', [SekretarisController::class, 'notulensiIndex'])->name('notulensi.index');
+    Route::get('/notulensi/create', [SekretarisController::class, 'notulensiCreate'])->name('notulensi.create');
+    Route::post('/notulensi', [SekretarisController::class, 'notulensiStore'])->name('notulensi.store');
+    Route::get('/notulensi/{notulensi}', [SekretarisController::class, 'notulensiShow'])->name('notulensi.show');
+    Route::get('/notulensi/{notulensi}/edit', [SekretarisController::class, 'notulensiEdit'])->name('notulensi.edit');
+    Route::put('/notulensi/{notulensi}', [SekretarisController::class, 'notulensiUpdate'])->name('notulensi.update');
+    Route::delete('/notulensi/{notulensi}', [SekretarisController::class, 'notulensiDestroy'])->name('notulensi.destroy');
     
-    // Proker management
-    Route::prefix('proker')->name('proker.')->group(function () {
-        Route::get('/', [SekretarisController::class, 'prokerIndex'])->name('index');
-        Route::get('/create', [SekretarisController::class, 'prokerCreate'])->name('create');
-        Route::post('/', [SekretarisController::class, 'prokerStore'])->name('store');
-        Route::get('/{proker}', [SekretarisController::class, 'prokerShow'])->name('show');
-        Route::get('/{proker}/edit', [SekretarisController::class, 'prokerEdit'])->name('edit');
-        Route::put('/{proker}', [SekretarisController::class, 'prokerUpdate'])->name('update');
-        Route::delete('/{proker}', [SekretarisController::class, 'prokerDestroy'])->name('destroy');
-    });
+    // Proker Routes
+    Route::get('/proker', [SekretarisController::class, 'prokerIndex'])->name('proker.index');
+    Route::get('/proker/create', [SekretarisController::class, 'prokerCreate'])->name('proker.create');
+    Route::post('/proker', [SekretarisController::class, 'prokerStore'])->name('proker.store');
+    Route::get('/proker/{id}', [SekretarisController::class, 'prokerShow'])->name('proker.show');
+    Route::get('/proker/{id}/edit', [SekretarisController::class, 'prokerEdit'])->name('proker.edit');
+    Route::put('/proker/{id}', [SekretarisController::class, 'prokerUpdate'])->name('proker.update');
+    Route::delete('/proker/{id}', [SekretarisController::class, 'prokerDestroy'])->name('proker.destroy');
     
-    // Absen management
-    Route::prefix('absen')->name('absen.')->group(function () {
-        Route::get('/', [AbsenController::class, 'index'])->name('index');
-        Route::post('/', [AbsenController::class, 'store'])->name('store');
-        Route::post('/bulk', [AbsenController::class, 'storeBulk'])->name('store-bulk');
-        Route::put('/{absen}', [AbsenController::class, 'update'])->name('update');
-        Route::delete('/{absen}', [AbsenController::class, 'destroy'])->name('destroy');
-    });
+    // Absen Routes
+    Route::get('/absen', [AbsenController::class, 'index'])->name('absen.index');
+    Route::post('/absen', [AbsenController::class, 'store'])->name('absen.store');
+    Route::post('/absen/bulk', [AbsenController::class, 'storeBulk'])->name('absen.store-bulk');
+    Route::put('/absen/{absen}', [AbsenController::class, 'update'])->name('absen.update');
+    Route::delete('/absen/{absen}', [AbsenController::class, 'destroy'])->name('absen.destroy');
+});
+
+// Bendahara Routes
+Route::prefix('bendahara')->name('bendahara.')->middleware(['auth', 'role:bendahara'])->group(function () {
+    Route::get('/dashboard', [BendaharaController::class, 'dashboard'])->name('dashboard');
+    
+    // Kas Anggota Routes
+    Route::get('/kas-anggota', [BendaharaController::class, 'kasAnggotaIndex'])->name('kas-anggota.index');
+    Route::get('/kas-anggota/create', [BendaharaController::class, 'kasAnggotaCreate'])->name('kas-anggota.create');
+    Route::post('/kas-anggota', [BendaharaController::class, 'kasAnggotaStore'])->name('kas-anggota.store');
+    Route::get('/kas-anggota/riwayat', [BendaharaController::class, 'kasAnggotaRiwayat'])->name('kas-anggota.riwayat');
+    Route::get('/kas-anggota/{kasAnggota}', [BendaharaController::class, 'kasAnggotaShow'])->name('kas-anggota.show');
+    Route::get('/kas-anggota/{kasAnggota}/edit', [BendaharaController::class, 'kasAnggotaEdit'])->name('kas-anggota.edit');
+    Route::put('/kas-anggota/{kasAnggota}', [BendaharaController::class, 'kasAnggotaUpdate'])->name('kas-anggota.update');
+    Route::delete('/kas-anggota/{kasAnggota}', [BendaharaController::class, 'kasAnggotaDestroy'])->name('kas-anggota.destroy');
+    
+    // Pemasukan Routes
+    Route::get('/pemasukan', [BendaharaController::class, 'pemasukanIndex'])->name('pemasukan.index');
+    Route::get('/pemasukan/create', [BendaharaController::class, 'pemasukanCreate'])->name('pemasukan.create');
+    Route::post('/pemasukan', [BendaharaController::class, 'pemasukanStore'])->name('pemasukan.store');
+    Route::get('/pemasukan/{pemasukan}', [BendaharaController::class, 'pemasukanShow'])->name('pemasukan.show');
+    Route::get('/pemasukan/{pemasukan}/edit', [BendaharaController::class, 'pemasukanEdit'])->name('pemasukan.edit');
+    Route::put('/pemasukan/{pemasukan}', [BendaharaController::class, 'pemasukanUpdate'])->name('pemasukan.update');
+    Route::patch('/pemasukan/{pemasukan}/verify', [BendaharaController::class, 'pemasukanVerify'])->name('pemasukan.verify');
+    Route::delete('/pemasukan/{pemasukan}', [BendaharaController::class, 'pemasukanDestroy'])->name('pemasukan.destroy');
+    
+    // Pengeluaran Routes
+    Route::get('/pengeluaran', [BendaharaController::class, 'pengeluaranIndex'])->name('pengeluaran.index');
+    Route::get('/pengeluaran/create', [BendaharaController::class, 'pengeluaranCreate'])->name('pengeluaran.create');
+    Route::post('/pengeluaran', [BendaharaController::class, 'pengeluaranStore'])->name('pengeluaran.store');
+    Route::get('/pengeluaran/{pengeluaran}', [BendaharaController::class, 'pengeluaranShow'])->name('pengeluaran.show');
+    Route::get('/pengeluaran/{pengeluaran}/edit', [BendaharaController::class, 'pengeluaranEdit'])->name('pengeluaran.edit');
+    Route::put('/pengeluaran/{pengeluaran}', [BendaharaController::class, 'pengeluaranUpdate'])->name('pengeluaran.update');
+    Route::patch('/pengeluaran/{pengeluaran}/verify', [BendaharaController::class, 'pengeluaranVerify'])->name('pengeluaran.verify');
+    Route::patch('/pengeluaran/{pengeluaran}/approve', [BendaharaController::class, 'pengeluaranApprove'])->name('pengeluaran.approve');
+    Route::delete('/pengeluaran/{pengeluaran}', [BendaharaController::class, 'pengeluaranDestroy'])->name('pengeluaran.destroy');
+    
+    // Laporan Routes
+    Route::get('/laporan', [BendaharaController::class, 'laporanKeuangan'])->name('laporan.index');
+    Route::get('/laporan/kas-anggota', [BendaharaController::class, 'laporanKasAnggota'])->name('laporan.kas-anggota');
+    
+    // Kas Settings Routes
+    Route::get('/kas-settings', [BendaharaController::class, 'kasSettingsIndex'])->name('kas-settings.index');
+    Route::put('/kas-settings', [BendaharaController::class, 'kasSettingsUpdate'])->name('kas-settings.update');
+});
+
+// Public News Routes - Menggunakan slug seperti sebelumnya
+Route::prefix('news')->name('news.')->group(function () {
+    Route::get('/{news:slug}', function (News $news) {
+        // Increment views
+        $news->increment('views');
+        
+        // Reload dengan relationships
+        $news->load(['user', 'category', 'type', 'genres', 'comments']);
+        
+        return view('news.show', compact('news'));
+    })->name('show');
+    
+    // Public Comment Store (tidak perlu auth, tapi tetap aman dengan CSRF dan rate limiting)
+    Route::post('/{news:slug}/comments', [\App\Http\Controllers\KoordinatorJurnalistik\CommentController::class, 'store'])
+        ->middleware('throttle:5,60') // 5 requests per 60 minutes
+        ->name('comments.store');
+});
+
+// Comment Routes - Admin/Koordinator (perlu auth dan role koordinator jurnalistik)
+Route::middleware(['auth', 'role:koordinator_jurnalistik'])->group(function () {
+    Route::delete('/comments/{comment}', [\App\Http\Controllers\KoordinatorJurnalistik\CommentController::class, 'destroy'])->name('comments.destroy');
 });

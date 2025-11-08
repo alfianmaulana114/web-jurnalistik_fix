@@ -3,9 +3,8 @@
 namespace App\Services\KoordinatorJurnalistik;
 
 use App\Models\Design;
-use App\Models\Content;
-use App\Models\Proker;
-use App\Models\User;
+use App\Models\News;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Validation\Rule;
@@ -15,49 +14,55 @@ class DesignService
 {
     public function index(): array
     {
-        $designs = Design::with(['content', 'proker', 'creator', 'reviewer'])
+        $designs = Design::with(['berita'])
             ->latest()
             ->paginate(10);
-            
-        return compact('designs');
+
+        // Berita tersedia untuk pemilihan di modal index (mirip caption)
+        // Kecualikan berita yang sudah memiliki desain terkait
+        $usedNewsIdsForDesigns = Design::whereNotNull('berita_id')->pluck('berita_id')->unique()->toArray();
+        $availableNews = News::with('category')
+            ->whereNotIn('id', $usedNewsIdsForDesigns)
+            ->latest()
+            ->get();
+        
+        return compact('designs', 'availableNews');
     }
 
-    public function create(): array
+    public function create(Request $request = null): array
     {
-        $contents = Content::approved()->get();
-        $prokers = Proker::active()->get();
-        $users = User::all();
-        return compact('contents', 'prokers', 'users');
+        $availableNews = News::latest()->get();
+        
+        $selectedNews = null;
+        $selectedNewsTitle = null;
+        
+        if ($request && $request->has('news_id')) {
+            $selectedNews = News::find($request->news_id);
+            $selectedNewsTitle = $request->has('news_title') 
+                ? $request->news_title 
+                : ($selectedNews ? ($selectedNews->title ?? $selectedNews->judul) : null);
+        }
+
+        return compact('availableNews', 'selectedNews', 'selectedNewsTitle');
     }
 
     public function store(Request $request): RedirectResponse
     {
         $validated = $request->validate([
-            'judul' => 'required|string|max:255',
-            'deskripsi' => 'required|string',
-            'jenis_desain' => ['required', Rule::in(array_keys(Design::getTypes()))],
-            'file' => 'required|file|mimes:jpg,jpeg,png,gif,svg,pdf,ai,psd|max:10240',
-            'dimensi' => 'nullable|string',
-            'status' => ['required', Rule::in(array_keys(Design::getAllStatuses()))],
-            'catatan_revisi' => 'nullable|string',
-            'content_id' => 'nullable|exists:contents,id',
-            'proker_id' => 'nullable|exists:prokers,id',
-            'reviewed_by' => 'nullable|exists:users,id',
+            'media_url' => 'required|url',
+            'jenis' => ['required', Rule::in(array_keys(Design::getJenisOptions()))],
+            'catatan' => 'nullable|string',
+            'berita_id' => 'nullable|exists:news,id',
         ]);
 
-        // Handle file upload
-        if ($request->hasFile('file')) {
-            $file = $request->file('file');
-            $fileName = time() . '_' . $file->getClientOriginalName();
-            $filePath = $file->storeAs('designs', $fileName, 'public');
-            
-            $validated['file_path'] = $filePath;
-            $validated['file_name'] = $fileName;
-            $validated['file_size'] = $file->getSize();
+        // Optional: track creator if auth available
+        if (Auth::check()) {
+            $validated['created_by'] = Auth::id();
         }
 
-        // Assume current user is koordinator jurnalistik (ID 1 for now)
-        $validated['created_by'] = 1;
+        // Derive title from selected news (no manual input)
+        $news = isset($validated['berita_id']) ? News::find($validated['berita_id']) : null;
+        $validated['judul'] = $news ? ($news->title ?? $news->judul ?? 'Tanpa Judul') : 'Tanpa Judul';
 
         Design::create($validated);
 
@@ -67,48 +72,27 @@ class DesignService
 
     public function show(Design $design): array
     {
-        $design->load(['content', 'proker', 'creator', 'reviewer']);
+        $design->load(['berita']);
         return compact('design');
     }
 
     public function edit(Design $design): array
     {
-        $contents = Content::approved()->get();
-        $prokers = Proker::active()->get();
-        $users = User::all();
-        return compact('design', 'contents', 'prokers', 'users');
+        $availableNews = News::latest()->get();
+        return compact('design', 'availableNews');
     }
 
     public function update(Request $request, Design $design): RedirectResponse
     {
         $validated = $request->validate([
-            'judul' => 'required|string|max:255',
-            'deskripsi' => 'required|string',
-            'jenis_desain' => ['required', Rule::in(array_keys(Design::getTypes()))],
-            'file' => 'nullable|file|mimes:jpg,jpeg,png,gif,svg,pdf,ai,psd|max:10240',
-            'dimensi' => 'nullable|string',
-            'status' => ['required', Rule::in(array_keys(Design::getAllStatuses()))],
-            'catatan_revisi' => 'nullable|string',
-            'content_id' => 'nullable|exists:contents,id',
-            'proker_id' => 'nullable|exists:prokers,id',
-            'reviewed_by' => 'nullable|exists:users,id',
+            'media_url' => 'required|url',
+            'jenis' => ['required', Rule::in(array_keys(Design::getJenisOptions()))],
+            'catatan' => 'nullable|string',
+            'berita_id' => 'nullable|exists:news,id',
         ]);
-
-        // Handle file upload if new file is provided
-        if ($request->hasFile('file')) {
-            // Delete old file
-            if ($design->file_path && Storage::disk('public')->exists($design->file_path)) {
-                Storage::disk('public')->delete($design->file_path);
-            }
-            
-            $file = $request->file('file');
-            $fileName = time() . '_' . $file->getClientOriginalName();
-            $filePath = $file->storeAs('designs', $fileName, 'public');
-            
-            $validated['file_path'] = $filePath;
-            $validated['file_name'] = $fileName;
-            $validated['file_size'] = $file->getSize();
-        }
+        // Always sync judul with selected news if provided; else keep existing
+        $news = isset($validated['berita_id']) ? News::find($validated['berita_id']) : null;
+        $validated['judul'] = $news ? ($news->title ?? $news->judul ?? $design->judul) : $design->judul;
 
         $design->update($validated);
 
@@ -118,11 +102,6 @@ class DesignService
 
     public function destroy(Design $design): RedirectResponse
     {
-        // Delete file from storage
-        if ($design->file_path && Storage::disk('public')->exists($design->file_path)) {
-            Storage::disk('public')->delete($design->file_path);
-        }
-        
         $design->delete();
 
         return redirect()->route('koordinator-jurnalistik.designs.index')

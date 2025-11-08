@@ -11,7 +11,7 @@ class NewsGenre extends Model
 
     public function news(): BelongsToMany
     {
-        return $this->belongsToMany(News::class, 'news_genre_pivot', 'news_genres_id', 'news_id')
+        return $this->belongsToMany(News::class, 'news_genre_pivot', 'news_genre_id', 'news_id')
                     ->withTimestamps();
     }
 }

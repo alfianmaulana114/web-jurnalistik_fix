@@ -9,144 +9,17 @@
     <div class="flex items-center justify-between">
         <div>
             <h2 class="text-2xl font-bold text-gray-900">Desain Media</h2>
-            <p class="mt-1 text-sm text-gray-600">Kelola desain media untuk konten jurnalistik</p>
+            <p class="mt-1 text-sm text-gray-600">Kelola desain media sederhana</p>
         </div>
-        <a href="{{ route('koordinator-jurnalistik.designs.create') }}" class="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500">
-            <i class="fas fa-plus mr-2"></i>
-            Tambah Desain
-        </a>
-    </div>
-
-    <!-- Statistics Cards -->
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        <div class="bg-white overflow-hidden shadow rounded-lg">
-            <div class="p-5">
-                <div class="flex items-center">
-                    <div class="flex-shrink-0">
-                        <i class="fas fa-palette text-2xl text-blue-600"></i>
-                    </div>
-                    <div class="ml-5 w-0 flex-1">
-                        <dl>
-                            <dt class="text-sm font-medium text-gray-500 truncate">Total Desain</dt>
-                            <dd class="text-lg font-medium text-gray-900">{{ $totalDesigns ?? 0 }}</dd>
-                        </dl>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="bg-white overflow-hidden shadow rounded-lg">
-            <div class="p-5">
-                <div class="flex items-center">
-                    <div class="flex-shrink-0">
-                        <i class="fas fa-clock text-2xl text-yellow-600"></i>
-                    </div>
-                    <div class="ml-5 w-0 flex-1">
-                        <dl>
-                            <dt class="text-sm font-medium text-gray-500 truncate">Dalam Proses</dt>
-                            <dd class="text-lg font-medium text-gray-900">{{ $inProgressDesigns ?? 0 }}</dd>
-                        </dl>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="bg-white overflow-hidden shadow rounded-lg">
-            <div class="p-5">
-                <div class="flex items-center">
-                    <div class="flex-shrink-0">
-                        <i class="fas fa-check-circle text-2xl text-green-600"></i>
-                    </div>
-                    <div class="ml-5 w-0 flex-1">
-                        <dl>
-                            <dt class="text-sm font-medium text-gray-500 truncate">Selesai</dt>
-                            <dd class="text-lg font-medium text-gray-900">{{ $completedDesigns ?? 0 }}</dd>
-                        </dl>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="bg-white overflow-hidden shadow rounded-lg">
-            <div class="p-5">
-                <div class="flex items-center">
-                    <div class="flex-shrink-0">
-                        <i class="fas fa-exclamation-triangle text-2xl text-red-600"></i>
-                    </div>
-                    <div class="ml-5 w-0 flex-1">
-                        <dl>
-                            <dt class="text-sm font-medium text-gray-500 truncate">Perlu Revisi</dt>
-                            <dd class="text-lg font-medium text-gray-900">{{ $needsRevisionDesigns ?? 0 }}</dd>
-                        </dl>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Filters -->
-    <div class="bg-white shadow rounded-lg">
-        <div class="px-6 py-4 border-b border-gray-200">
-            <h3 class="text-lg font-medium text-gray-900">Filter & Pencarian</h3>
-        </div>
-        <div class="p-6">
-            <form method="GET" action="{{ route('koordinator-jurnalistik.designs.index') }}" class="space-y-4">
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                    <div>
-                        <label for="search" class="block text-sm font-medium text-gray-700">Pencarian</label>
-                        <input type="text" name="search" id="search" value="{{ request('search') }}" placeholder="Cari judul atau deskripsi..." class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-red-500 focus:border-red-500 sm:text-sm">
-                    </div>
-
-                    <div>
-                        <label for="status" class="block text-sm font-medium text-gray-700">Status</label>
-                        <select name="status" id="status" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-red-500 focus:border-red-500 sm:text-sm">
-                            <option value="">Semua Status</option>
-                            <option value="draft" {{ request('status') === 'draft' ? 'selected' : '' }}>Draft</option>
-                            <option value="in_progress" {{ request('status') === 'in_progress' ? 'selected' : '' }}>Dalam Proses</option>
-                            <option value="review" {{ request('status') === 'review' ? 'selected' : '' }}>Review</option>
-                            <option value="completed" {{ request('status') === 'completed' ? 'selected' : '' }}>Selesai</option>
-                            <option value="needs_revision" {{ request('status') === 'needs_revision' ? 'selected' : '' }}>Perlu Revisi</option>
-                        </select>
-                    </div>
-
-                    <div>
-                        <label for="type" class="block text-sm font-medium text-gray-700">Tipe Desain</label>
-                        <select name="type" id="type" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-red-500 focus:border-red-500 sm:text-sm">
-                            <option value="">Semua Tipe</option>
-                            <option value="poster" {{ request('type') === 'poster' ? 'selected' : '' }}>Poster</option>
-                            <option value="banner" {{ request('type') === 'banner' ? 'selected' : '' }}>Banner</option>
-                            <option value="infographic" {{ request('type') === 'infographic' ? 'selected' : '' }}>Infografis</option>
-                            <option value="logo" {{ request('type') === 'logo' ? 'selected' : '' }}>Logo</option>
-                            <option value="flyer" {{ request('type') === 'flyer' ? 'selected' : '' }}>Flyer</option>
-                            <option value="thumbnail" {{ request('type') === 'thumbnail' ? 'selected' : '' }}>Thumbnail</option>
-                            <option value="social_media" {{ request('type') === 'social_media' ? 'selected' : '' }}>Media Sosial</option>
-                        </select>
-                    </div>
-
-                    <div>
-                        <label for="creator" class="block text-sm font-medium text-gray-700">Pembuat</label>
-                        <select name="creator" id="creator" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-red-500 focus:border-red-500 sm:text-sm">
-                            <option value="">Semua Pembuat</option>
-                            @foreach($creators ?? [] as $creator)
-                                <option value="{{ $creator->id }}" {{ request('creator') == $creator->id ? 'selected' : '' }}>
-                                    {{ $creator->name }}
-                                </option>
-                            @endforeach
-                        </select>
-                    </div>
-                </div>
-
-                <div class="flex items-center space-x-4">
-                    <button type="submit" class="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500">
-                        <i class="fas fa-search mr-2"></i>
-                        Filter
-                    </button>
-                    <a href="{{ route('koordinator-jurnalistik.designs.index') }}" class="inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500">
-                        <i class="fas fa-times mr-2"></i>
-                        Reset
-                    </a>
-                </div>
-            </form>
+        <div class="flex items-center space-x-3">
+            <a href="{{ route('koordinator-jurnalistik.designs.create') }}" class="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500">
+                <i class="fas fa-plus mr-2"></i>
+                Tambah Desain
+            </a>
+            <button type="button" onclick="openNewsSelectionModal()" class="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">
+                <i class="fas fa-newspaper mr-2"></i>
+                Pilih Berita untuk Desain
+            </button>
         </div>
     </div>
 
@@ -161,105 +34,63 @@
                 <table class="min-w-full divide-y divide-gray-200">
                     <thead class="bg-gray-50">
                         <tr>
-                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                Desain
-                            </th>
-                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                Tipe & Dimensi
-                            </th>
-                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                Status
-                            </th>
-                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                Pembuat
-                            </th>
-                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                Terkait
-                            </th>
-                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                Tanggal
-                            </th>
-                            <th scope="col" class="relative px-6 py-3">
-                                <span class="sr-only">Actions</span>
-                            </th>
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Judul</th>
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Jenis</th>
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Berita</th>
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Media</th>
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Catatan</th>
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tanggal</th>
+                            <th scope="col" class="relative px-6 py-3"><span class="sr-only">Actions</span></th>
                         </tr>
                     </thead>
                     <tbody class="bg-white divide-y divide-gray-200">
                         @foreach($designs as $design)
                             <tr class="hover:bg-gray-50">
-                                <td class="px-6 py-4 whitespace-nowrap">
-                                    <div class="flex items-center">
-                                        <div class="flex-shrink-0 h-12 w-12">
-                                            @if($design->file_path)
-                                                <img class="h-12 w-12 rounded-lg object-cover" src="{{ asset('storage/' . $design->file_path) }}" alt="{{ $design->judul }}">
-                                            @else
-                                                <div class="h-12 w-12 rounded-lg bg-gray-200 flex items-center justify-center">
-                                                    <i class="fas fa-image text-gray-400"></i>
-                                                </div>
-                                            @endif
-                                        </div>
-                                        <div class="ml-4">
-                                            <div class="text-sm font-medium text-gray-900">{{ $design->judul }}</div>
-                                            <div class="text-sm text-gray-500">{{ Str::limit($design->deskripsi, 50) }}</div>
-                                        </div>
-                                    </div>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                                    <a href="{{ route('koordinator-jurnalistik.designs.show', $design) }}" class="font-medium hover:text-red-600">
+                                        {{ Str::limit($design->judul, 60) }}
+                                    </a>
                                 </td>
-                                <td class="px-6 py-4 whitespace-nowrap">
-                                    <div class="text-sm text-gray-900">
+                                <td class="px-6 py-4 whitespace-nowrap text-sm">
+                                    @php($jenisOptions = \App\Models\Design::getJenisOptions())
+                                    @if($design->jenis === 'desain')
                                         <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
-                                            {{ ucfirst(str_replace('_', ' ', $design->type)) }}
+                                            {{ $jenisOptions[$design->jenis] ?? ucfirst($design->jenis) }}
                                         </span>
-                                    </div>
-                                    <div class="text-sm text-gray-500">{{ $design->lebar }}x{{ $design->tinggi }}px</div>
+                                    @elseif($design->jenis === 'video')
+                                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">
+                                            {{ $jenisOptions[$design->jenis] ?? ucfirst($design->jenis) }}
+                                        </span>
+                                    @elseif($design->jenis === 'funfact')
+                                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-purple-100 text-purple-800">
+                                            {{ $jenisOptions[$design->jenis] ?? ucfirst($design->jenis) }}
+                                        </span>
+                                    @else
+                                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
+                                            {{ $jenisOptions[$design->jenis] ?? ucfirst($design->jenis) }}
+                                        </span>
+                                    @endif
                                 </td>
-                                <td class="px-6 py-4 whitespace-nowrap">
-                                    @php
-                                        $statusColors = [
-                                            'draft' => 'bg-gray-100 text-gray-800',
-                                            'in_progress' => 'bg-yellow-100 text-yellow-800',
-                                            'review' => 'bg-blue-100 text-blue-800',
-                                            'completed' => 'bg-green-100 text-green-800',
-                                            'needs_revision' => 'bg-red-100 text-red-800'
-                                        ];
-                                        $statusLabels = [
-                                            'draft' => 'Draft',
-                                            'in_progress' => 'Dalam Proses',
-                                            'review' => 'Review',
-                                            'completed' => 'Selesai',
-                                            'needs_revision' => 'Perlu Revisi'
-                                        ];
-                                    @endphp
-                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium {{ $statusColors[$design->status] ?? 'bg-gray-100 text-gray-800' }}">
-                                        {{ $statusLabels[$design->status] ?? ucfirst($design->status) }}
-                                    </span>
-                                </td>
-                                <td class="px-6 py-4 whitespace-nowrap">
-                                    <div class="flex items-center">
-                                        <div class="flex-shrink-0 h-8 w-8">
-                                            <div class="h-8 w-8 rounded-full bg-red-100 flex items-center justify-center">
-                                                <span class="text-sm font-medium text-red-800">{{ substr($design->creator->name ?? 'N/A', 0, 1) }}</span>
-                                            </div>
-                                        </div>
-                                        <div class="ml-3">
-                                            <div class="text-sm font-medium text-gray-900">{{ $design->creator->name ?? 'N/A' }}</div>
-                                            <div class="text-sm text-gray-500">{{ $design->creator->role ?? '' }}</div>
-                                        </div>
-                                    </div>
-                                </td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                    @if($design->content)
-                                        <div class="flex items-center">
-                                            <i class="fas fa-newspaper mr-1 text-blue-500"></i>
-                                            <span>{{ Str::limit($design->content->judul, 30) }}</span>
-                                        </div>
-                                    @elseif($design->proker)
-                                        <div class="flex items-center">
-                                            <i class="fas fa-project-diagram mr-1 text-green-500"></i>
-                                            <span>{{ Str::limit($design->proker->nama, 30) }}</span>
-                                        </div>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                                    @if($design->berita)
+                                        <a href="{{ route('koordinator-jurnalistik.news.show', $design->berita) }}" class="text-blue-600 hover:text-blue-800">
+                                            {{ Str::limit($design->berita->title ?? $design->berita->judul ?? 'Berita', 40) }}
+                                        </a>
                                     @else
                                         <span class="text-gray-400">Tidak terkait</span>
                                     @endif
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm">
+                                    @if($design->media_url)
+                                        <a href="{{ $design->media_url }}" target="_blank" rel="noopener" class="text-blue-600 hover:text-blue-800">
+                                            {{ Str::limit($design->media_url, 40) }}
+                                        </a>
+                                    @else
+                                        <span class="text-gray-400">Tidak ada</span>
+                                    @endif
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                    {{ Str::limit($design->catatan, 60) }}
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                                     <div>{{ $design->created_at->format('d M Y') }}</div>
@@ -298,13 +129,103 @@
             <div class="px-6 py-12 text-center">
                 <i class="fas fa-palette text-4xl text-gray-400 mb-4"></i>
                 <h3 class="text-lg font-medium text-gray-900 mb-2">Belum ada desain</h3>
-                <p class="text-gray-500 mb-4">Mulai dengan membuat desain media pertama Anda.</p>
+                <p class="text-gray-500 mb-4">Mulai dengan membuat entri desain pertama Anda.</p>
                 <a href="{{ route('koordinator-jurnalistik.designs.create') }}" class="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500">
                     <i class="fas fa-plus mr-2"></i>
                     Tambah Desain Pertama
                 </a>
             </div>
         @endif
+</div>
+</div>
+<!-- Modal Pilih Berita untuk Desain -->
+<div id="newsSelectionModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center hidden z-50">
+    <div class="bg-white rounded-lg shadow-lg w-full max-w-4xl max-h-[80vh] flex flex-col">
+        <!-- Header -->
+        <div class="bg-green-600 px-6 py-4 flex-shrink-0">
+            <h3 class="text-lg font-semibold text-white">Pilih Berita untuk Desain</h3>
+        </div>
+
+        <!-- Pencarian -->
+        <div class="px-6 py-4 border-b flex-shrink-0">
+            <input type="text" id="newsSearch" placeholder="Cari berita..." class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-green-500" onkeyup="filterNews()">
+        </div>
+
+        <!-- Daftar Berita -->
+        <div class="overflow-y-auto flex-1">
+            <div class="px-6 py-4 space-y-3">
+                @forelse($availableNews as $news)
+                    <div class="news-item border border-gray-200 rounded-lg p-4 cursor-pointer hover:bg-gray-50 transition-colors" data-news-id="{{ $news->id }}" onclick="selectNews(this)">
+                        <h4 class="font-semibold text-gray-800">{{ $news->title ?? $news->judul }}</h4>
+                        <p class="text-sm text-gray-600 mt-1">{{ Str::limit(strip_tags($news->content ?? $news->isi ?? ''), 150) }}</p>
+                        <div class="flex items-center justify-between mt-2">
+                            <span class="text-xs text-gray-500">{{ optional($news->created_at)->format('d M Y') }}</span>
+                            <span class="text-xs bg-green-100 text-green-800 px-2 py-1 rounded">{{ $news->category->name ?? 'Uncategorized' }}</span>
+                        </div>
+                    </div>
+                @empty
+                    <div class="text-center py-8 text-gray-500">
+                        <i class="fas fa-info-circle text-gray-400 text-2xl mb-2"></i>
+                        <p class="mt-2">Tidak ada berita yang tersedia</p>
+                    </div>
+                @endforelse
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="bg-gray-50 px-6 py-4 border-t flex justify-end space-x-3 flex-shrink-0">
+            <button type="button" onclick="closeNewsSelectionModal()" class="px-4 py-2 text-gray-600 border border-gray-300 rounded-lg hover:bg-gray-100 transition-colors">Batal</button>
+            <button type="button" id="createDesignBtn" onclick="createDesignForSelectedNews()" class="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors disabled:bg-gray-400 disabled:cursor-not-allowed" disabled>Buat Desain</button>
+        </div>
     </div>
 </div>
+
+<script>
+let selectedNewsId = null;
+
+function openNewsSelectionModal() {
+    document.getElementById('newsSelectionModal').classList.remove('hidden');
+}
+
+function closeNewsSelectionModal() {
+    document.getElementById('newsSelectionModal').classList.add('hidden');
+    selectedNewsId = null;
+    const btn = document.getElementById('createDesignBtn');
+    if (btn) btn.disabled = true;
+    document.querySelectorAll('.news-item').forEach(item => item.classList.remove('border-green-500','bg-green-50'));
+}
+
+function filterNews() {
+    const term = document.getElementById('newsSearch').value.toLowerCase();
+    document.querySelectorAll('.news-item').forEach(item => {
+        const title = item.querySelector('h4').textContent.toLowerCase();
+        const content = (item.querySelector('p')?.textContent || '').toLowerCase();
+        item.style.display = (title.includes(term) || content.includes(term)) ? 'block' : 'none';
+    });
+}
+
+function selectNews(el) {
+    document.querySelectorAll('.news-item').forEach(item => item.classList.remove('border-green-500','bg-green-50'));
+    el.classList.add('border-green-500','bg-green-50');
+    selectedNewsId = el.getAttribute('data-news-id');
+    const btn = document.getElementById('createDesignBtn');
+    if (btn) btn.disabled = !selectedNewsId;
+}
+
+function createDesignForSelectedNews() {
+    if (!selectedNewsId) return;
+    const selectedEl = document.querySelector(`.news-item[data-news-id="${selectedNewsId}"]`);
+    const newsTitle = selectedEl ? selectedEl.querySelector('h4').textContent : '';
+    const url = `{{ route('koordinator-jurnalistik.designs.create') }}?news_id=${selectedNewsId}&news_title=${encodeURIComponent(newsTitle)}`;
+    window.location.href = url;
+}
+
+// Close modal when clicking outside
+document.addEventListener('click', function(event) {
+    const modal = document.getElementById('newsSelectionModal');
+    if (event.target === modal) {
+        closeNewsSelectionModal();
+    }
+});
+</script>
 @endsection

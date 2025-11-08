@@ -59,18 +59,13 @@ class PengeluaranService
             'metode_pembayaran' => 'required|in:' . implode(',', array_keys(Pengeluaran::getAllMetodePembayaran())),
             'nomor_referensi' => 'nullable|string|max:100',
             'penerima' => 'required|string|max:255',
-            'bukti_pengeluaran' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
+            'bukti_pengeluaran' => 'nullable|url|max:1000',
             'keterangan' => 'nullable|string|max:1000',
         ]);
 
         $validated['created_by'] = Auth::id();
 
-        if ($request->hasFile('bukti_pengeluaran')) {
-            $file = $request->file('bukti_pengeluaran');
-            $filename = time() . '_' . $file->getClientOriginalName();
-            $path = $file->storeAs('bukti_pengeluaran', $filename, 'public');
-            $validated['bukti_pengeluaran'] = $path;
-        }
+        // Bukti pengeluaran sekarang berupa URL, tidak ada upload file.
 
         Pengeluaran::create($validated);
 
@@ -89,19 +84,10 @@ class PengeluaranService
             'metode_pembayaran' => 'required|in:' . implode(',', array_keys(Pengeluaran::getAllMetodePembayaran())),
             'nomor_referensi' => 'nullable|string|max:100',
             'penerima' => 'required|string|max:255',
-            'bukti_pengeluaran' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
+            'bukti_pengeluaran' => 'nullable|url|max:1000',
             'keterangan' => 'nullable|string|max:1000',
         ]);
-
-        if ($request->hasFile('bukti_pengeluaran')) {
-            if ($pengeluaran->bukti_pengeluaran) {
-                Storage::disk('public')->delete($pengeluaran->bukti_pengeluaran);
-            }
-            $file = $request->file('bukti_pengeluaran');
-            $filename = time() . '_' . $file->getClientOriginalName();
-            $path = $file->storeAs('bukti_pengeluaran', $filename, 'public');
-            $validated['bukti_pengeluaran'] = $path;
-        }
+        // Tidak ada pengelolaan file saat update karena bukti berupa URL.
 
         $pengeluaran->update($validated);
 
@@ -111,8 +97,10 @@ class PengeluaranService
 
     public function destroy(Pengeluaran $pengeluaran): RedirectResponse
     {
-        if ($pengeluaran->bukti_pengeluaran) {
-            Storage::disk('public')->delete($pengeluaran->bukti_pengeluaran);
+        if ($pengeluaran->bukti_pengeluaran && !filter_var($pengeluaran->bukti_pengeluaran, FILTER_VALIDATE_URL)) {
+            if (Storage::disk('public')->exists($pengeluaran->bukti_pengeluaran)) {
+                Storage::disk('public')->delete($pengeluaran->bukti_pengeluaran);
+            }
         }
         $pengeluaran->delete();
         return redirect()->route('bendahara.pengeluaran.index')

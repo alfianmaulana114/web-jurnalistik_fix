@@ -5,10 +5,10 @@
 
 @section('content')
 <div class="max-w-4xl mx-auto">
-    <div class="bg-white rounded-lg shadow">
-        <div class="px-6 py-4 border-b border-gray-200">
+    <div class="bg-white rounded-lg shadow-sm border border-gray-200">
+        <div class="px-6 py-5 border-b border-gray-200">
             <div class="flex items-center justify-between">
-                <h3 class="text-lg font-medium text-gray-900">Edit User: {{ $user->name }}</h3>
+                <h3 class="text-lg font-semibold text-gray-900">Edit User: {{ $user->name }}</h3>
                 <a href="{{ route('koordinator-jurnalistik.users.show', $user) }}" class="text-gray-600 hover:text-gray-800">
                     <i class="fas fa-times text-xl"></i>
                 </a>
@@ -26,7 +26,7 @@
                 <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
                     <div>
                         <label for="name" class="block text-sm font-medium text-gray-700">Nama Lengkap <span class="text-red-500">*</span></label>
-                        <input type="text" name="name" id="name" value="{{ old('name', $user->name) }}" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-red-500 focus:border-red-500 sm:text-sm @error('name') border-red-300 @enderror" required>
+                        <input type="text" name="name" id="name" value="{{ old('name', $user->name) }}" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-2 focus:ring-blue-400 focus:border-blue-400 sm:text-sm @error('name') border-red-300 @enderror" required>
                         @error('name')
                             <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                         @enderror
@@ -34,7 +34,7 @@
 
                     <div>
                         <label for="nim" class="block text-sm font-medium text-gray-700">NIM <span class="text-red-500">*</span></label>
-                        <input type="number" name="nim" id="nim" value="{{ old('nim', $user->nim) }}" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-red-500 focus:border-red-500 sm:text-sm @error('nim') border-red-300 @enderror" required>
+                        <input type="number" name="nim" id="nim" value="{{ old('nim', $user->nim) }}" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-2 focus:ring-blue-400 focus:border-blue-400 sm:text-sm @error('nim') border-red-300 @enderror" required>
                         @error('nim')
                             <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                         @enderror
@@ -43,7 +43,7 @@
 
                 <div>
                     <label for="email" class="block text-sm font-medium text-gray-700">Email <span class="text-red-500">*</span></label>
-                    <input type="email" name="email" id="email" value="{{ old('email', $user->email) }}" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-red-500 focus:border-red-500 sm:text-sm @error('email') border-red-300 @enderror" required>
+                    <input type="email" name="email" id="email" value="{{ old('email', $user->email) }}" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-2 focus:ring-blue-400 focus:border-blue-400 sm:text-sm @error('email') border-red-300 @enderror" required>
                     @error('email')
                         <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                     @enderror
@@ -62,7 +62,7 @@
                 
                 <div>
                     <label for="role" class="block text-sm font-medium text-gray-700">Role <span class="text-red-500">*</span></label>
-                    <select name="role" id="role" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-red-500 focus:border-red-500 sm:text-sm @error('role') border-red-300 @enderror" required>
+                    <select name="role" id="role" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-2 focus:ring-blue-400 focus:border-blue-400 sm:text-sm @error('role') border-red-300 @enderror" required>
                         <option value="">Pilih Role</option>
                         
                         <optgroup label="Koordinator">
@@ -125,7 +125,7 @@
                         <div>
                             <label for="password" class="block text-sm font-medium text-gray-700">Password Baru</label>
                             <div class="relative">
-                                <input type="password" name="password" id="password" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-red-500 focus:border-red-500 sm:text-sm @error('password') border-red-300 @enderror">
+                                <input type="password" name="password" id="password" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-2 focus:ring-blue-400 focus:border-blue-400 sm:text-sm @error('password') border-red-300 @enderror">
                                 <button type="button" id="togglePassword" class="absolute inset-y-0 right-0 pr-3 flex items-center">
                                     <i class="fas fa-eye text-gray-400 hover:text-gray-600" id="eyeIcon"></i>
                                 </button>
@@ -139,7 +139,7 @@
                         <div>
                             <label for="password_confirmation" class="block text-sm font-medium text-gray-700">Konfirmasi Password Baru</label>
                             <div class="relative">
-                                <input type="password" name="password_confirmation" id="password_confirmation" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-red-500 focus:border-red-500 sm:text-sm">
+                                <input type="password" name="password_confirmation" id="password_confirmation" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-2 focus:ring-blue-400 focus:border-blue-400 sm:text-sm">
                                 <button type="button" id="togglePasswordConfirmation" class="absolute inset-y-0 right-0 pr-3 flex items-center">
                                     <i class="fas fa-eye text-gray-400 hover:text-gray-600" id="eyeIconConfirmation"></i>
                                 </button>
@@ -166,7 +166,7 @@
                 <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
                     <div>
                         <label for="phone" class="block text-sm font-medium text-gray-700">Nomor Telepon</label>
-                        <input type="tel" name="phone" id="phone" value="{{ old('phone', $user->phone) }}" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-red-500 focus:border-red-500 sm:text-sm @error('phone') border-red-300 @enderror" placeholder="08xxxxxxxxxx">
+                        <input type="tel" name="phone" id="phone" value="{{ old('phone', $user->phone) }}" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-2 focus:ring-blue-400 focus:border-blue-400 sm:text-sm @error('phone') border-red-300 @enderror" placeholder="08xxxxxxxxxx">
                         @error('phone')
                             <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                         @enderror
@@ -174,7 +174,7 @@
 
                     <div>
                         <label for="angkatan" class="block text-sm font-medium text-gray-700">Angkatan</label>
-                        <input type="number" name="angkatan" id="angkatan" value="{{ old('angkatan', $user->angkatan) }}" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-red-500 focus:border-red-500 sm:text-sm @error('angkatan') border-red-300 @enderror" min="2000" max="{{ date('Y') + 1 }}">
+                        <input type="number" name="angkatan" id="angkatan" value="{{ old('angkatan', $user->angkatan) }}" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-2 focus:ring-blue-400 focus:border-blue-400 sm:text-sm @error('angkatan') border-red-300 @enderror" min="2000" max="{{ date('Y') + 1 }}">
                         @error('angkatan')
                             <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                         @enderror
@@ -183,7 +183,7 @@
 
                 <div>
                     <label for="bio" class="block text-sm font-medium text-gray-700">Bio/Deskripsi</label>
-                    <textarea name="bio" id="bio" rows="3" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-red-500 focus:border-red-500 sm:text-sm @error('bio') border-red-300 @enderror" placeholder="Ceritakan sedikit tentang diri Anda...">{{ old('bio', $user->bio) }}</textarea>
+                    <textarea name="bio" id="bio" rows="3" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-2 focus:ring-blue-400 focus:border-blue-400 sm:text-sm @error('bio') border-red-300 @enderror" placeholder="Ceritakan sedikit tentang diri Anda...">{{ old('bio', $user->bio) }}</textarea>
                     @error('bio')
                         <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                     @enderror
@@ -194,53 +194,13 @@
             <div class="space-y-4">
                 <h4 class="text-md font-medium text-gray-900 border-b pb-2">Status Akun</h4>
                 
-                <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
-                    <div class="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
-                        <div>
-                            <span class="text-sm font-medium text-gray-900">Status Verifikasi Email</span>
-                            <p class="text-xs text-gray-500">{{ $user->email_verified_at ? 'Terverifikasi pada ' . $user->email_verified_at->format('d M Y H:i') : 'Belum terverifikasi' }}</p>
-                        </div>
-                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium
-                            @if($user->email_verified_at)
-                                bg-green-100 text-green-800
-                            @else
-                                bg-red-100 text-red-800
-                            @endif
-                        ">
-                            @if($user->email_verified_at)
-                                <i class="fas fa-check-circle mr-1"></i>
-                                Terverifikasi
-                            @else
-                                <i class="fas fa-exclamation-circle mr-1"></i>
-                                Belum Verifikasi
-                            @endif
-                        </span>
+                <div class="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
+                    <div>
+                        <span class="text-sm font-medium text-gray-900">Bergabung</span>
+                        <p class="text-xs text-gray-500">{{ $user->created_at->format('d M Y H:i') }}</p>
                     </div>
-
-                    <div class="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
-                        <div>
-                            <span class="text-sm font-medium text-gray-900">Bergabung</span>
-                            <p class="text-xs text-gray-500">{{ $user->created_at->format('d M Y H:i') }}</p>
-                        </div>
-                        <span class="text-sm text-gray-600">{{ $user->created_at->diffForHumans() }}</span>
-                    </div>
+                    <span class="text-sm text-gray-600">{{ $user->created_at->diffForHumans() }}</span>
                 </div>
-
-                @if(!$user->email_verified_at)
-                <div class="bg-yellow-50 border border-yellow-200 rounded-md p-4">
-                    <div class="flex">
-                        <div class="flex-shrink-0">
-                            <i class="fas fa-exclamation-triangle text-yellow-400"></i>
-                        </div>
-                        <div class="ml-3">
-                            <h3 class="text-sm font-medium text-yellow-800">Email Belum Terverifikasi</h3>
-                            <div class="mt-2 text-sm text-yellow-700">
-                                <p>User ini belum memverifikasi email. Anda dapat mengirim ulang email verifikasi dari halaman detail user.</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                @endif
             </div>
 
             <!-- Activity Summary -->
@@ -282,11 +242,11 @@
             @endif
 
             <!-- Submit Buttons -->
-            <div class="flex items-center justify-end space-x-3 pt-6 border-t">
-                <a href="{{ route('koordinator-jurnalistik.users.show', $user) }}" class="inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500">
+            <div class="flex items-center justify-end gap-3 pt-6 border-t">
+                <a href="{{ route('koordinator-jurnalistik.users.show', $user) }}" class="inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
                     Batal
                 </a>
-                <button type="submit" class="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500">
+                <button type="submit" id="submitBtn" class="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
                     <i class="fas fa-save mr-2"></i>
                     Simpan Perubahan
                 </button>
@@ -492,6 +452,22 @@ document.addEventListener('DOMContentLoaded', function() {
         if (this.value.length > 0 && !this.value.startsWith('0') && !this.value.startsWith('+62')) {
             this.value = '0' + this.value.replace(/^[^0]/g, '');
         }
+    });
+    
+    // Double click protection
+    const form = document.querySelector('form');
+    const submitBtn = document.getElementById('submitBtn');
+    let isSubmitting = false;
+    
+    form.addEventListener('submit', function(e) {
+        if (isSubmitting) {
+            e.preventDefault();
+            return false;
+        }
+        
+        isSubmitting = true;
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Menyimpan...';
     });
 });
 </script>

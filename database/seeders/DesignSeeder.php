@@ -20,128 +20,79 @@ class DesignSeeder extends Seeder
         $anggotaMediaKreatif1 = User::where('role', User::ROLE_ANGGOTA_MEDIA_KREATIF)->first();
         $anggotaMediaKreatif2 = User::where('role', User::ROLE_ANGGOTA_MEDIA_KREATIF)->skip(1)->first();
         
-        $content1 = Content::first();
-        $content2 = Content::skip(1)->first();
+        if (!$koordinatorMediaKreatif || !$anggotaMediaKreatif1 || !$anggotaMediaKreatif2) {
+            $this->command->warn('User Media Kreatif tidak ditemukan. Pastikan UserSeeder sudah dijalankan.');
+            return;
+        }
+        
         $proker1 = Proker::first();
         $proker2 = Proker::skip(1)->first();
+        $proker4 = Proker::skip(3)->first();
 
-        // Design 1: Poster untuk Content (Published)
-        Design::create([
-            'judul' => 'Poster Berita Juara Robotika',
-            'deskripsi' => 'Poster untuk mendukung publikasi berita tentang prestasi tim robotika universitas',
-            'jenis_desain' => Design::TYPE_POSTER,
-            'file_path' => 'designs/posters/poster-robotika-2025.jpg',
-            'file_name' => 'poster-robotika-2025.jpg',
-            'file_size' => 2048576, // 2MB
-            'dimensi' => '1080x1350',
-            'status' => Design::STATUS_PUBLISHED,
-            'catatan_revisi' => 'Desain sudah sesuai dengan brand guideline',
-            'content_id' => null,
-            'proker_id' => null,
-            'created_by' => $anggotaMediaKreatif1->id,
-            'reviewed_by' => $koordinatorMediaKreatif->id,
-        ]);
+        // Design 1: Desain untuk berita
+        Design::updateOrCreate(
+            ['judul' => 'Poster Berita Juara Robotika'],
+            [
+                'media_url' => 'https://example.com/poster-robotika.jpg',
+                'jenis' => Design::JENIS_DESAIN,
+                'catatan' => 'Poster untuk mendukung publikasi berita tentang prestasi tim robotika universitas',
+                'berita_id' => null,
+                'created_by' => $anggotaMediaKreatif1->id,
+            ]
+        );
 
-        // Design 2: Banner untuk Proker Workshop
-        Design::create([
-            'judul' => 'Banner Workshop Jurnalistik',
-            'deskripsi' => 'Banner promosi untuk workshop jurnalistik pemula',
-            'jenis_desain' => Design::TYPE_BANNER,
-            'file_path' => 'designs/banners/banner-workshop-jurnalistik.png',
-            'file_name' => 'banner-workshop-jurnalistik.png',
-            'file_size' => 1536000, // 1.5MB
-            'dimensi' => '1920x1080',
-            'status' => Design::STATUS_PUBLISHED,
-            'catatan_revisi' => null,
-            'content_id' => null,
-            'proker_id' => $proker1->id,
-            'created_by' => $anggotaMediaKreatif2->id,
-            'reviewed_by' => $koordinatorMediaKreatif->id,
-        ]);
+        // Design 2: Video untuk proker
+        if ($proker1) {
+            Design::updateOrCreate(
+                ['judul' => 'Video Workshop Jurnalistik'],
+                [
+                    'media_url' => 'https://example.com/video-workshop.mp4',
+                    'jenis' => Design::JENIS_VIDEO,
+                    'catatan' => 'Video promosi untuk workshop jurnalistik pemula',
+                    'berita_id' => null,
+                    'created_by' => $anggotaMediaKreatif2->id,
+                ]
+            );
+        }
 
-        // Design 3: Infografis dalam Review
-        Design::create([
-            'judul' => 'Infografis Dampak Kenaikan UKT',
-            'deskripsi' => 'Infografis untuk menjelaskan dampak kenaikan UKT terhadap mahasiswa',
-            'jenis_desain' => Design::TYPE_INFOGRAFIS,
-            'file_path' => 'designs/infografis/infografis-ukt-2025.svg',
-            'file_name' => 'infografis-ukt-2025.svg',
-            'file_size' => 512000, // 500KB
-            'dimensi' => '1080x1920',
-            'status' => Design::STATUS_REVIEW,
-            'catatan_revisi' => 'Perlu penyesuaian warna sesuai brand guideline',
-            'content_id' => null,
-            'proker_id' => null,
-            'created_by' => $anggotaMediaKreatif1->id,
-            'reviewed_by' => $koordinatorMediaKreatif->id,
-        ]);
+        // Design 3: Funfact
+        Design::updateOrCreate(
+            ['judul' => 'Funfact Teknologi Berkelanjutan'],
+            [
+                'media_url' => 'https://example.com/funfact-teknologi.jpg',
+                'jenis' => Design::JENIS_FUNFACT,
+                'catatan' => 'Funfact tentang inovasi teknologi berkelanjutan di kampus',
+                'berita_id' => null,
+                'created_by' => $anggotaMediaKreatif1->id,
+            ]
+        );
 
-        // Design 4: Logo untuk Proker
-        Design::create([
-            'judul' => 'Logo Majalah Kampus Edisi Khusus',
-            'deskripsi' => 'Logo khusus untuk majalah kampus edisi wisuda',
-            'jenis_desain' => Design::TYPE_LOGO,
-            'file_path' => 'designs/logos/logo-majalah-wisuda.ai',
-            'file_name' => 'logo-majalah-wisuda.ai',
-            'file_size' => 3072000, // 3MB
-            'dimensi' => '2000x2000',
-            'status' => Design::STATUS_APPROVED,
-            'catatan_revisi' => 'Logo sudah final, siap untuk produksi',
-            'content_id' => null,
-            'proker_id' => $proker2->id,
-            'created_by' => $koordinatorMediaKreatif->id,
-            'reviewed_by' => $koordinatorMediaKreatif->id,
-        ]);
+        // Design 4: Desain untuk proker
+        if ($proker2) {
+            Design::updateOrCreate(
+                ['judul' => 'Logo Majalah Kampus Edisi Khusus'],
+                [
+                    'media_url' => 'https://example.com/logo-majalah.png',
+                    'jenis' => Design::JENIS_DESAIN,
+                    'catatan' => 'Logo khusus untuk majalah kampus edisi wisuda',
+                    'berita_id' => null,
+                    'created_by' => $koordinatorMediaKreatif->id,
+                ]
+            );
+        }
 
-        // Design 5: Flyer Draft
-        Design::create([
-            'judul' => 'Flyer Pelatihan Fotografi',
-            'deskripsi' => 'Flyer promosi untuk pelatihan fotografi jurnalistik',
-            'jenis_desain' => Design::TYPE_POSTER,
-            'file_path' => 'designs/flyers/flyer-fotografi-draft.psd',
-            'file_name' => 'flyer-fotografi-draft.psd',
-            'file_size' => 4096000, // 4MB
-            'dimensi' => '1080x1350',
-            'status' => Design::STATUS_DRAFT,
-            'catatan_revisi' => null,
-            'content_id' => null,
-            'proker_id' => Proker::skip(3)->first()->id,
-            'created_by' => $anggotaMediaKreatif2->id,
-            'reviewed_by' => null,
-        ]);
-
-        // Design 6: Thumbnail Video
-        Design::create([
-            'judul' => 'Thumbnail Video Tutorial Jurnalistik',
-            'deskripsi' => 'Thumbnail untuk video tutorial dasar-dasar jurnalistik',
-            'jenis_desain' => Design::TYPE_THUMBNAIL,
-            'file_path' => 'designs/thumbnails/thumbnail-tutorial-jurnalistik.jpg',
-            'file_name' => 'thumbnail-tutorial-jurnalistik.jpg',
-            'file_size' => 1024000, // 1MB
-            'dimensi' => '1280x720',
-            'status' => Design::STATUS_PUBLISHED,
-            'catatan_revisi' => 'Thumbnail menarik dan sesuai konten',
-            'content_id' => null,
-            'proker_id' => $proker1->id,
-            'created_by' => $anggotaMediaKreatif1->id,
-            'reviewed_by' => $koordinatorMediaKreatif->id,
-        ]);
-
-        // Design 7: Template Social Media
-        Design::create([
-            'judul' => 'Template Instagram Story UKM',
-            'deskripsi' => 'Template untuk Instagram story UKM Jurnalistik',
-            'jenis_desain' => Design::TYPE_ILUSTRASI,
-            'file_path' => 'designs/templates/ig-story-template.fig',
-            'file_name' => 'ig-story-template.fig',
-            'file_size' => 2560000, // 2.5MB
-            'dimensi' => '1080x1920',
-            'status' => Design::STATUS_APPROVED,
-            'catatan_revisi' => 'Template sudah sesuai dengan brand identity UKM',
-            'content_id' => null,
-            'proker_id' => null,
-            'created_by' => $koordinatorMediaKreatif->id,
-            'reviewed_by' => $koordinatorMediaKreatif->id,
-        ]);
+        // Design 5: Video tutorial
+        if ($proker1) {
+            Design::updateOrCreate(
+                ['judul' => 'Video Tutorial Jurnalistik'],
+                [
+                    'media_url' => 'https://example.com/tutorial-jurnalistik.mp4',
+                    'jenis' => Design::JENIS_VIDEO,
+                    'catatan' => 'Video tutorial dasar-dasar jurnalistik',
+                    'berita_id' => null,
+                    'created_by' => $anggotaMediaKreatif1->id,
+                ]
+            );
+        }
     }
 }

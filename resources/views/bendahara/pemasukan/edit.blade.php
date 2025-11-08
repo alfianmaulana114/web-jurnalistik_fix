@@ -4,29 +4,27 @@
 
 @section('content')
 <div class="container mx-auto px-4 py-6 max-w-4xl">
-    <div class="bg-white rounded-lg shadow-sm">
-        <div class="p-4 border-b">
-            <h2 class="text-lg font-semibold text-gray-700">Edit Pemasukan</h2>
-            <p class="text-sm text-gray-600 mt-1">Kode Transaksi: {{ $pemasukan->kode_transaksi }}</p>
-        </div>
+    <div class="bg-white rounded-lg shadow-sm p-6">
+        <h3 class="text-2xl font-medium text-gray-800 mb-6">Edit Pemasukan</h3>
+        <p class="text-sm text-gray-600 mb-6">Kode Transaksi: {{ $pemasukan->kode_transaksi }}</p>
         
-        <form action="{{ route('bendahara.pemasukan.update', $pemasukan) }}" method="POST" enctype="multipart/form-data" class="p-6">
+        <form action="{{ route('bendahara.pemasukan.update', $pemasukan) }}" method="POST">
             @csrf
             @method('PUT')
             
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <!-- Left Column -->
-                <div class="space-y-4">
+                <div>
                     <!-- Tanggal -->
-                    <div>
-                        <label for="tanggal" class="block text-sm font-medium text-gray-700 mb-1">
+                    <div class="mb-4">
+                        <label for="tanggal" class="block text-sm font-medium text-gray-700 mb-2">
                             Tanggal <span class="text-red-500">*</span>
                         </label>
                         <input type="date" 
                                id="tanggal" 
                                name="tanggal" 
                                value="{{ old('tanggal', $pemasukan->tanggal->format('Y-m-d')) }}"
-                               class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent @error('tanggal') border-red-500 @enderror"
+                               class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-400 focus:border-transparent @error('tanggal') border-red-500 @enderror"
                                required>
                         @error('tanggal')
                             <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
@@ -34,14 +32,14 @@
                     </div>
 
                     <!-- Deskripsi -->
-                    <div>
-                        <label for="deskripsi" class="block text-sm font-medium text-gray-700 mb-1">
+                    <div class="mb-4">
+                        <label for="deskripsi" class="block text-sm font-medium text-gray-700 mb-2">
                             Deskripsi <span class="text-red-500">*</span>
                         </label>
                         <textarea id="deskripsi" 
                                   name="deskripsi" 
                                   rows="3"
-                                  class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent @error('deskripsi') border-red-500 @enderror"
+                                  class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-400 focus:border-transparent @error('deskripsi') border-red-500 @enderror"
                                   placeholder="Masukkan deskripsi pemasukan..."
                                   required>{{ old('deskripsi', $pemasukan->deskripsi) }}</textarea>
                         @error('deskripsi')
@@ -50,13 +48,13 @@
                     </div>
 
                     <!-- Kategori -->
-                    <div>
-                        <label for="kategori" class="block text-sm font-medium text-gray-700 mb-1">
+                    <div class="mb-4">
+                        <label for="kategori" class="block text-sm font-medium text-gray-700 mb-2">
                             Kategori <span class="text-red-500">*</span>
                         </label>
                         <select id="kategori" 
                                 name="kategori" 
-                                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent @error('kategori') border-red-500 @enderror"
+                                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-400 focus:border-transparent @error('kategori') border-red-500 @enderror"
                                 required>
                             <option value="">Pilih Kategori</option>
                             <option value="kas_anggota" {{ old('kategori', $pemasukan->kategori) === 'kas_anggota' ? 'selected' : '' }}>Kas Anggota</option>
@@ -71,13 +69,13 @@
                     </div>
 
                     <!-- Kas Anggota Terkait (conditional) -->
-                    <div id="kasAnggotaField" class="{{ old('kategori', $pemasukan->kategori) === 'kas_anggota' ? '' : 'hidden' }}">
-                        <label for="kas_anggota_id" class="block text-sm font-medium text-gray-700 mb-1">
+                    <div id="kasAnggotaField" class="mb-4 {{ old('kategori', $pemasukan->kategori) === 'kas_anggota' ? '' : 'hidden' }}">
+                        <label for="kas_anggota_id" class="block text-sm font-medium text-gray-700 mb-2">
                             Kas Anggota Terkait
                         </label>
                         <select id="kas_anggota_id" 
                                 name="kas_anggota_id" 
-                                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-400 focus:border-transparent">
                             <option value="">Pilih Kas Anggota</option>
                             @foreach($kasAnggotas as $kas)
                                 <option value="{{ $kas->id }}" 
@@ -92,15 +90,15 @@
                     </div>
 
                     <!-- Sumber -->
-                    <div>
-                        <label for="sumber" class="block text-sm font-medium text-gray-700 mb-1">
+                    <div class="mb-4">
+                        <label for="sumber" class="block text-sm font-medium text-gray-700 mb-2">
                             Sumber <span class="text-red-500">*</span>
                         </label>
                         <input type="text" 
                                id="sumber" 
                                name="sumber" 
                                value="{{ old('sumber', $pemasukan->sumber) }}"
-                               class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent @error('sumber') border-red-500 @enderror"
+                               class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-400 focus:border-transparent @error('sumber') border-red-500 @enderror"
                                placeholder="Contoh: John Doe, PT ABC, dll"
                                required>
                         @error('sumber')
@@ -110,10 +108,10 @@
                 </div>
 
                 <!-- Right Column -->
-                <div class="space-y-4">
+                <div>
                     <!-- Jumlah -->
-                    <div>
-                        <label for="jumlah" class="block text-sm font-medium text-gray-700 mb-1">
+                    <div class="mb-4">
+                        <label for="jumlah" class="block text-sm font-medium text-gray-700 mb-2">
                             Jumlah <span class="text-red-500">*</span>
                         </label>
                         <div class="relative">
@@ -122,7 +120,7 @@
                                    id="jumlah" 
                                    name="jumlah" 
                                    value="{{ old('jumlah', $pemasukan->jumlah) }}"
-                                   class="w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent @error('jumlah') border-red-500 @enderror"
+                                   class="w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-400 focus:border-transparent @error('jumlah') border-red-500 @enderror"
                                    placeholder="0"
                                    min="0"
                                    step="1000"
@@ -134,13 +132,13 @@
                     </div>
 
                     <!-- Metode Pembayaran -->
-                    <div>
-                        <label for="metode_pembayaran" class="block text-sm font-medium text-gray-700 mb-1">
+                    <div class="mb-4">
+                        <label for="metode_pembayaran" class="block text-sm font-medium text-gray-700 mb-2">
                             Metode Pembayaran
                         </label>
                         <select id="metode_pembayaran" 
                                 name="metode_pembayaran" 
-                                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-400 focus:border-transparent">
                             <option value="">Pilih Metode</option>
                             <option value="tunai" {{ old('metode_pembayaran', $pemasukan->metode_pembayaran) === 'tunai' ? 'selected' : '' }}>Tunai</option>
                             <option value="transfer" {{ old('metode_pembayaran', $pemasukan->metode_pembayaran) === 'transfer' ? 'selected' : '' }}>Transfer Bank</option>
@@ -149,65 +147,60 @@
                         </select>
                     </div>
 
-                    <!-- Bukti Transfer -->
-                    <div>
-                        <label for="bukti_transfer" class="block text-sm font-medium text-gray-700 mb-1">
-                            Bukti Transfer
+                    <!-- Bukti Transfer (URL) -->
+                    <div class="mb-4">
+                        <label for="bukti_pemasukan" class="block text-sm font-medium text-gray-700 mb-2">
+                            Link Bukti Transfer
                         </label>
-                        @if($pemasukan->bukti_transfer)
+                        @if($pemasukan->bukti_pemasukan)
+                            @php $isUrl = filter_var($pemasukan->bukti_pemasukan, FILTER_VALIDATE_URL); @endphp
                             <div class="mb-2 p-3 bg-blue-50 rounded-md">
-                                <p class="text-sm text-blue-700 mb-2">File saat ini: {{ basename($pemasukan->bukti_transfer) }}</p>
-                                <a href="{{ asset('storage/' . $pemasukan->bukti_transfer) }}" 
-                                   target="_blank" 
-                                   class="text-blue-600 hover:text-blue-800 text-sm">
-                                    <i class="fas fa-external-link-alt mr-1"></i>Lihat File
-                                </a>
+                                @if($isUrl)
+                                    <a href="{{ $pemasukan->bukti_pemasukan }}" 
+                                       target="_blank" 
+                                       class="text-blue-600 hover:text-blue-800 text-sm">
+                                        <i class="fas fa-external-link-alt mr-1"></i>Lihat Bukti
+                                    </a>
+                                @else
+                                    <p class="text-sm text-blue-700 mb-2">File saat ini: {{ basename($pemasukan->bukti_pemasukan) }}</p>
+                                    <a href="{{ asset('storage/' . $pemasukan->bukti_pemasukan) }}" 
+                                       target="_blank" 
+                                       class="text-blue-600 hover:text-blue-800 text-sm">
+                                        <i class="fas fa-external-link-alt mr-1"></i>Lihat File
+                                    </a>
+                                @endif
                             </div>
                         @endif
-                        <input type="file" 
-                               id="bukti_transfer" 
-                               name="bukti_transfer" 
-                               class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent @error('bukti_transfer') border-red-500 @enderror"
-                               accept="image/*,.pdf">
-                        <p class="text-xs text-gray-500 mt-1">Format: JPG, PNG, PDF. Maksimal 2MB. Kosongkan jika tidak ingin mengubah.</p>
-                        @error('bukti_transfer')
+                        <input type="url" 
+                               id="bukti_pemasukan" 
+                               name="bukti_pemasukan" 
+                               value="{{ old('bukti_pemasukan', $pemasukan->bukti_pemasukan) }}"
+                               class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-400 focus:border-transparent @error('bukti_pemasukan') border-red-500 @enderror"
+                               placeholder="https://contoh.com/bukti-transfer">
+                        <p class="text-xs text-gray-500 mt-1">Tempelkan tautan ke bukti (gambar atau dokumen) yang dapat diakses. Kosongkan jika tidak ingin mengubah.</p>
+                        @error('bukti_pemasukan')
                             <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
                         @enderror
                     </div>
 
-                    <!-- Status -->
-                    <div>
-                        <label for="status" class="block text-sm font-medium text-gray-700 mb-1">
-                            Status <span class="text-red-500">*</span>
-                        </label>
-                        <select id="status" 
-                                name="status" 
-                                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent @error('status') border-red-500 @enderror"
-                                required>
-                            <option value="pending" {{ old('status', $pemasukan->status) === 'pending' ? 'selected' : '' }}>Pending</option>
-                            <option value="verified" {{ old('status', $pemasukan->status) === 'verified' ? 'selected' : '' }}>Terverifikasi</option>
-                        </select>
-                        @error('status')
-                            <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
-                        @enderror
-                    </div>
+                    <!-- Status: ditentukan oleh sistem (tidak bisa diubah manual) -->
 
                     <!-- Keterangan -->
-                    <div>
-                        <label for="keterangan" class="block text-sm font-medium text-gray-700 mb-1">
+                    <div class="mb-4">
+                        <label for="keterangan" class="block text-sm font-medium text-gray-700 mb-2">
                             Keterangan
                         </label>
                         <textarea id="keterangan" 
                                   name="keterangan" 
                                   rows="3"
-                                  class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                  class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-400 focus:border-transparent"
                                   placeholder="Catatan tambahan (opsional)">{{ old('keterangan', $pemasukan->keterangan) }}</textarea>
                     </div>
                 </div>
             </div>
 
             <!-- Info Box -->
-            <div class="mt-6 bg-blue-50 border border-blue-200 rounded-md p-4">
+            <div class="mt-6 bg-blue-50 rounded-lg p-4">
                 <div class="flex">
                     <div class="flex-shrink-0">
                         <i class="fas fa-info-circle text-blue-400"></i>
@@ -218,7 +211,7 @@
                             <ul class="list-disc list-inside space-y-1">
                                 <li>Pastikan semua data yang dimasukkan sudah benar sebelum menyimpan</li>
                                 <li>Jika mengubah kategori menjadi "Kas Anggota", pilih kas anggota yang sesuai</li>
-                                <li>Upload bukti transfer untuk transparansi keuangan</li>
+                                <li>Masukkan link bukti transfer untuk transparansi keuangan</li>
                                 <li>Status "Terverifikasi" hanya dapat diubah oleh bendahara</li>
                             </ul>
                         </div>
@@ -227,22 +220,15 @@
             </div>
 
             <!-- Action Buttons -->
-            <div class="flex justify-between items-center mt-6 pt-4 border-t">
+            <div class="flex justify-end space-x-4 mt-6">
                 <a href="{{ route('bendahara.pemasukan.show', $pemasukan) }}" 
                    class="px-4 py-2 bg-gray-200 text-gray-700 rounded-md hover:bg-gray-300 transition-colors">
-                    <i class="fas fa-arrow-left mr-2"></i>Kembali
+                    Batal
                 </a>
-                
-                <div class="flex space-x-2">
-                    <button type="reset" 
-                            class="px-4 py-2 bg-yellow-500 text-white rounded-md hover:bg-yellow-600 transition-colors">
-                        <i class="fas fa-undo mr-2"></i>Reset
+                <button type="submit" id="submitBtn"
+                        class="px-6 py-3 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors">
+                    <i class="fas fa-save mr-2"></i>Simpan Perubahan
                     </button>
-                    <button type="submit" 
-                            class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors">
-                        <i class="fas fa-save mr-2"></i>Update Pemasukan
-                    </button>
-                </div>
             </div>
         </form>
     </div>
@@ -280,6 +266,22 @@ document.addEventListener('DOMContentLoaded', function() {
         // Remove any non-digit characters except for the decimal point
         let value = this.value.replace(/[^\d]/g, '');
         this.value = value;
+    });
+    
+    // Double click protection
+    const form = document.querySelector('form');
+    const submitBtn = document.getElementById('submitBtn');
+    let isSubmitting = false;
+    
+    form.addEventListener('submit', function(e) {
+        if (isSubmitting) {
+            e.preventDefault();
+            return false;
+        }
+        
+        isSubmitting = true;
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Menyimpan...';
     });
 });
 </script>

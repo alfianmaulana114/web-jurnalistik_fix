@@ -28,14 +28,24 @@ class NewsSeeder extends Seeder
             ],
         ];
 
+        // Get koordinator jurnalistik user
+        $koordinator = \App\Models\User::where('role', \App\Models\User::ROLE_KOORDINATOR_JURNALISTIK)->first();
+        
+        if (!$koordinator) {
+            $this->command->warn('Koordinator Jurnalistik tidak ditemukan. Pastikan UserSeeder sudah dijalankan.');
+            return;
+        }
+
         foreach ($dummyNews as $news) {
-            News::create([
-                'user_id' => 1, // Admin ID
-                'title' => $news['title'],
-                'slug' => Str::slug($news['title']),
-                'content' => $news['content'],
-                'views' => rand(10, 100),
-            ]);
+            News::updateOrCreate(
+                ['slug' => Str::slug($news['title'])],
+                [
+                    'user_id' => $koordinator->id,
+                    'title' => $news['title'],
+                    'content' => $news['content'],
+                    'views' => rand(10, 100),
+                ]
+            );
         }
     }
 }

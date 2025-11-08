@@ -61,19 +61,14 @@ class PemasukanService
             'metode_pembayaran' => 'required|in:' . implode(',', array_keys(Pemasukan::getAllMetodePembayaran())),
             'nomor_referensi' => 'nullable|string|max:100',
             'kas_anggota_id' => 'nullable|exists:kas_anggota,id',
-            'bukti_pemasukan' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
+            'bukti_pemasukan' => 'nullable|url|max:1000',
             'keterangan' => 'nullable|string|max:1000',
         ]);
 
         $validated['user_id'] = Auth::id();
         $validated['created_by'] = Auth::id();
 
-        if ($request->hasFile('bukti_pemasukan')) {
-            $file = $request->file('bukti_pemasukan');
-            $filename = time() . '_' . $file->getClientOriginalName();
-            $path = $file->storeAs('bukti_pemasukan', $filename, 'public');
-            $validated['bukti_pemasukan'] = $path;
-        }
+        // Bukti pemasukan sekarang berupa URL, tidak perlu penyimpanan file.
 
         $pemasukan = Pemasukan::create($validated);
 
@@ -102,19 +97,10 @@ class PemasukanService
             'metode_pembayaran' => 'required|in:' . implode(',', array_keys(Pemasukan::getAllMetodePembayaran())),
             'nomor_referensi' => 'nullable|string|max:100',
             'kas_anggota_id' => 'nullable|exists:kas_anggota,id',
-            'bukti_pemasukan' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
+            'bukti_pemasukan' => 'nullable|url|max:1000',
             'keterangan' => 'nullable|string|max:1000',
         ]);
-
-        if ($request->hasFile('bukti_pemasukan')) {
-            if ($pemasukan->bukti_pemasukan) {
-                Storage::disk('public')->delete($pemasukan->bukti_pemasukan);
-            }
-            $file = $request->file('bukti_pemasukan');
-            $filename = time() . '_' . $file->getClientOriginalName();
-            $path = $file->storeAs('bukti_pemasukan', $filename, 'public');
-            $validated['bukti_pemasukan'] = $path;
-        }
+        // Bukti pemasukan berupa URL, tidak ada pengelolaan file saat update.
 
         $pemasukan->update($validated);
 
@@ -124,8 +110,10 @@ class PemasukanService
 
     public function destroy(Pemasukan $pemasukan): RedirectResponse
     {
-        if ($pemasukan->bukti_pemasukan) {
-            Storage::disk('public')->delete($pemasukan->bukti_pemasukan);
+        if ($pemasukan->bukti_pemasukan && !filter_var($pemasukan->bukti_pemasukan, FILTER_VALIDATE_URL)) {
+            if (Storage::disk('public')->exists($pemasukan->bukti_pemasukan)) {
+                Storage::disk('public')->delete($pemasukan->bukti_pemasukan);
+            }
         }
 
         if ($pemasukan->kas_anggota_id && $pemasukan->kategori === 'kas_anggota') {

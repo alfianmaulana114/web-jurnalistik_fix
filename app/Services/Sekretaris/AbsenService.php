@@ -4,6 +4,7 @@ namespace App\Services\Sekretaris;
 
 use App\Models\Absen;
 use App\Models\User;
+use App\Models\Notulensi;
 use Illuminate\Http\Request;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\DB;
@@ -13,9 +14,8 @@ class AbsenService
 {
     public function index(array $filters = []): array
     {
-        $bulan = $filters['bulan'] ?? now()->format('m');
-        $tahun = $filters['tahun'] ?? now()->year;
         $search = $filters['search'] ?? '';
+        $notulensi_id = $filters['notulensi_id'] ?? null;
 
         $query = User::query();
 
@@ -26,15 +26,20 @@ class AbsenService
             });
         }
 
+        // Tampilkan semua anggota; peserta rapat akan otomatis ditandai hadir melalui sinkronisasi Notulensi
+
         $users = $query->orderBy('name')->get();
 
-        // Ambil absen untuk bulan dan tahun yang dipilih
-        $absenData = Absen::where('bulan', $this->getBulanName($bulan))
-            ->where('tahun', $tahun)
-            ->get()
-            ->keyBy('user_id');
-
-        return compact('users', 'absenData', 'bulan', 'tahun', 'search');
+        // Absen berbasis rapat; jika rapat belum dipilih, tetap tampilkan daftar anggota
+        if ($notulensi_id) {
+            $absenData = Absen::where('notulensi_id', $notulensi_id)
+                ->get()
+                ->keyBy('user_id');
+        } else {
+            $absenData = collect();
+        }
+        $meetings = Notulensi::orderBy('tanggal', 'desc')->get();
+        return compact('users', 'absenData', 'search', 'meetings', 'notulensi_id');
     }
 
     public function store(Request $request): RedirectResponse
@@ -44,7 +49,7 @@ class AbsenService
             'tanggal' => 'required|date',
             'status' => 'required|in:hadir,izin,sakit,tidak_hadir',
             'keterangan' => 'nullable|string',
-            'notulensi_id' => 'nullable|exists:notulensi,id',
+            'notulensi_id' => 'required|exists:notulensi,id',
         ]);
 
         $tanggal = Carbon::parse($validated['tanggal']);
@@ -87,9 +92,9 @@ class AbsenService
             'tanggal' => 'required|date',
             'absens' => 'required|array',
             'absens.*.user_id' => 'required|exists:users,id',
-            'absens.*.status' => 'required|in:hadir,izin,sakit,tidak_hadir',
+            'absens.*.status' => 'nullable|in:hadir,izin,sakit,tidak_hadir',
             'absens.*.keterangan' => 'nullable|string',
-            'notulensi_id' => 'nullable|exists:notulensi,id',
+            'notulensi_id' => 'required|exists:notulensi,id',
         ]);
 
         $tanggal = Carbon::parse($validated['tanggal']);
@@ -98,20 +103,23 @@ class AbsenService
 
         DB::transaction(function () use ($validated, $bulan, $tahun) {
             foreach ($validated['absens'] as $absenData) {
-                Absen::updateOrCreate(
-                    [
-                        'user_id' => $absenData['user_id'],
-                        'tanggal' => $validated['tanggal'],
-                    ],
-                    [
-                        'status' => $absenData['status'],
-                        'keterangan' => $absenData['keterangan'] ?? null,
-                        'notulensi_id' => $validated['notulensi_id'] ?? null,
-                        'bulan' => $bulan,
-                        'tahun' => $tahun,
-                        'created_by' => auth()->id(),
-                    ]
-                );
+                // Hanya simpan jika status diisi
+                if (!empty($absenData['status'])) {
+                    Absen::updateOrCreate(
+                        [
+                            'user_id' => $absenData['user_id'],
+                            'tanggal' => $validated['tanggal'],
+                        ],
+                        [
+                            'status' => $absenData['status'],
+                            'keterangan' => $absenData['keterangan'] ?? null,
+                            'notulensi_id' => $validated['notulensi_id'] ?? null,
+                            'bulan' => $bulan,
+                            'tahun' => $tahun,
+                            'created_by' => auth()->id(),
+                        ]
+                    );
+                }
             }
         });
 

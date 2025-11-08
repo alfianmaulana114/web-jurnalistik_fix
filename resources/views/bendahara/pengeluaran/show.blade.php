@@ -99,58 +99,58 @@
                 </div>
             </div>
 
-            <!-- Bukti Pembayaran -->
-            @if($pengeluaran->bukti_pembayaran)
+            <!-- Bukti Pengeluaran -->
+            @php $proof = $pengeluaran->bukti_pengeluaran; @endphp
+            @if($proof)
             <div class="mt-6 bg-gray-50 rounded-lg p-4">
                 <h3 class="text-md font-semibold text-gray-700 mb-4 flex items-center">
-                    <i class="fas fa-file-image mr-2 text-purple-500"></i>Bukti Pembayaran
+                    <i class="fas fa-file-image mr-2 text-purple-500"></i>Bukti Pengeluaran
                 </h3>
+                @php
+                    $path = parse_url($proof, PHP_URL_PATH) ?? '';
+                    $extension = strtolower(pathinfo($path, PATHINFO_EXTENSION));
+                    $isImage = in_array($extension, ['jpg','jpeg','png','gif','webp']);
+                    $isUrl = filter_var($proof, FILTER_VALIDATE_URL);
+                @endphp
                 <div class="flex items-center space-x-4">
-                    @if(in_array(pathinfo($pengeluaran->bukti_pembayaran, PATHINFO_EXTENSION), ['jpg', 'jpeg', 'png', 'gif']))
-                        <img src="{{ asset('storage/' . $pengeluaran->bukti_pembayaran) }}" 
-                             alt="Bukti Pembayaran" 
-                             class="w-32 h-32 object-cover rounded-lg border">
+                    @if($isUrl)
+                        @if($isImage)
+                            <img src="{{ $proof }}" 
+                                 alt="Bukti Pengeluaran" 
+                                 class="w-32 h-32 object-cover rounded-lg border">
+                        @else
+                            <div class="w-32 h-32 bg-gray-200 rounded-lg border flex items-center justify-center">
+                                <i class="fas fa-file-alt text-4xl text-gray-500"></i>
+                            </div>
+                        @endif
+                        <div>
+                            <p class="text-sm text-gray-600 mb-2">Bukti: {{ basename($path) ?: 'Tautan' }}</p>
+                            <a href="{{ $proof }}" 
+                               target="_blank" 
+                               class="inline-flex items-center px-3 py-2 bg-blue-600 text-white text-sm rounded-md hover:bg-blue-700 transition-colors">
+                                <i class="fas fa-external-link-alt mr-2"></i>Buka Bukti
+                            </a>
+                        </div>
                     @else
-                        <div class="w-32 h-32 bg-gray-200 rounded-lg border flex items-center justify-center">
-                            <i class="fas fa-file-pdf text-4xl text-red-500"></i>
+                        @php $legacyUrl = asset('storage/' . $proof); @endphp
+                        @if($isImage)
+                            <img src="{{ $legacyUrl }}" 
+                                 alt="Bukti Pengeluaran" 
+                                 class="w-32 h-32 object-cover rounded-lg border">
+                        @else
+                            <div class="w-32 h-32 bg-gray-200 rounded-lg border flex items-center justify-center">
+                                <i class="fas fa-file-pdf text-4xl text-red-500"></i>
+                            </div>
+                        @endif
+                        <div>
+                            <p class="text-sm text-gray-600 mb-2">File: {{ basename($proof) }}</p>
+                            <a href="{{ $legacyUrl }}" 
+                               target="_blank" 
+                               class="inline-flex items-center px-3 py-2 bg-blue-600 text-white text-sm rounded-md hover:bg-blue-700 transition-colors">
+                                <i class="fas fa-download mr-2"></i>Lihat Bukti
+                            </a>
                         </div>
                     @endif
-                    <div>
-                        <p class="text-sm text-gray-600 mb-2">File: {{ basename($pengeluaran->bukti_pembayaran) }}</p>
-                        <a href="{{ asset('storage/' . $pengeluaran->bukti_pembayaran) }}" 
-                           target="_blank" 
-                           class="inline-flex items-center px-3 py-2 bg-blue-600 text-white text-sm rounded-md hover:bg-blue-700 transition-colors">
-                            <i class="fas fa-download mr-2"></i>Download
-                        </a>
-                    </div>
-                </div>
-            </div>
-            @endif
-
-            <!-- Nota/Kwitansi -->
-            @if($pengeluaran->nota_kwitansi)
-            <div class="mt-6 bg-gray-50 rounded-lg p-4">
-                <h3 class="text-md font-semibold text-gray-700 mb-4 flex items-center">
-                    <i class="fas fa-receipt mr-2 text-orange-500"></i>Nota/Kwitansi
-                </h3>
-                <div class="flex items-center space-x-4">
-                    @if(in_array(pathinfo($pengeluaran->nota_kwitansi, PATHINFO_EXTENSION), ['jpg', 'jpeg', 'png', 'gif']))
-                        <img src="{{ asset('storage/' . $pengeluaran->nota_kwitansi) }}" 
-                             alt="Nota/Kwitansi" 
-                             class="w-32 h-32 object-cover rounded-lg border">
-                    @else
-                        <div class="w-32 h-32 bg-gray-200 rounded-lg border flex items-center justify-center">
-                            <i class="fas fa-file-pdf text-4xl text-red-500"></i>
-                        </div>
-                    @endif
-                    <div>
-                        <p class="text-sm text-gray-600 mb-2">File: {{ basename($pengeluaran->nota_kwitansi) }}</p>
-                        <a href="{{ asset('storage/' . $pengeluaran->nota_kwitansi) }}" 
-                           target="_blank" 
-                           class="inline-flex items-center px-3 py-2 bg-blue-600 text-white text-sm rounded-md hover:bg-blue-700 transition-colors">
-                            <i class="fas fa-download mr-2"></i>Download
-                        </a>
-                    </div>
                 </div>
             </div>
             @endif

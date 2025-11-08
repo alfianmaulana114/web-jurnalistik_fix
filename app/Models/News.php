@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class News extends Model
 {
@@ -39,8 +40,13 @@ class News extends Model
 
     public function genres(): BelongsToMany
     {
-        return $this->belongsToMany(NewsGenre::class, 'news_genre_pivot', 'news_id', 'news_genres_id')
+        return $this->belongsToMany(NewsGenre::class, 'news_genre_pivot', 'news_id', 'news_genre_id')
                     ->withTimestamps();
+    }
+
+    public function comments(): HasMany
+    {
+        return $this->hasMany(Comment::class);
     }
 
 }

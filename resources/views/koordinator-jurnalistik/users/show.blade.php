@@ -195,20 +195,9 @@
                 <div class="px-6 py-4 space-y-4">
                     <div class="flex items-center justify-between">
                         <span class="text-sm text-gray-500">Status</span>
-                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium
-                            @if($user->email_verified_at)
-                                bg-green-100 text-green-800
-                            @else
-                                bg-red-100 text-red-800
-                            @endif
-                        ">
-                            @if($user->email_verified_at)
-                                <i class="fas fa-check-circle mr-1"></i>
-                                Aktif
-                            @else
-                                <i class="fas fa-exclamation-circle mr-1"></i>
-                                Belum Verifikasi
-                            @endif
+                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                            <i class="fas fa-check-circle mr-1"></i>
+                            Aktif
                         </span>
                     </div>
                     
@@ -270,13 +259,6 @@
                         <i class="fas fa-key mr-2"></i>
                         Reset Password
                     </button>
-                    
-                    @if(!$user->email_verified_at)
-                    <button type="button" onclick="resendVerification()" class="w-full inline-flex items-center justify-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500">
-                        <i class="fas fa-paper-plane mr-2"></i>
-                        Kirim Ulang Verifikasi
-                    </button>
-                    @endif
                 </div>
             </div>
 
@@ -383,31 +365,6 @@ function resetPassword() {
         .catch(error => {
             console.error('Error:', error);
             alert('Terjadi kesalahan saat mengirim link reset password.');
-        });
-    }
-}
-
-function resendVerification() {
-    if (confirm('Apakah Anda yakin ingin mengirim ulang email verifikasi?')) {
-        // Here you would typically make an AJAX request to resend verification
-        fetch(`{{ route('koordinator-jurnalistik.users.resend-verification', $user) }}`, {
-            method: 'POST',
-            headers: {
-                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
-                'Content-Type': 'application/json',
-            },
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                alert('Email verifikasi telah dikirim ulang.');
-            } else {
-                alert('Gagal mengirim email verifikasi.');
-            }
-        })
-        .catch(error => {
-            console.error('Error:', error);
-            alert('Terjadi kesalahan saat mengirim email verifikasi.');
         });
     }
 }

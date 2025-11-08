@@ -275,7 +275,7 @@
                         <div class="flex items-start justify-between">
                             <div class="flex-1">
                                 <p class="font-medium text-gray-900">{{ $comment->name }}</p>
-                                <p class="text-sm text-gray-600 mt-1">{{ Str::limit($comment->comment, 80) }}</p>
+                                <p class="text-sm text-gray-600 mt-1">{{ Str::limit($comment->content, 80) }}</p>
                                 <p class="text-xs text-gray-500 mt-2">
                                     Pada: <a href="#" class="text-red-600 hover:text-red-800">{{ Str::limit($comment->news->title, 30) }}</a>
                                 </p>

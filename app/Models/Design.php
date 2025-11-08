@@ -18,18 +18,13 @@ class Design extends Model
      */
     protected $fillable = [
         'judul',
-        'deskripsi',
-        'jenis_desain',
-        'file_path',
-        'file_name',
-        'file_size',
-        'dimensi',
-        'status',
-        'catatan_revisi',
-        'content_id',
-        'proker_id',
+        // Simplified design structure
+        'media_url',
+        'jenis',
+        'catatan',
+        'berita_id',
+        // Legacy for compatibility (kept but not used in new flow)
         'created_by',
-        'reviewed_by',
     ];
 
     /**
@@ -52,6 +47,22 @@ class Design extends Model
     const STATUS_APPROVED = 'approved';
     const STATUS_PUBLISHED = 'published';
     const STATUS_REJECTED = 'rejected';
+
+    /**
+     * Simplified jenis options
+     */
+    const JENIS_DESAIN = 'desain';
+    const JENIS_VIDEO = 'video';
+    const JENIS_FUNFACT = 'funfact';
+
+    public static function getJenisOptions(): array
+    {
+        return [
+            self::JENIS_DESAIN => 'Desain',
+            self::JENIS_VIDEO => 'Video',
+            self::JENIS_FUNFACT => 'Funfact',
+        ];
+    }
 
     /**
      * Get all available design types
@@ -101,6 +112,14 @@ class Design extends Model
     }
 
     /**
+     * Get the news related to this design
+     */
+    public function berita(): BelongsTo
+    {
+        return $this->belongsTo(News::class, 'berita_id');
+    }
+
+    /**
      * Get the user who created this design
      */
     public function creator(): BelongsTo
@@ -145,7 +164,7 @@ class Design extends Model
      */
     public function getStatusLabel(): string
     {
-        return self::getAllStatuses()[$this->status] ?? $this->status;
+        return self::getAllStatuses()[$this->status] ?? ($this->status ?? '');
     }
 
     /**
@@ -174,7 +193,7 @@ class Design extends Model
      */
     public function getFileUrl(): string
     {
-        return Storage::url($this->file_path);
+        return $this->media_url ?? '';
     }
 
     /**
@@ -201,15 +220,7 @@ class Design extends Model
      */
     public function isImage(): bool
     {
-        return in_array($this->jenis_desain, [
-            self::TYPE_POSTER,
-            self::TYPE_BANNER,
-            self::TYPE_INFOGRAFIS,
-            self::TYPE_LOGO,
-            self::TYPE_THUMBNAIL,
-            self::TYPE_COVER,
-            self::TYPE_ILUSTRASI,
-        ]);
+        return $this->jenis === self::JENIS_DESAIN;
     }
 
     /**
@@ -217,7 +228,15 @@ class Design extends Model
      */
     public function isVideo(): bool
     {
-        return $this->jenis_desain === self::TYPE_VIDEO;
+        return $this->jenis === self::JENIS_VIDEO;
+    }
+
+    /**
+     * Check if design is a funfact
+     */
+    public function isFunfact(): bool
+    {
+        return $this->jenis === self::JENIS_FUNFACT;
     }
 
     /**

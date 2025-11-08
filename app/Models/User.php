@@ -81,6 +81,20 @@ class User extends Authenticatable
     }
 
     /**
+     * Get dashboard route based on user role
+     */
+    public function getDashboardRoute(): string
+    {
+        return match($this->role) {
+            self::ROLE_KOORDINATOR_JURNALISTIK => route('koordinator-jurnalistik.dashboard'),
+            self::ROLE_BENDAHARA => route('bendahara.dashboard'),
+            self::ROLE_SEKRETARIS => route('sekretaris.dashboard'),
+            self::ROLE_KOORDINATOR_REDAKSI => route('koordinator-redaksi.dashboard'),
+            default => route('home'),
+        };
+    }
+
+    /**
      * Check if user is koordinator jurnalistik
      */
     public function isKoordinatorJurnalistik(): bool
@@ -213,6 +227,14 @@ class User extends Authenticatable
     public function isSekretaris(): bool
     {
         return $this->role === self::ROLE_SEKRETARIS;
+    }
+
+    /**
+     * Check if user is koordinator redaksi
+     */
+    public function isKoordinatorRedaksi(): bool
+    {
+        return $this->role === self::ROLE_KOORDINATOR_REDAKSI;
     }
 
     /**

@@ -4,84 +4,76 @@
 @section('header', 'Tambah Program Kerja')
 
 @section('content')
-<div class="max-w-4xl mx-auto">
-    <div class="bg-white rounded-lg shadow">
-        <div class="px-6 py-4 border-b border-gray-200">
-            <div class="flex items-center justify-between">
-                <h3 class="text-lg font-medium text-gray-900">Tambah Program Kerja Baru</h3>
-                <a href="{{ route('koordinator-jurnalistik.prokers.index') }}" class="text-gray-600 hover:text-gray-900">
-                    <i class="fas fa-times text-xl"></i>
-                </a>
-            </div>
-        </div>
+<div class="container mx-auto px-4 py-6 max-w-4xl">
+    <div class="bg-white rounded-lg shadow-sm p-6">
+        <h3 class="text-2xl font-medium text-gray-800 mb-6">Tambah Program Kerja Baru</h3>
 
-        <form action="{{ route('koordinator-jurnalistik.prokers.store') }}" method="POST" class="p-6 space-y-6">
+        <form action="{{ route('koordinator-jurnalistik.prokers.store') }}" method="POST">
             @csrf
 
-            <!-- Basic Information -->
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div class="md:col-span-2">
-                    <label for="nama_proker" class="block text-sm font-medium text-gray-700">Nama Program Kerja <span class="text-red-500">*</span></label>
-                    <input type="text" name="nama_proker" id="nama_proker" value="{{ old('nama_proker') }}" required class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-red-500 focus:border-red-500 sm:text-sm @error('nama_proker') border-red-300 @enderror">
+                <div class="col-span-2">
+                    <label for="nama_proker" class="block text-sm font-medium text-gray-700 mb-2">Nama Program Kerja <span class="text-red-500">*</span></label>
+                    <input type="text" name="nama_proker" id="nama_proker" value="{{ old('nama_proker') }}" required class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-400 focus:border-transparent @error('nama_proker') border-red-500 @enderror">
                     @error('nama_proker')
-                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                        <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
                     @enderror
                 </div>
 
-                <div class="md:col-span-2">
-                    <label for="deskripsi" class="block text-sm font-medium text-gray-700">Deskripsi <span class="text-red-500">*</span></label>
-                    <textarea name="deskripsi" id="deskripsi" rows="4" required class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-red-500 focus:border-red-500 sm:text-sm @error('deskripsi') border-red-300 @enderror">{{ old('deskripsi') }}</textarea>
+                <div class="col-span-2">
+                    <label for="deskripsi" class="block text-sm font-medium text-gray-700 mb-2">Deskripsi <span class="text-red-500">*</span></label>
+                    <textarea name="deskripsi" id="deskripsi" rows="4" required class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-400 focus:border-transparent @error('deskripsi') border-red-500 @enderror">{{ old('deskripsi') }}</textarea>
                     @error('deskripsi')
-                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                        <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
                     @enderror
                 </div>
 
                 <div>
-                    <label for="tanggal_mulai" class="block text-sm font-medium text-gray-700">Tanggal Mulai <span class="text-red-500">*</span></label>
-                    <input type="date" name="tanggal_mulai" id="tanggal_mulai" value="{{ old('tanggal_mulai') }}" required class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-red-500 focus:border-red-500 sm:text-sm @error('tanggal_mulai') border-red-300 @enderror">
+                    <label for="tanggal_mulai" class="block text-sm font-medium text-gray-700 mb-2">Tanggal Mulai <span class="text-red-500">*</span></label>
+                    <input type="date" name="tanggal_mulai" id="tanggal_mulai" value="{{ old('tanggal_mulai') }}" required class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-400 focus:border-transparent @error('tanggal_mulai') border-red-500 @enderror">
                     @error('tanggal_mulai')
-                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                        <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
                     @enderror
                 </div>
 
                 <div>
-                    <label for="tanggal_selesai" class="block text-sm font-medium text-gray-700">Tanggal Selesai <span class="text-red-500">*</span></label>
-                    <input type="date" name="tanggal_selesai" id="tanggal_selesai" value="{{ old('tanggal_selesai') }}" required class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-red-500 focus:border-red-500 sm:text-sm @error('tanggal_selesai') border-red-300 @enderror">
+                    <label for="tanggal_selesai" class="block text-sm font-medium text-gray-700 mb-2">Tanggal Selesai <span class="text-red-500">*</span></label>
+                    <input type="date" name="tanggal_selesai" id="tanggal_selesai" value="{{ old('tanggal_selesai') }}" required class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-400 focus:border-transparent @error('tanggal_selesai') border-red-500 @enderror">
                     @error('tanggal_selesai')
-                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                        <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
                     @enderror
                 </div>
 
                 <div>
-                    <label for="status" class="block text-sm font-medium text-gray-700">Status <span class="text-red-500">*</span></label>
-                    <select name="status" id="status" required class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-red-500 focus:border-red-500 sm:text-sm @error('status') border-red-300 @enderror">
+                    <label for="status" class="block text-sm font-medium text-gray-700 mb-2">Status <span class="text-red-500">*</span></label>
+                    <select name="status" id="status" required class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-400 focus:border-transparent @error('status') border-red-500 @enderror">
                         <option value="">Pilih Status</option>
                         @foreach(\App\Models\Proker::getAllStatuses() as $key => $label)
                             <option value="{{ $key }}" {{ old('status') == $key ? 'selected' : '' }}>{{ $label }}</option>
                         @endforeach
                     </select>
                     @error('status')
-                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                        <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
                     @enderror
                 </div>
 
-                <div class="md:col-span-2">
-                    <label for="catatan" class="block text-sm font-medium text-gray-700">Catatan</label>
-                    <textarea name="catatan" id="catatan" rows="3" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-red-500 focus:border-red-500 sm:text-sm @error('catatan') border-red-300 @enderror">{{ old('catatan') }}</textarea>
+                <div class="col-span-2">
+                    <label for="catatan" class="block text-sm font-medium text-gray-700 mb-2">Catatan</label>
+                    <textarea name="catatan" id="catatan" rows="3" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-400 focus:border-transparent @error('catatan') border-red-500 @enderror">{{ old('catatan') }}</textarea>
                     @error('catatan')
-                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                        <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
                     @enderror
                 </div>
             </div>
 
             <!-- Committee Selection -->
-            <div class="border-t border-gray-200 pt-6">
+            <div class="border-t border-gray-200 pt-6 mt-6">
                 <h4 class="text-lg font-medium text-gray-900 mb-4">Panitia Program Kerja</h4>
                 <div id="committee-container" class="space-y-4">
                     <div class="committee-item grid grid-cols-1 md:grid-cols-3 gap-4 p-4 border border-gray-200 rounded-lg">
                         <div>
-                            <label class="block text-sm font-medium text-gray-700">Anggota</label>
-                            <select name="committees[0][user_id]" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-red-500 focus:border-red-500 sm:text-sm">
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Anggota</label>
+                            <select name="committees[0][user_id]" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-400 focus:border-transparent">
                                 <option value="">Pilih Anggota</option>
                                 @foreach($users as $user)
                                     <option value="{{ $user->id }}">{{ $user->name }} ({{ $user->role }})</option>
@@ -89,18 +81,18 @@
                             </select>
                         </div>
                         <div>
-                            <label class="block text-sm font-medium text-gray-700">Jabatan</label>
-                            <input type="text" name="committees[0][jabatan]" placeholder="Ketua, Sekretaris, dll." class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-red-500 focus:border-red-500 sm:text-sm">
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Jabatan</label>
+                            <input type="text" name="committees[0][jabatan]" placeholder="Ketua, Sekretaris, dll." class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-400 focus:border-transparent">
                         </div>
                         <div>
-                            <label class="block text-sm font-medium text-gray-700">Tugas</label>
-                            <input type="text" name="committees[0][tugas]" placeholder="Deskripsi tugas" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-red-500 focus:border-red-500 sm:text-sm">
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Tugas</label>
+                            <input type="text" name="committees[0][tugas]" placeholder="Deskripsi tugas" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-400 focus:border-transparent">
                         </div>
                     </div>
                 </div>
 
                 <div class="mt-4">
-                    <button type="button" id="add-committee" class="inline-flex items-center px-3 py-2 border border-gray-300 shadow-sm text-sm leading-4 font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500">
+                    <button type="button" id="add-committee" class="inline-flex items-center px-3 py-2 border border-gray-300 shadow-sm text-sm leading-4 font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
                         <i class="fas fa-plus mr-2"></i>
                         Tambah Anggota Panitia
                     </button>
@@ -108,13 +100,12 @@
             </div>
 
             <!-- Form Actions -->
-            <div class="flex items-center justify-end space-x-4 pt-6 border-t border-gray-200">
-                <a href="{{ route('koordinator-jurnalistik.prokers.index') }}" class="inline-flex items-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500">
+            <div class="flex justify-end space-x-4 mt-6">
+                <a href="{{ route('koordinator-jurnalistik.prokers.index') }}" class="px-4 py-2 bg-gray-200 text-gray-700 rounded-md hover:bg-gray-300 transition-colors">
                     Batal
                 </a>
-                <button type="submit" class="inline-flex items-center px-4 py-2 bg-red-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-red-700 focus:bg-red-700 active:bg-red-900 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 transition ease-in-out duration-150">
-                    <i class="fas fa-save mr-2"></i>
-                    Simpan Program Kerja
+                <button type="submit" id="submitBtn" class="px-6 py-3 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors">
+                    <i class="fas fa-save mr-2"></i>Simpan Program Kerja
                 </button>
             </div>
         </form>
@@ -133,26 +124,26 @@
         newCommittee.innerHTML = `
             <div>
                 <label class="block text-sm font-medium text-gray-700">Anggota</label>
-                <select name="committees[${committeeIndex}][user_id]" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-red-500 focus:border-red-500 sm:text-sm">
-                    <option value="">Pilih Anggota</option>
-                    @foreach($users as $user)
-                        <option value="{{ $user->id }}">{{ $user->name }} ({{ $user->role }})</option>
-                    @endforeach
-                </select>
-            </div>
-            <div>
-                <label class="block text-sm font-medium text-gray-700">Jabatan</label>
-                <input type="text" name="committees[${committeeIndex}][jabatan]" placeholder="Ketua, Sekretaris, dll." class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-red-500 focus:border-red-500 sm:text-sm">
-            </div>
-            <div class="flex items-end">
-                <div class="flex-1">
-                    <label class="block text-sm font-medium text-gray-700">Tugas</label>
-                    <input type="text" name="committees[${committeeIndex}][tugas]" placeholder="Deskripsi tugas" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-red-500 focus:border-red-500 sm:text-sm">
+                    <select name="committees[${committeeIndex}][user_id]" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-400 focus:border-transparent">
+                        <option value="">Pilih Anggota</option>
+                        @foreach($users as $user)
+                            <option value="{{ $user->id }}">{{ $user->name }} ({{ $user->role }})</option>
+                        @endforeach
+                    </select>
                 </div>
-                <button type="button" class="ml-2 p-2 text-red-600 hover:text-red-800" onclick="this.closest('.committee-item').remove()">
-                    <i class="fas fa-trash"></i>
-                </button>
-            </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Jabatan</label>
+                    <input type="text" name="committees[${committeeIndex}][jabatan]" placeholder="Ketua, Sekretaris, dll." class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-400 focus:border-transparent">
+                </div>
+                <div class="flex items-end">
+                    <div class="flex-1">
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Tugas</label>
+                        <input type="text" name="committees[${committeeIndex}][tugas]" placeholder="Deskripsi tugas" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-400 focus:border-transparent">
+                    </div>
+                    <button type="button" class="ml-2 p-2 text-red-600 hover:text-red-800" onclick="this.closest('.committee-item').remove()">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                </div>
         `;
         container.appendChild(newCommittee);
         committeeIndex++;
@@ -167,6 +158,22 @@
         if (endDateInput.value && endDateInput.value < startDate) {
             endDateInput.value = startDate;
         }
+    });
+    
+    // Double click protection
+    const form = document.querySelector('form');
+    const submitBtn = document.getElementById('submitBtn');
+    let isSubmitting = false;
+    
+    form.addEventListener('submit', function(e) {
+        if (isSubmitting) {
+            e.preventDefault();
+            return false;
+        }
+        
+        isSubmitting = true;
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Menyimpan...';
     });
 </script>
 @endpush

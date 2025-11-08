@@ -5,10 +5,10 @@
 
 @section('content')
 <div class="max-w-4xl mx-auto">
-    <div class="bg-white rounded-lg shadow">
-        <div class="px-6 py-4 border-b border-gray-200">
+    <div class="bg-white rounded-lg shadow-sm border border-gray-200">
+        <div class="px-6 py-5 border-b border-gray-200">
             <div class="flex items-center justify-between">
-                <h3 class="text-lg font-medium text-gray-900">Tambah User Baru</h3>
+                <h3 class="text-lg font-semibold text-gray-900">Tambah User Baru</h3>
                 <a href="{{ route('koordinator-jurnalistik.users.index') }}" class="text-gray-600 hover:text-gray-800">
                     <i class="fas fa-times text-xl"></i>
                 </a>
@@ -25,7 +25,7 @@
                 <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
                     <div>
                         <label for="name" class="block text-sm font-medium text-gray-700">Nama Lengkap <span class="text-red-500">*</span></label>
-                        <input type="text" name="name" id="name" value="{{ old('name') }}" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-red-500 focus:border-red-500 sm:text-sm @error('name') border-red-300 @enderror" required>
+                        <input type="text" name="name" id="name" value="{{ old('name') }}" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-2 focus:ring-blue-400 focus:border-blue-400 sm:text-sm @error('name') border-red-300 @enderror" required>
                         @error('name')
                             <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                         @enderror
@@ -33,7 +33,7 @@
 
                     <div>
                         <label for="nim" class="block text-sm font-medium text-gray-700">NIM <span class="text-red-500">*</span></label>
-                        <input type="number" name="nim" id="nim" value="{{ old('nim') }}" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-red-500 focus:border-red-500 sm:text-sm @error('nim') border-red-300 @enderror" required>
+                        <input type="number" name="nim" id="nim" value="{{ old('nim') }}" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-2 focus:ring-blue-400 focus:border-blue-400 sm:text-sm @error('nim') border-red-300 @enderror" required>
                         @error('nim')
                             <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                         @enderror
@@ -42,7 +42,7 @@
 
                 <div>
                     <label for="email" class="block text-sm font-medium text-gray-700">Email <span class="text-red-500">*</span></label>
-                    <input type="email" name="email" id="email" value="{{ old('email') }}" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-red-500 focus:border-red-500 sm:text-sm @error('email') border-red-300 @enderror" required>
+                    <input type="email" name="email" id="email" value="{{ old('email') }}" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-2 focus:ring-blue-400 focus:border-blue-400 sm:text-sm @error('email') border-red-300 @enderror" required>
                     @error('email')
                         <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                     @enderror
@@ -55,7 +55,7 @@
                 
                 <div>
                     <label for="role" class="block text-sm font-medium text-gray-700">Role <span class="text-red-500">*</span></label>
-                    <select name="role" id="role" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-red-500 focus:border-red-500 sm:text-sm @error('role') border-red-300 @enderror" required>
+                    <select name="role" id="role" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-2 focus:ring-blue-400 focus:border-blue-400 sm:text-sm @error('role') border-red-300 @enderror" required>
                         <option value="">Pilih Role</option>
                         
                         <optgroup label="Koordinator">
@@ -98,11 +98,29 @@
                 
                 <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
                     <div>
-                        <label for="password" class="block text-sm font-medium text-gray-700">Password <span class="text-red-500">*</span></label>
+                        <label for="password" class="block text-sm font-medium text-gray-700 mb-1">Password <span class="text-red-500">*</span></label>
                         <div class="relative">
-                            <input type="password" name="password" id="password" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-red-500 focus:border-red-500 sm:text-sm @error('password') border-red-300 @enderror" required>
-                            <button type="button" id="togglePassword" class="absolute inset-y-0 right-0 pr-3 flex items-center">
-                                <i class="fas fa-eye text-gray-400 hover:text-gray-600" id="eyeIcon"></i>
+                            <input 
+                                type="password" 
+                                name="password" 
+                                id="password" 
+                                class="block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm pr-10 py-2 pl-3 @error('password') border-red-300 focus:border-red-500 focus:ring-red-500 @enderror" 
+                                placeholder="Masukkan password" 
+                                required
+                            >
+                            <button 
+                                type="button" 
+                                id="togglePassword" 
+                                class="absolute inset-y-0 right-0 flex items-center pr-3 text-gray-400 hover:text-gray-600 focus:outline-none focus:text-gray-600 transition-colors duration-200"
+                                aria-label="Toggle password visibility"
+                            >
+                                <svg id="eyeIcon" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                                </svg>
+                                <svg id="eyeIconSlash" class="h-5 w-5 hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.29 3.29m0 0L3 3m3.29 3.29L12 12m-5.71-5.71L12 12" />
+                                </svg>
                             </button>
                         </div>
                         @error('password')
@@ -112,11 +130,29 @@
                     </div>
 
                     <div>
-                        <label for="password_confirmation" class="block text-sm font-medium text-gray-700">Konfirmasi Password <span class="text-red-500">*</span></label>
+                        <label for="password_confirmation" class="block text-sm font-medium text-gray-700 mb-1">Konfirmasi Password <span class="text-red-500">*</span></label>
                         <div class="relative">
-                            <input type="password" name="password_confirmation" id="password_confirmation" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-red-500 focus:border-red-500 sm:text-sm" required>
-                            <button type="button" id="togglePasswordConfirmation" class="absolute inset-y-0 right-0 pr-3 flex items-center">
-                                <i class="fas fa-eye text-gray-400 hover:text-gray-600" id="eyeIconConfirmation"></i>
+                            <input 
+                                type="password" 
+                                name="password_confirmation" 
+                                id="password_confirmation" 
+                                class="block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm pr-10 py-2 pl-3" 
+                                placeholder="Konfirmasi password" 
+                                required
+                            >
+                            <button 
+                                type="button" 
+                                id="togglePasswordConfirmation" 
+                                class="absolute inset-y-0 right-0 flex items-center pr-3 text-gray-400 hover:text-gray-600 focus:outline-none focus:text-gray-600 transition-colors duration-200"
+                                aria-label="Toggle password confirmation visibility"
+                            >
+                                <svg id="eyeIconConfirmation" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                                </svg>
+                                <svg id="eyeIconSlashConfirmation" class="h-5 w-5 hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.29 3.29m0 0L3 3m3.29 3.29L12 12m-5.71-5.71L12 12" />
+                                </svg>
                             </button>
                         </div>
                     </div>
@@ -140,7 +176,7 @@
                 <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
                     <div>
                         <label for="phone" class="block text-sm font-medium text-gray-700">Nomor Telepon</label>
-                        <input type="tel" name="phone" id="phone" value="{{ old('phone') }}" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-red-500 focus:border-red-500 sm:text-sm @error('phone') border-red-300 @enderror" placeholder="08xxxxxxxxxx">
+                        <input type="tel" name="phone" id="phone" value="{{ old('phone') }}" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-2 focus:ring-blue-400 focus:border-blue-400 sm:text-sm @error('phone') border-red-300 @enderror" placeholder="08xxxxxxxxxx">
                         @error('phone')
                             <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                         @enderror
@@ -148,7 +184,7 @@
 
                     <div>
                         <label for="angkatan" class="block text-sm font-medium text-gray-700">Angkatan</label>
-                        <input type="number" name="angkatan" id="angkatan" value="{{ old('angkatan', date('Y')) }}" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-red-500 focus:border-red-500 sm:text-sm @error('angkatan') border-red-300 @enderror" min="2000" max="{{ date('Y') + 1 }}">
+                        <input type="number" name="angkatan" id="angkatan" value="{{ old('angkatan', date('Y')) }}" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-2 focus:ring-blue-400 focus:border-blue-400 sm:text-sm @error('angkatan') border-red-300 @enderror" min="2000" max="{{ date('Y') + 1 }}">
                         @error('angkatan')
                             <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                         @enderror
@@ -157,7 +193,7 @@
 
                 <div>
                     <label for="bio" class="block text-sm font-medium text-gray-700">Bio/Deskripsi</label>
-                    <textarea name="bio" id="bio" rows="3" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-red-500 focus:border-red-500 sm:text-sm @error('bio') border-red-300 @enderror" placeholder="Ceritakan sedikit tentang diri Anda...">{{ old('bio') }}</textarea>
+                    <textarea name="bio" id="bio" rows="3" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-2 focus:ring-blue-400 focus:border-blue-400 sm:text-sm @error('bio') border-red-300 @enderror" placeholder="Ceritakan sedikit tentang diri Anda...">{{ old('bio') }}</textarea>
                     @error('bio')
                         <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                     @enderror
@@ -180,11 +216,11 @@
             </div>
 
             <!-- Submit Buttons -->
-            <div class="flex items-center justify-end space-x-3 pt-6 border-t">
-                <a href="{{ route('koordinator-jurnalistik.users.index') }}" class="inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500">
+            <div class="flex items-center justify-end gap-3 pt-6 border-t">
+                <a href="{{ route('koordinator-jurnalistik.users.index') }}" class="inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
                     Batal
                 </a>
-                <button type="submit" class="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500">
+                <button type="submit" class="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
                     <i class="fas fa-save mr-2"></i>
                     Simpan User
                 </button>
@@ -231,28 +267,53 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 
-    // Password visibility toggle
-    function setupPasswordToggle(inputId, toggleId, iconId) {
+    // Password visibility toggle - Using Tailwind SVG icons (only one icon visible at a time)
+    function setupPasswordToggle(inputId, toggleId, eyeIconId, eyeSlashIconId) {
         const input = document.getElementById(inputId);
         const toggle = document.getElementById(toggleId);
-        const icon = document.getElementById(iconId);
+        const eyeIcon = document.getElementById(eyeIconId);
+        const eyeSlashIcon = document.getElementById(eyeSlashIconId);
 
-        toggle.addEventListener('click', function() {
-            const type = input.getAttribute('type') === 'password' ? 'text' : 'password';
-            input.setAttribute('type', type);
-            
-            if (type === 'password') {
-                icon.classList.remove('fa-eye-slash');
-                icon.classList.add('fa-eye');
+        if (!input || !toggle || !eyeIcon || !eyeSlashIcon) {
+            console.error('Password toggle elements not found for:', inputId);
+            return;
+        }
+
+        // Ensure only one icon is visible initially (eye icon when password is hidden)
+        eyeIcon.classList.remove('hidden');
+        eyeSlashIcon.classList.add('hidden');
+
+        // Function to update icon based on current password state
+        function updateIcon() {
+            if (input.type === 'password') {
+                // Password is hidden - show eye icon (to show password), hide eye-slash
+                eyeIcon.classList.remove('hidden');
+                eyeSlashIcon.classList.add('hidden');
+                eyeSlashIcon.classList.remove('text-blue-500');
             } else {
-                icon.classList.remove('fa-eye');
-                icon.classList.add('fa-eye-slash');
+                // Password is visible - hide eye icon, show eye-slash (to hide password)
+                eyeIcon.classList.add('hidden');
+                eyeSlashIcon.classList.remove('hidden');
+                eyeSlashIcon.classList.add('text-blue-500');
             }
+        }
+
+        // Prevent form submission when clicking toggle
+        toggle.addEventListener('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            
+            // Toggle password visibility
+            input.type = input.type === 'password' ? 'text' : 'password';
+            
+            // Update icon based on new state
+            updateIcon();
         });
     }
 
-    setupPasswordToggle('password', 'togglePassword', 'eyeIcon');
-    setupPasswordToggle('password_confirmation', 'togglePasswordConfirmation', 'eyeIconConfirmation');
+    // Initialize password toggles
+    setupPasswordToggle('password', 'togglePassword', 'eyeIcon', 'eyeIconSlash');
+    setupPasswordToggle('password_confirmation', 'togglePasswordConfirmation', 'eyeIconConfirmation', 'eyeIconSlashConfirmation');
 
     // Password strength checker
     function checkPasswordStrength(password) {
@@ -362,6 +423,22 @@ document.addEventListener('DOMContentLoaded', function() {
         if (this.value.length > 0 && !this.value.startsWith('0') && !this.value.startsWith('+62')) {
             this.value = '0' + this.value.replace(/^[^0]/g, '');
         }
+    });
+    
+    // Double click protection
+    const form = document.querySelector('form');
+    const submitBtn = document.getElementById('submitBtn');
+    let isSubmitting = false;
+    
+    form.addEventListener('submit', function(e) {
+        if (isSubmitting) {
+            e.preventDefault();
+            return false;
+        }
+        
+        isSubmitting = true;
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Menyimpan...';
     });
 });
 </script>

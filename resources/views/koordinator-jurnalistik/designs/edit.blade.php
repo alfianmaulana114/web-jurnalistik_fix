@@ -4,337 +4,76 @@
 @section('header', 'Edit Desain')
 
 @section('content')
-<div class="max-w-4xl mx-auto">
-    <div class="bg-white rounded-lg shadow">
-        <div class="px-6 py-4 border-b border-gray-200">
-            <div class="flex items-center justify-between">
-                <h3 class="text-lg font-medium text-gray-900">Edit Desain Media</h3>
-                <a href="{{ route('koordinator-jurnalistik.designs.show', $design) }}" class="text-gray-600 hover:text-gray-800">
-                    <i class="fas fa-times text-xl"></i>
-                </a>
-            </div>
-        </div>
+<div class="container mx-auto px-4 py-6 max-w-4xl">
+    <div class="bg-white rounded-lg shadow-sm p-6">
+        <h3 class="text-2xl font-medium text-gray-800 mb-6">Edit Desain Media</h3>
 
-        <form action="{{ route('koordinator-jurnalistik.designs.update', $design) }}" method="POST" enctype="multipart/form-data" class="p-6 space-y-6">
+        <form action="{{ route('koordinator-jurnalistik.designs.update', $design) }}" method="POST">
             @csrf
             @method('PUT')
 
-            <!-- Basic Information -->
-            <div class="space-y-4">
-                <h4 class="text-md font-medium text-gray-900 border-b pb-2">Informasi Dasar</h4>
-                
-                <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
-                    <div class="lg:col-span-2">
-                        <label for="judul" class="block text-sm font-medium text-gray-700">Judul Desain <span class="text-red-500">*</span></label>
-                        <input type="text" name="judul" id="judul" value="{{ old('judul', $design->judul) }}" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-red-500 focus:border-red-500 sm:text-sm @error('judul') border-red-300 @enderror" required>
-                        @error('judul')
-                            <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                        @enderror
-                    </div>
-
-                    <div>
-                        <label for="type" class="block text-sm font-medium text-gray-700">Tipe Desain <span class="text-red-500">*</span></label>
-                        <select name="type" id="type" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-red-500 focus:border-red-500 sm:text-sm @error('type') border-red-300 @enderror" required>
-                            <option value="">Pilih Tipe</option>
-                            <option value="poster" {{ old('type', $design->type) === 'poster' ? 'selected' : '' }}>Poster</option>
-                            <option value="banner" {{ old('type', $design->type) === 'banner' ? 'selected' : '' }}>Banner</option>
-                            <option value="infographic" {{ old('type', $design->type) === 'infographic' ? 'selected' : '' }}>Infografis</option>
-                            <option value="logo" {{ old('type', $design->type) === 'logo' ? 'selected' : '' }}>Logo</option>
-                            <option value="flyer" {{ old('type', $design->type) === 'flyer' ? 'selected' : '' }}>Flyer</option>
-                            <option value="thumbnail" {{ old('type', $design->type) === 'thumbnail' ? 'selected' : '' }}>Thumbnail</option>
-                            <option value="social_media" {{ old('type', $design->type) === 'social_media' ? 'selected' : '' }}>Media Sosial</option>
-                        </select>
-                        @error('type')
-                            <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                        @enderror
-                    </div>
-
-                    <div>
-                        <label for="status" class="block text-sm font-medium text-gray-700">Status <span class="text-red-500">*</span></label>
-                        <select name="status" id="status" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-red-500 focus:border-red-500 sm:text-sm @error('status') border-red-300 @enderror" required>
-                            <option value="">Pilih Status</option>
-                            <option value="draft" {{ old('status', $design->status) === 'draft' ? 'selected' : '' }}>Draft</option>
-                            <option value="in_progress" {{ old('status', $design->status) === 'in_progress' ? 'selected' : '' }}>Dalam Proses</option>
-                            <option value="review" {{ old('status', $design->status) === 'review' ? 'selected' : '' }}>Review</option>
-                            <option value="completed" {{ old('status', $design->status) === 'completed' ? 'selected' : '' }}>Selesai</option>
-                            <option value="needs_revision" {{ old('status', $design->status) === 'needs_revision' ? 'selected' : '' }}>Perlu Revisi</option>
-                        </select>
-                        @error('status')
-                            <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                        @enderror
-                    </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <!-- Judul Otomatis dari Berita -->
+                <div class="col-span-2">
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Judul (otomatis dari berita)</label>
+                    <input type="text" id="judul_auto" class="w-full px-3 py-2 border border-gray-300 rounded-md bg-gray-100 focus:ring-2 focus:ring-blue-400 focus:border-transparent" value="{{ $design->berita->title ?? $design->judul }}" placeholder="Pilih berita untuk menampilkan judul" disabled>
+                    <p class="text-xs text-gray-500 mt-1">Judul akan disesuaikan dengan judul berita terpilih.</p>
                 </div>
 
+                <!-- Jenis -->
                 <div>
-                    <label for="deskripsi" class="block text-sm font-medium text-gray-700">Deskripsi <span class="text-red-500">*</span></label>
-                    <textarea name="deskripsi" id="deskripsi" rows="4" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-red-500 focus:border-red-500 sm:text-sm @error('deskripsi') border-red-300 @enderror" placeholder="Jelaskan konsep, tujuan, dan detail desain" required>{{ old('deskripsi', $design->deskripsi) }}</textarea>
-                    @error('deskripsi')
-                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                    <label for="jenis" class="block text-sm font-medium text-gray-700 mb-2">Jenis <span class="text-red-500">*</span></label>
+                    @php($jenisOptions = \App\Models\Design::getJenisOptions())
+                    <select name="jenis" id="jenis" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-400 focus:border-transparent">
+                        <option value="">Pilih Jenis</option>
+                        @foreach($jenisOptions as $key => $label)
+                            <option value="{{ $key }}" {{ old('jenis', $design->jenis) == $key ? 'selected' : '' }}>{{ $label }}</option>
+                        @endforeach
+                    </select>
+                    @error('jenis')
+                        <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
+                    @enderror
+                </div>
+
+                <!-- Link Media -->
+                <div class="col-span-2">
+                    <label for="media_url" class="block text-sm font-medium text-gray-700 mb-2">Link Media <span class="text-red-500">*</span></label>
+                    <input type="url" name="media_url" id="media_url" value="{{ old('media_url', $design->media_url) }}" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-400 focus:border-transparent" placeholder="https://...">
+                    @error('media_url')
+                        <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
+                    @enderror
+                </div>
+
+                <!-- Berita terkait -->
+                <div class="col-span-2">
+                    <label for="berita_id" class="block text-sm font-medium text-gray-700 mb-2">Terkait Berita (Opsional)</label>
+                    <select name="berita_id" id="berita_id" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-400 focus:border-transparent">
+                        <option value="">Pilih Berita</option>
+                        @foreach($availableNews as $news)
+                            <option value="{{ $news->id }}" data-title="{{ $news->title }}" {{ old('berita_id', $design->berita_id) == $news->id ? 'selected' : '' }}>{{ $news->title }}</option>
+                        @endforeach
+                    </select>
+                    @error('berita_id')
+                        <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
+                    @enderror
+                </div>
+
+                <!-- Catatan -->
+                <div class="col-span-2">
+                    <label for="catatan" class="block text-sm font-medium text-gray-700 mb-2">Catatan</label>
+                    <textarea name="catatan" id="catatan" rows="4" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-400 focus:border-transparent" placeholder="Catatan tambahan">{{ old('catatan', $design->catatan) }}</textarea>
+                    @error('catatan')
+                        <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
                     @enderror
                 </div>
             </div>
 
-            <!-- Current File & Upload New -->
-            <div class="space-y-4">
-                <h4 class="text-md font-medium text-gray-900 border-b pb-2">File Desain</h4>
-                
-                @if($design->file_path)
-                    <div class="bg-gray-50 border border-gray-200 rounded-md p-4">
-                        <h5 class="text-sm font-medium text-gray-900 mb-3">File Saat Ini</h5>
-                        <div class="flex items-center space-x-4">
-                            @php
-                                $fileExtension = pathinfo($design->file_path, PATHINFO_EXTENSION);
-                                $imageExtensions = ['jpg', 'jpeg', 'png', 'gif', 'webp'];
-                            @endphp
-                            
-                            @if(in_array(strtolower($fileExtension), $imageExtensions))
-                                <img src="{{ asset('storage/' . $design->file_path) }}" alt="{{ $design->judul }}" class="h-20 w-20 object-cover rounded-lg">
-                            @else
-                                <div class="h-20 w-20 bg-gray-200 rounded-lg flex items-center justify-center">
-                                    <i class="fas fa-file-alt text-2xl text-gray-400"></i>
-                                </div>
-                            @endif
-                            
-                            <div class="flex-1">
-                                <p class="text-sm font-medium text-gray-900">{{ basename($design->file_path) }}</p>
-                                <p class="text-sm text-gray-500">{{ strtoupper($fileExtension) }} • {{ number_format($design->ukuran_file ?? 0) }} KB</p>
-                                @if($design->lebar && $design->tinggi)
-                                    <p class="text-sm text-gray-500">{{ $design->lebar }} x {{ $design->tinggi }} px</p>
-                                @endif
-                            </div>
-                            
-                            <a href="{{ asset('storage/' . $design->file_path) }}" target="_blank" class="inline-flex items-center px-3 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50">
-                                <i class="fas fa-download mr-2"></i>
-                                Download
-                            </a>
-                        </div>
-                    </div>
-                @endif
-                
-                <div>
-                    <label for="file" class="block text-sm font-medium text-gray-700">
-                        {{ $design->file_path ? 'Ganti File Desain' : 'Upload File Desain' }}
-                    </label>
-                    <div class="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-gray-300 border-dashed rounded-md hover:border-red-400 transition-colors">
-                        <div class="space-y-1 text-center">
-                            <div id="file-preview" class="hidden">
-                                <img id="preview-image" class="mx-auto h-32 w-auto rounded-lg" src="" alt="Preview">
-                            </div>
-                            <div id="upload-placeholder">
-                                <i class="fas fa-cloud-upload-alt text-4xl text-gray-400"></i>
-                                <div class="flex text-sm text-gray-600">
-                                    <label for="file" class="relative cursor-pointer bg-white rounded-md font-medium text-red-600 hover:text-red-500 focus-within:outline-none focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-red-500">
-                                        <span>Upload file</span>
-                                        <input id="file" name="file" type="file" class="sr-only" accept="image/*,.pdf,.ai,.psd,.eps">
-                                    </label>
-                                    <p class="pl-1">atau drag and drop</p>
-                                </div>
-                                <p class="text-xs text-gray-500">PNG, JPG, PDF, AI, PSD, EPS hingga 10MB</p>
-                                @if($design->file_path)
-                                    <p class="text-xs text-gray-400 mt-2">Kosongkan jika tidak ingin mengganti file</p>
-                                @endif
-                            </div>
-                        </div>
-                    </div>
-                    @error('file')
-                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                    @enderror
-                </div>
-
-                <div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
-                    <div>
-                        <label for="lebar" class="block text-sm font-medium text-gray-700">Lebar (px)</label>
-                        <input type="number" name="lebar" id="lebar" value="{{ old('lebar', $design->lebar) }}" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-red-500 focus:border-red-500 sm:text-sm @error('lebar') border-red-300 @enderror" min="1">
-                        @error('lebar')
-                            <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                        @enderror
-                    </div>
-
-                    <div>
-                        <label for="tinggi" class="block text-sm font-medium text-gray-700">Tinggi (px)</label>
-                        <input type="number" name="tinggi" id="tinggi" value="{{ old('tinggi', $design->tinggi) }}" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-red-500 focus:border-red-500 sm:text-sm @error('tinggi') border-red-300 @enderror" min="1">
-                        @error('tinggi')
-                            <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                        @enderror
-                    </div>
-
-                    <div>
-                        <label for="ukuran_file" class="block text-sm font-medium text-gray-700">Ukuran File (KB)</label>
-                        <input type="number" name="ukuran_file" id="ukuran_file" value="{{ old('ukuran_file', $design->ukuran_file) }}" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-red-500 focus:border-red-500 sm:text-sm @error('ukuran_file') border-red-300 @enderror" min="1" readonly>
-                        @error('ukuran_file')
-                            <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                        @enderror
-                    </div>
-                </div>
-            </div>
-
-            <!-- Relationships -->
-            <div class="space-y-4">
-                <h4 class="text-md font-medium text-gray-900 border-b pb-2">Keterkaitan</h4>
-                
-                <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
-                    <div>
-                        <label for="content_id" class="block text-sm font-medium text-gray-700">Konten Terkait</label>
-                        <select name="content_id" id="content_id" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-red-500 focus:border-red-500 sm:text-sm @error('content_id') border-red-300 @enderror">
-                            <option value="">Pilih Konten (Opsional)</option>
-                            @foreach($contents ?? [] as $content)
-                                <option value="{{ $content->id }}" {{ old('content_id', $design->content_id) == $content->id ? 'selected' : '' }}>
-                                    {{ $content->judul }} ({{ ucfirst($content->type) }})
-                                </option>
-                            @endforeach
-                        </select>
-                        @error('content_id')
-                            <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                        @enderror
-                    </div>
-
-                    <div>
-                        <label for="proker_id" class="block text-sm font-medium text-gray-700">Program Kerja Terkait</label>
-                        <select name="proker_id" id="proker_id" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-red-500 focus:border-red-500 sm:text-sm @error('proker_id') border-red-300 @enderror">
-                            <option value="">Pilih Program Kerja (Opsional)</option>
-                            @foreach($prokers ?? [] as $proker)
-                                <option value="{{ $proker->id }}" {{ old('proker_id', $design->proker_id) == $proker->id ? 'selected' : '' }}>
-                                    {{ $proker->nama }} ({{ ucfirst($proker->status) }})
-                                </option>
-                            @endforeach
-                        </select>
-                        @error('proker_id')
-                            <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                        @enderror
-                    </div>
-                </div>
-
-                <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
-                    <div>
-                        <label for="creator_id" class="block text-sm font-medium text-gray-700">Pembuat Desain</label>
-                        <select name="creator_id" id="creator_id" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-red-500 focus:border-red-500 sm:text-sm @error('creator_id') border-red-300 @enderror">
-                            <option value="">Pilih Pembuat (Opsional)</option>
-                            @foreach($creators ?? [] as $creator)
-                                <option value="{{ $creator->id }}" {{ old('creator_id', $design->creator_id) == $creator->id ? 'selected' : '' }}>
-                                    {{ $creator->name }} ({{ $creator->role }})
-                                </option>
-                            @endforeach
-                        </select>
-                        @error('creator_id')
-                            <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                        @enderror
-                    </div>
-
-                    <div>
-                        <label for="reviewer_id" class="block text-sm font-medium text-gray-700">Reviewer</label>
-                        <select name="reviewer_id" id="reviewer_id" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-red-500 focus:border-red-500 sm:text-sm @error('reviewer_id') border-red-300 @enderror">
-                            <option value="">Pilih Reviewer (Opsional)</option>
-                            @foreach($reviewers ?? [] as $reviewer)
-                                <option value="{{ $reviewer->id }}" {{ old('reviewer_id', $design->reviewer_id) == $reviewer->id ? 'selected' : '' }}>
-                                    {{ $reviewer->name }} ({{ $reviewer->role }})
-                                </option>
-                            @endforeach
-                        </select>
-                        @error('reviewer_id')
-                            <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                        @enderror
-                    </div>
-                </div>
-            </div>
-
-            <!-- Notes -->
-            <div class="space-y-4">
-                <h4 class="text-md font-medium text-gray-900 border-b pb-2">Catatan</h4>
-                
-                <div>
-                    <label for="catatan_revisi" class="block text-sm font-medium text-gray-700">Catatan Revisi</label>
-                    <textarea name="catatan_revisi" id="catatan_revisi" rows="3" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-red-500 focus:border-red-500 sm:text-sm @error('catatan_revisi') border-red-300 @enderror" placeholder="Catatan untuk revisi atau feedback">{{ old('catatan_revisi', $design->catatan_revisi) }}</textarea>
-                    @error('catatan_revisi')
-                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                    @enderror
-                </div>
-            </div>
-
-            <!-- Status Change Warnings -->
-            <div id="statusChangeAlert" class="hidden bg-yellow-50 border border-yellow-200 rounded-md p-4">
-                <div class="flex">
-                    <div class="flex-shrink-0">
-                        <i class="fas fa-exclamation-triangle text-yellow-400"></i>
-                    </div>
-                    <div class="ml-3">
-                        <h3 class="text-sm font-medium text-yellow-800">Perhatian</h3>
-                        <div class="mt-2 text-sm text-yellow-700">
-                            <p id="statusChangeMessage"></p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Type Specific Guidelines -->
-            <div id="typeGuidelines" class="space-y-4">
-                <h4 class="text-md font-medium text-gray-900 border-b pb-2">Panduan Desain</h4>
-                
-                <!-- Poster Guidelines -->
-                <div id="posterGuidelines" class="hidden bg-blue-50 border border-blue-200 rounded-md p-4">
-                    <h5 class="text-sm font-medium text-blue-800 mb-2">Panduan Poster:</h5>
-                    <ul class="text-sm text-blue-700 space-y-1">
-                        <li>• Ukuran standar: A3 (297x420mm) atau A4 (210x297mm)</li>
-                        <li>• Resolusi minimal: 300 DPI untuk cetak</li>
-                        <li>• Gunakan hierarki visual yang jelas</li>
-                        <li>• Pastikan teks mudah dibaca dari jarak jauh</li>
-                    </ul>
-                </div>
-
-                <!-- Banner Guidelines -->
-                <div id="bannerGuidelines" class="hidden bg-yellow-50 border border-yellow-200 rounded-md p-4">
-                    <h5 class="text-sm font-medium text-yellow-800 mb-2">Panduan Banner:</h5>
-                    <ul class="text-sm text-yellow-700 space-y-1">
-                        <li>• Ukuran web: 728x90px, 300x250px, atau 320x50px</li>
-                        <li>• Ukuran cetak: sesuai kebutuhan lokasi</li>
-                        <li>• Pesan harus singkat dan jelas</li>
-                        <li>• Gunakan call-to-action yang menarik</li>
-                    </ul>
-                </div>
-
-                <!-- Infographic Guidelines -->
-                <div id="infographicGuidelines" class="hidden bg-green-50 border border-green-200 rounded-md p-4">
-                    <h5 class="text-sm font-medium text-green-800 mb-2">Panduan Infografis:</h5>
-                    <ul class="text-sm text-green-700 space-y-1">
-                        <li>• Gunakan data yang akurat dan terpercaya</li>
-                        <li>• Buat alur informasi yang logis</li>
-                        <li>• Gunakan ikon dan ilustrasi yang konsisten</li>
-                        <li>• Pastikan kontras warna yang baik</li>
-                    </ul>
-                </div>
-
-                <!-- Social Media Guidelines -->
-                <div id="socialMediaGuidelines" class="hidden bg-purple-50 border border-purple-200 rounded-md p-4">
-                    <h5 class="text-sm font-medium text-purple-800 mb-2">Panduan Media Sosial:</h5>
-                    <ul class="text-sm text-purple-700 space-y-1">
-                        <li>• Instagram Post: 1080x1080px (square)</li>
-                        <li>• Instagram Story: 1080x1920px</li>
-                        <li>• Facebook Post: 1200x630px</li>
-                        <li>• Twitter Header: 1500x500px</li>
-                    </ul>
-                </div>
-            </div>
-
-            <!-- Submit Buttons -->
-            <div class="flex items-center justify-end space-x-3 pt-6 border-t">
-                <a href="{{ route('koordinator-jurnalistik.designs.show', $design) }}" class="inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500">
-                    Batal
-                </a>
-                <button type="submit" name="action" value="save" class="inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500">
-                    <i class="fas fa-save mr-2"></i>
-                    Simpan
+            <!-- Actions -->
+            <div class="flex justify-end space-x-4 mt-6">
+                <a href="{{ route('koordinator-jurnalistik.designs.show', $design) }}" class="px-4 py-2 bg-gray-200 text-gray-700 rounded-md hover:bg-gray-300 transition-colors">Batal</a>
+                <button type="submit" id="submitBtn" class="px-6 py-3 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors">
+                    <i class="fas fa-save mr-2"></i>Simpan Perubahan
                 </button>
-                @if($design->status === 'draft')
-                    <button type="submit" name="action" value="progress" class="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-yellow-600 hover:bg-yellow-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-yellow-500">
-                        <i class="fas fa-play mr-2"></i>
-                        Simpan & Mulai Proses
-                    </button>
-                @endif
-                @if($design->status === 'in_progress')
-                    <button type="submit" name="action" value="review" class="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
-                        <i class="fas fa-paper-plane mr-2"></i>
-                        Simpan & Kirim Review
-                    </button>
-                @endif
             </div>
         </form>
     </div>
@@ -343,214 +82,31 @@
 @push('scripts')
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    const fileInput = document.getElementById('file');
-    const previewContainer = document.getElementById('file-preview');
-    const previewImage = document.getElementById('preview-image');
-    const uploadPlaceholder = document.getElementById('upload-placeholder');
-    const lebarInput = document.getElementById('lebar');
-    const tinggiInput = document.getElementById('tinggi');
-    const ukuranFileInput = document.getElementById('ukuran_file');
-    const typeSelect = document.getElementById('type');
-    const statusSelect = document.getElementById('status');
-    const statusChangeAlert = document.getElementById('statusChangeAlert');
-    const statusChangeMessage = document.getElementById('statusChangeMessage');
-    const originalStatus = '{{ $design->status }}';
-
-    // File upload handler
-    fileInput.addEventListener('change', function(e) {
-        const file = e.target.files[0];
-        if (file) {
-            // Show file size
-            const fileSizeKB = Math.round(file.size / 1024);
-            ukuranFileInput.value = fileSizeKB;
-
-            // Show preview for images
-            if (file.type.startsWith('image/')) {
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    previewImage.src = e.target.result;
-                    previewContainer.classList.remove('hidden');
-                    uploadPlaceholder.classList.add('hidden');
-
-                    // Get image dimensions
-                    const img = new Image();
-                    img.onload = function() {
-                        lebarInput.value = this.width;
-                        tinggiInput.value = this.height;
-                    };
-                    img.src = e.target.result;
-                };
-                reader.readAsDataURL(file);
-            } else {
-                // For non-image files, just hide placeholder
-                uploadPlaceholder.classList.add('hidden');
-                previewContainer.classList.add('hidden');
-            }
-        }
-    });
-
-    // Status change handler
-    function handleStatusChange() {
-        const newStatus = statusSelect.value;
-        
-        if (newStatus !== originalStatus) {
-            let message = '';
-            
-            switch (newStatus) {
-                case 'completed':
-                    if (originalStatus !== 'review') {
-                        message = 'Anda akan mengubah status menjadi "Selesai". Pastikan desain sudah final.';
-                    }
-                    break;
-                case 'needs_revision':
-                    message = 'Anda akan mengubah status menjadi "Perlu Revisi". Pastikan catatan revisi sudah diisi.';
-                    break;
-                case 'review':
-                    if (originalStatus === 'completed') {
-                        message = 'Anda akan mengubah status dari "Selesai" ke "Review". Apakah ada masalah dengan desain?';
-                    }
-                    break;
-                case 'draft':
-                    if (['completed', 'review'].includes(originalStatus)) {
-                        message = 'Anda akan mengubah status kembali ke "Draft". Ini akan memerlukan proses ulang.';
-                    }
-                    break;
-            }
-            
-            if (message) {
-                statusChangeMessage.textContent = message;
-                statusChangeAlert.classList.remove('hidden');
-            } else {
-                statusChangeAlert.classList.add('hidden');
-            }
-        } else {
-            statusChangeAlert.classList.add('hidden');
+    const beritaSelect = document.getElementById('berita_id');
+    const judulAuto = document.getElementById('judul_auto');
+    function updateJudulAuto() {
+        const opt = beritaSelect.options[beritaSelect.selectedIndex];
+        const title = opt ? opt.getAttribute('data-title') : '';
+        if (title) {
+            judulAuto.value = title;
         }
     }
+    beritaSelect.addEventListener('change', updateJudulAuto);
     
-    statusSelect.addEventListener('change', handleStatusChange);
-    handleStatusChange(); // Initial check
-
-    // Type-specific guidelines
-    const guidelines = {
-        poster: document.getElementById('posterGuidelines'),
-        banner: document.getElementById('bannerGuidelines'),
-        infographic: document.getElementById('infographicGuidelines'),
-        social_media: document.getElementById('socialMediaGuidelines')
-    };
-
-    function showTypeGuidelines() {
-        // Hide all guidelines first
-        Object.values(guidelines).forEach(guideline => {
-            if (guideline) guideline.classList.add('hidden');
-        });
-
-        // Show relevant guideline
-        const selectedType = typeSelect.value;
-        if (guidelines[selectedType]) {
-            guidelines[selectedType].classList.remove('hidden');
-        }
-    }
-
-    typeSelect.addEventListener('change', showTypeGuidelines);
-    showTypeGuidelines(); // Initial check
-
-    // Form submission handler
+    // Double click protection
     const form = document.querySelector('form');
-    form.addEventListener('submit', function(e) {
-        const action = e.submitter.value;
-        if (action === 'progress') {
-            statusSelect.value = 'in_progress';
-        } else if (action === 'review') {
-            statusSelect.value = 'review';
-        }
-    });
-
-    // Auto-resize textareas
-    const textareas = document.querySelectorAll('textarea');
-    textareas.forEach(textarea => {
-        textarea.addEventListener('input', function() {
-            this.style.height = 'auto';
-            this.style.height = this.scrollHeight + 'px';
-        });
-        
-        // Initial resize
-        textarea.style.height = 'auto';
-        textarea.style.height = textarea.scrollHeight + 'px';
-    });
-
-    // Drag and drop functionality
-    const dropZone = document.querySelector('.border-dashed');
+    const submitBtn = document.getElementById('submitBtn');
+    let isSubmitting = false;
     
-    ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
-        dropZone.addEventListener(eventName, preventDefaults, false);
-    });
-
-    function preventDefaults(e) {
-        e.preventDefault();
-        e.stopPropagation();
-    }
-
-    ['dragenter', 'dragover'].forEach(eventName => {
-        dropZone.addEventListener(eventName, highlight, false);
-    });
-
-    ['dragleave', 'drop'].forEach(eventName => {
-        dropZone.addEventListener(eventName, unhighlight, false);
-    });
-
-    function highlight(e) {
-        dropZone.classList.add('border-red-400', 'bg-red-50');
-    }
-
-    function unhighlight(e) {
-        dropZone.classList.remove('border-red-400', 'bg-red-50');
-    }
-
-    dropZone.addEventListener('drop', handleDrop, false);
-
-    function handleDrop(e) {
-        const dt = e.dataTransfer;
-        const files = dt.files;
-        
-        if (files.length > 0) {
-            fileInput.files = files;
-            fileInput.dispatchEvent(new Event('change'));
-        }
-    }
-
-    // Relationship exclusivity (content OR proker, not both)
-    const contentSelect = document.getElementById('content_id');
-    const prokerSelect = document.getElementById('proker_id');
-    const originalContent = '{{ $design->content_id }}';
-    const originalProker = '{{ $design->proker_id }}';
-
-    contentSelect.addEventListener('change', function() {
-        if (this.value) {
-            prokerSelect.value = '';
+    form.addEventListener('submit', function(e) {
+        if (isSubmitting) {
+            e.preventDefault();
+            return false;
         }
         
-        // Warn if changing existing relationship
-        if (originalContent && this.value !== originalContent) {
-            const confirmation = confirm('Anda akan mengubah konten terkait. Apakah Anda yakin?');
-            if (!confirmation) {
-                this.value = originalContent;
-            }
-        }
-    });
-
-    prokerSelect.addEventListener('change', function() {
-        if (this.value) {
-            contentSelect.value = '';
-        }
-        
-        // Warn if changing existing relationship
-        if (originalProker && this.value !== originalProker) {
-            const confirmation = confirm('Anda akan mengubah program kerja terkait. Apakah Anda yakin?');
-            if (!confirmation) {
-                this.value = originalProker;
-            }
-        }
+        isSubmitting = true;
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Menyimpan...';
     });
 });
 </script>

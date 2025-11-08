@@ -78,15 +78,7 @@
         </div>
         @endif
 
-        <!-- Tindak Lanjut -->
-        @if($notulensi->tindak_lanjut)
-        <div class="mb-6">
-            <p class="text-sm font-medium text-gray-700 mb-2">Tindak Lanjut</p>
-            <div class="bg-yellow-50 rounded-md p-4">
-                <p class="text-gray-900 whitespace-pre-line">{{ $notulensi->tindak_lanjut }}</p>
-            </div>
-        </div>
-        @endif
+        <!-- Tindak Lanjut: dihapus sesuai permintaan -->
 
         <!-- Back Button -->
         <div class="mt-6">

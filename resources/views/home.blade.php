@@ -126,6 +126,11 @@
         </div>
     </nav>
 
+    <!-- Flash Messages -->
+    <div class="max-w-7xl mx-auto px-4 pt-4">
+        @include('partials.flash')
+    </div>
+
     <div class="bg-gray-100 min-h-screen">
         <div class="max-w-7xl mx-auto px-4 py-8">
             <!-- Headline Section -->

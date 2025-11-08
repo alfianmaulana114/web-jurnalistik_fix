@@ -98,7 +98,7 @@
 
             <!-- Submit Button -->
             <div class="mt-8 flex justify-end">
-                <button type="submit" class="px-6 py-3 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors">
+                <button type="submit" id="submitBtn" class="px-6 py-3 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors">
                     <i class="fas fa-save mr-2"></i>Simpan Berita
                 </button>
             </div>
@@ -327,6 +327,22 @@ document.addEventListener('DOMContentLoaded', function() {
                 fileInput.value = '';
             });
         }, 'image/webp', 0.8);
+    });
+    
+    // Double click protection
+    const form = document.querySelector('form');
+    const submitBtn = document.getElementById('submitBtn');
+    let isSubmitting = false;
+    
+    form.addEventListener('submit', function(e) {
+        if (isSubmitting) {
+            e.preventDefault();
+            return false;
+        }
+        
+        isSubmitting = true;
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Menyimpan...';
     });
 });
 </script>

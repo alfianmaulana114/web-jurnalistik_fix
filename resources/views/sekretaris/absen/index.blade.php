@@ -21,21 +21,16 @@
 
     <!-- Filters -->
     <div class="bg-white rounded-lg shadow p-6">
-        <form method="GET" action="{{ route('sekretaris.absen.index') }}" class="grid grid-cols-1 md:grid-cols-4 gap-4">
+        <form method="GET" action="{{ route('sekretaris.absen.index') }}" class="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div>
-                <label for="bulan" class="block text-sm font-medium text-gray-700">Bulan</label>
-                <select name="bulan" id="bulan" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
-                    @foreach(\App\Models\Absen::getAllBulan() as $key => $label)
-                        <option value="{{ $key }}" {{ request('bulan') == $key ? 'selected' : '' }}>{{ $label }}</option>
+                <label for="notulensi_id" class="block text-sm font-medium text-gray-700">Rapat</label>
+                <select name="notulensi_id" id="notulensi_id" required class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
+                    <option value="">Pilih rapat</option>
+                    @foreach($meetings as $m)
+                        <option value="{{ $m->id }}" {{ (string)request('notulensi_id') === (string)$m->id ? 'selected' : '' }}>
+                            {{ $m->judul }} - {{ $m->tanggal->format('d M Y') }}
+                        </option>
                     @endforeach
-                </select>
-            </div>
-            <div>
-                <label for="tahun" class="block text-sm font-medium text-gray-700">Tahun</label>
-                <select name="tahun" id="tahun" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
-                    @for($year = date('Y'); $year >= date('Y') - 2; $year--)
-                        <option value="{{ $year }}" {{ request('tahun') == $year ? 'selected' : '' }}>{{ $year }}</option>
-                    @endfor
                 </select>
             </div>
             <div>
@@ -53,6 +48,25 @@
 
     <!-- Absen Table -->
     <div class="bg-white rounded-lg shadow overflow-hidden">
+        @if(!$notulensi_id)
+        <div class="px-6 pt-6">
+            <div class="rounded-md bg-yellow-50 p-4">
+                <div class="flex">
+                    <div class="flex-shrink-0">
+                        <svg class="h-5 w-5 text-yellow-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9 9V5h2v4H9zm0 2h2v4H9v-4z" clip-rule="evenodd" />
+                        </svg>
+                    </div>
+                    <div class="ml-3">
+                        <h3 class="text-sm font-medium text-yellow-800">Pilih rapat untuk melihat status kehadiran</h3>
+                        <div class="mt-2 text-sm text-yellow-700">
+                            <p>Tabel tetap ditampilkan agar semua anggota terlihat. Status akan terisi setelah memilih rapat.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        @endif
         @if($users->count() > 0)
         <table class="min-w-full divide-y divide-gray-200">
             <thead class="bg-gray-50">
@@ -90,20 +104,18 @@
                     </td>
                     <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                         @if($absen)
-                            <button onclick="editAbsen({{ $absen->id }}, '{{ $absen->status }}', '{{ $absen->keterangan ?? '' }}')" class="text-blue-600 hover:text-blue-900 mr-3">
+                            <button onclick="editAbsen({{ $absen->id }}, '{{ $absen->status }}', '{{ $absen->keterangan ?? '' }}')" class="text-blue-600 hover:text-blue-900 mr-3" title="Edit Absen">
                                 <i class="fas fa-edit"></i>
                             </button>
                             <form action="{{ route('sekretaris.absen.destroy', $absen) }}" method="POST" class="inline">
                                 @csrf
                                 @method('DELETE')
-                                <button type="submit" class="text-red-600 hover:text-red-900" onclick="return confirm('Apakah Anda yakin ingin menghapus absen ini?')">
+                                <button type="submit" class="text-red-600 hover:text-red-900" onclick="return confirm('Apakah Anda yakin ingin menghapus absen ini?')" title="Hapus Absen">
                                     <i class="fas fa-trash"></i>
                                 </button>
                             </form>
                         @else
-                            <button onclick="addAbsen({{ $user->id }})" class="text-green-600 hover:text-green-900">
-                                <i class="fas fa-plus"></i>
-                            </button>
+                            <span class="text-gray-400 text-xs">-</span>
                         @endif
                     </td>
                 </tr>
@@ -113,7 +125,7 @@
         @else
         <div class="p-6 text-center">
             <i class="fas fa-users text-6xl text-gray-300 mb-4"></i>
-            <p class="text-gray-500">Tidak ada anggota</p>
+            <p class="text-gray-500">Tidak ada anggota untuk ditampilkan</p>
         </div>
         @endif
     </div>
@@ -130,12 +142,23 @@
             <form id="bulkAbsenForm" action="{{ route('sekretaris.absen.store-bulk') }}" method="POST">
                 @csrf
                 <div class="px-6 py-4 space-y-4">
-                    <div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label for="bulk_notulensi_id" class="block text-sm font-medium text-gray-700">Rapat</label>
+                            <select name="notulensi_id" id="bulk_notulensi_id" required class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500">
+                                @foreach($meetings as $m)
+                                    <option value="{{ $m->id }}" {{ (string)request('notulensi_id') === (string)$m->id ? 'selected' : '' }}>
+                                        {{ $m->judul }} - {{ $m->tanggal->format('d M Y') }}
+                                    </option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div>
                         <label for="tanggal" class="block text-sm font-medium text-gray-700">Tanggal</label>
                         <input type="date" name="tanggal" id="tanggal" required value="{{ date('Y-m-d') }}"
                             class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500">
-                    </div>
-                    
+                        </div>
+
                     <div class="max-h-96 overflow-y-auto">
                         <table class="min-w-full divide-y divide-gray-200">
                             <thead class="bg-gray-50 sticky top-0">
@@ -150,8 +173,8 @@
                                 <tr>
                                     <td class="px-3 py-2 text-sm text-gray-900">{{ $user->name }}</td>
                                     <td class="px-3 py-2">
-                                        <select name="absens[{{ $user->id }}][status]" required class="block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 text-sm">
-                                            <option value="">Pilih</option>
+                                        <select name="absens[{{ $user->id }}][status]" class="block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 text-sm">
+                                            <option value="">Pilih (Opsional)</option>
                                             @foreach(\App\Models\Absen::getAllStatus() as $key => $label)
                                                 <option value="{{ $key }}">{{ $label }}</option>
                                             @endforeach
@@ -167,12 +190,55 @@
                             </tbody>
                         </table>
                     </div>
+                    <p class="text-xs text-gray-500 mt-2">* Hanya anggota yang diisi statusnya yang akan disimpan</p>
                 </div>
                 <div class="px-6 py-4 border-t border-gray-200 flex justify-end space-x-3">
                     <button type="button" onclick="hideBulkInputModal()" class="px-4 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-50">
                         Batal
                     </button>
                     <button type="submit" class="px-4 py-2 bg-blue-600 border border-transparent rounded-md text-sm font-medium text-white hover:bg-blue-700">
+                        Simpan
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Add Modal (Simple) -->
+<div id="addModal" class="hidden fixed z-50 inset-0 overflow-y-auto">
+    <div class="flex items-center justify-center min-h-screen px-4">
+        <div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity"></div>
+        <div class="bg-white rounded-lg shadow-xl max-w-md w-full relative z-10">
+            <div class="px-6 py-4 border-b border-gray-200">
+                <h3 class="text-lg font-medium text-gray-900">Tambah Absen</h3>
+            </div>
+            <form id="addAbsenForm" action="{{ route('sekretaris.absen.store') }}" method="POST">
+                @csrf
+                <input type="hidden" name="user_id" id="add_user_id">
+                <input type="hidden" name="notulensi_id" id="add_notulensi_id" value="{{ $notulensi_id }}">
+                <input type="hidden" name="tanggal" id="add_tanggal">
+                <div class="px-6 py-4 space-y-4">
+                    <div>
+                        <label for="add_status" class="block text-sm font-medium text-gray-700">Status <span class="text-red-500">*</span></label>
+                        <select name="status" id="add_status" required class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500">
+                            <option value="">Pilih Status</option>
+                            @foreach(\App\Models\Absen::getAllStatus() as $key => $label)
+                                <option value="{{ $key }}">{{ $label }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <div>
+                        <label for="add_keterangan" class="block text-sm font-medium text-gray-700">Keterangan <span class="text-gray-400 text-xs">(Opsional)</span></label>
+                        <input type="text" name="keterangan" id="add_keterangan" placeholder="Keterangan (opsional)"
+                            class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500">
+                    </div>
+                </div>
+                <div class="px-6 py-4 border-t border-gray-200 flex justify-end space-x-3">
+                    <button type="button" onclick="hideAddModal()" class="px-4 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-50">
+                        Batal
+                    </button>
+                    <button type="submit" id="submitBtn" class="px-4 py-2 bg-blue-600 border border-transparent rounded-md text-sm font-medium text-white hover:bg-blue-700">
                         Simpan
                     </button>
                 </div>
@@ -233,7 +299,7 @@ function hideBulkInputModal() {
 function editAbsen(id, status, keterangan) {
     document.getElementById('editAbsenForm').action = `/sekretaris/absen/${id}`;
     document.getElementById('edit_status').value = status;
-    document.getElementById('edit_keterangan').value = keterangan;
+    document.getElementById('edit_keterangan').value = keterangan || '';
     document.getElementById('editModal').classList.remove('hidden');
 }
 
@@ -242,18 +308,49 @@ function hideEditModal() {
 }
 
 function addAbsen(userId) {
-    // Populate bulk form with user
-    const selects = document.querySelectorAll('#bulkInputModal select[name*="[status]"]');
-    selects.forEach(select => {
-        const regex = /absens\[(\d+)\]/;
-        const match = select.name.match(regex);
-        if (match && match[1] == userId) {
-            select.closest('tr').scrollIntoView({ behavior: 'smooth', block: 'center' });
-            select.focus();
-        }
-    });
-    showBulkInputModal();
+    const notulensiId = document.getElementById('notulensi_id').value;
+    if (!notulensiId) {
+        alert('Pilih rapat terlebih dahulu!');
+        return;
+    }
+    
+    // Ambil tanggal dari notulensi yang dipilih
+    const meetings = @json($meetings);
+    const selectedMeeting = meetings.find(m => m.id == notulensiId);
+    const tanggal = selectedMeeting ? selectedMeeting.tanggal : '{{ date('Y-m-d') }}';
+    
+    document.getElementById('add_user_id').value = userId;
+    document.getElementById('add_notulensi_id').value = notulensiId;
+    document.getElementById('add_tanggal').value = tanggal;
+    document.getElementById('add_status').value = '';
+    document.getElementById('add_keterangan').value = '';
+    document.getElementById('addModal').classList.remove('hidden');
 }
+
+function hideAddModal() {
+    document.getElementById('addModal').classList.add('hidden');
+}
+
+// Double click protection untuk form add
+document.addEventListener('DOMContentLoaded', function() {
+    const addForm = document.getElementById('addAbsenForm');
+    const addSubmitBtn = document.getElementById('submitBtn');
+    
+    if (addForm && addSubmitBtn) {
+        let isSubmitting = false;
+        
+        addForm.addEventListener('submit', function(e) {
+            if (isSubmitting) {
+                e.preventDefault();
+                return false;
+            }
+            
+            isSubmitting = true;
+            addSubmitBtn.disabled = true;
+            addSubmitBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Menyimpan...';
+        });
+    }
+});
 </script>
 @endpush
 @endsection

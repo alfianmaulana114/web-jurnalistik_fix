@@ -14,34 +14,54 @@ class ContentService
 {
     public function index(): array
     {
-        $contents = Content::with(['brief', 'creator', 'designs', 'berita', 'desain'])
+        $contents = Content::with(['brief', 'creator', 'berita', 'desain'])
             ->latest()
             ->paginate(10);
         
-        // Get all news for selection (since there's no direct relationship via foreign key)
+        // News untuk modal pilihan caption: kecualikan yang sudah punya caption berita
+        $usedNewsIdsForCaptions = Content::where('jenis_konten', Content::TYPE_CAPTION_BERITA)
+            ->whereNotNull('berita_id')
+            ->pluck('berita_id')
+            ->unique()
+            ->toArray();
         $availableNews = \App\Models\News::with('category')
+            ->whereNotIn('id', $usedNewsIdsForCaptions)
             ->latest()
             ->get();
-            
-        return compact('contents', 'availableNews');
+
+        // Desain untuk modal pilihan caption berbasis desain: hanya desain tanpa berita terkait
+        $availableDesigns = \App\Models\Design::query()
+            ->whereNull('berita_id')
+            ->latest()
+            ->get();
+        
+        return compact('contents', 'availableNews', 'availableDesigns');
     }
 
     public function create(Request $request = null): array
     {
         $users = User::all();
         $beritas = \App\Models\News::all();
-        $desains = \App\Models\Design::approved()->get();
+        // Ambil semua desain terbaru tanpa bergantung pada kolom status yang sudah dihapus
+        $desains = \App\Models\Design::query()->latest()->get();
         
         $selectedNews = null;
         $selectedNewsTitle = null;
+        $selectedDesign = null;
+        $selectedDesignTitle = null;
         
         // Check if news_id parameter is provided
         if ($request && $request->has('news_id')) {
             $selectedNews = \App\Models\News::find($request->news_id);
             $selectedNewsTitle = $request->has('news_title') ? $request->news_title : ($selectedNews ? $selectedNews->title : null);
         }
+        // Check if design_id parameter is provided
+        if ($request && $request->has('design_id')) {
+            $selectedDesign = \App\Models\Design::find($request->design_id);
+            $selectedDesignTitle = $request->has('design_title') ? $request->design_title : ($selectedDesign ? $selectedDesign->judul : null);
+        }
         
-        return compact('users', 'beritas', 'desains', 'selectedNews', 'selectedNewsTitle');
+        return compact('users', 'beritas', 'desains', 'selectedNews', 'selectedNewsTitle', 'selectedDesign', 'selectedDesignTitle');
     }
 
     public function store(Request $request): RedirectResponse
@@ -72,7 +92,10 @@ class ContentService
         }
 
         // Set media_type based on jenis_konten if not provided
-        if ($validated['jenis_konten'] === Content::TYPE_CAPTION_MEDIA_KREATIF && !$validated['media_type']) {
+        if (
+            $validated['jenis_konten'] === Content::TYPE_CAPTION_MEDIA_KREATIF &&
+            empty($validated['media_type'] ?? null)
+        ) {
             $validated['media_type'] = Content::MEDIA_TYPE_FOTO; // default
         }
 
@@ -99,7 +122,8 @@ class ContentService
 
     public function show(Content $content): array
     {
-        $content->load(['brief', 'creator', 'designs.creator']);
+        // Muat relasi yang relevan dengan struktur baru
+        $content->load(['brief', 'creator', 'desain.creator']);
         return compact('content');
     }
 
@@ -123,13 +147,13 @@ class ContentService
         ]);
 
         // Validasi referensi berdasarkan jenis caption
-        if ($validated['jenis_konten'] === Content::TYPE_CAPTION_BERITA && !$validated['berita_id']) {
+        if ($validated['jenis_konten'] === Content::TYPE_CAPTION_BERITA && empty($validated['berita_id'] ?? null)) {
             return redirect()->back()
                 ->withInput()
                 ->withErrors(['berita_id' => 'Berita referensi wajib dipilih untuk caption berita']);
         }
 
-        if ($validated['jenis_konten'] === Content::TYPE_CAPTION_MEDIA_KREATIF && !$validated['desain_id']) {
+        if ($validated['jenis_konten'] === Content::TYPE_CAPTION_MEDIA_KREATIF && empty($validated['desain_id'] ?? null)) {
             return redirect()->back()
                 ->withInput()
                 ->withErrors(['desain_id' => 'Desain referensi wajib dipilih untuk caption media kreatif']);

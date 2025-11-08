@@ -14,19 +14,19 @@ class NewsCategoryTypeGenreSeeder extends Seeder
         // Seed News Categories
         $categories = ['Berita Nasional', 'Berita Internasional', 'Berita Internal'];
         foreach ($categories as $category) {
-            NewsCategory::create(['name' => $category]);
+            NewsCategory::updateOrCreate(['name' => $category]);
         }
 
         // Seed News Types
         $types = ['Berita Harian', 'Berita Terkini', 'Press Release', 'Media Partner'];
         foreach ($types as $type) {
-            NewsType::create(['name' => $type]);
+            NewsType::updateOrCreate(['name' => $type]);
         }
 
         // Seed News Genres
         $genres = ['Hiburan', 'Inspirasi', 'Nasional', 'Olahraga', 'Peristiwa', 'Politik', 'Teknologi', 'UBSI'];
         foreach ($genres as $genre) {
-            NewsGenre::create(['name' => $genre]);
+            NewsGenre::updateOrCreate(['name' => $genre]);
         }
     }
 }
