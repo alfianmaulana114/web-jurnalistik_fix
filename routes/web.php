@@ -20,6 +20,7 @@ use App\Http\Controllers\KoordinatorLitbang\BriefController as KoordinatorLitban
 use App\Http\Controllers\Sekretaris\SekretarisController;
 use App\Http\Controllers\Sekretaris\AbsenController;
 use App\Http\Controllers\Bendahara\BendaharaController;
+use App\Http\Controllers\Bendahara\ReadOnlyController;
 use App\Http\Controllers\Public\HomeController;
 use App\Http\Controllers\TempImageController;
 use App\Models\News;
@@ -215,6 +216,40 @@ Route::prefix('bendahara')->name('bendahara.')->middleware(['auth', 'role:bendah
     // Kas Settings Routes
     Route::get('/kas-settings', [BendaharaController::class, 'kasSettingsIndex'])->name('kas-settings.index');
     Route::put('/kas-settings', [BendaharaController::class, 'kasSettingsUpdate'])->name('kas-settings.update');
+    
+    // Read-Only Routes untuk melihat fitur koordinator-jurnalistik
+    Route::prefix('view')->name('view.')->group(function () {
+        // Dashboard Koordinator Jurnalistik (Read-Only)
+        Route::get('/koordinator-jurnalistik/dashboard', [ReadOnlyController::class, 'dashboard'])->name('koordinator-jurnalistik.dashboard');
+        
+        // News Routes (Read-Only)
+        Route::get('/news', [ReadOnlyController::class, 'newsIndex'])->name('news.index');
+        Route::get('/news/{id}', [ReadOnlyController::class, 'newsShow'])->name('news.show');
+        
+        // Proker Routes (Read-Only)
+        Route::get('/prokers', [ReadOnlyController::class, 'prokersIndex'])->name('prokers.index');
+        Route::get('/prokers/{proker}', [ReadOnlyController::class, 'prokersShow'])->name('prokers.show');
+        
+        // Brief Routes (Read-Only)
+        Route::get('/briefs', [ReadOnlyController::class, 'briefsIndex'])->name('briefs.index');
+        Route::get('/briefs/{brief}', [ReadOnlyController::class, 'briefsShow'])->name('briefs.show');
+        
+        // Content Routes (Read-Only)
+        Route::get('/contents', [ReadOnlyController::class, 'contentsIndex'])->name('contents.index');
+        Route::get('/contents/{content}', [ReadOnlyController::class, 'contentsShow'])->name('contents.show');
+        
+        // Design Routes (Read-Only)
+        Route::get('/designs', [ReadOnlyController::class, 'designsIndex'])->name('designs.index');
+        Route::get('/designs/{design}', [ReadOnlyController::class, 'designsShow'])->name('designs.show');
+        
+        // Funfact Routes (Read-Only)
+        Route::get('/funfacts', [ReadOnlyController::class, 'funfactsIndex'])->name('funfacts.index');
+        Route::get('/funfacts/{funfact}', [ReadOnlyController::class, 'funfactsShow'])->name('funfacts.show');
+        
+        // User Routes (Read-Only)
+        Route::get('/users', [ReadOnlyController::class, 'usersIndex'])->name('users.index');
+        Route::get('/users/{user}', [ReadOnlyController::class, 'usersShow'])->name('users.show');
+    });
 });
 
 // Public News Routes

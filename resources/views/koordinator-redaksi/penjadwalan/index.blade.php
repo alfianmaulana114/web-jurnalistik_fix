@@ -6,57 +6,68 @@
 @section('content')
 <div class="space-y-6">
     <!-- Header dengan Filter dan Tombol Tambah -->
-    <div class="bg-white rounded-lg shadow-md p-6">
+    <div class="rounded-xl border border-[#D8C4B6]/40 bg-white shadow-sm transition-all hover:shadow-md p-5">
         <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
             <div class="flex items-center gap-4">
-                <h2 class="text-xl font-semibold text-gray-800">Penjadwalan {{ $bulanLabel }} {{ $tahun }}</h2>
+                <div>
+                    <h2 class="text-base font-semibold text-[#1b334e]">Penjadwalan {{ $bulanLabel }} {{ $tahun }}</h2>
+                    <p class="mt-0.5 text-xs text-gray-600">Kelola jadwal anggota redaksi</p>
+                </div>
                 
                 <!-- Filter Bulan dan Tahun -->
                 <form method="GET" action="{{ route('koordinator-redaksi.penjadwalan.index') }}" class="flex items-center gap-2">
-                    <select name="bulan" class="px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-purple-500 focus:border-transparent">
+                    <select name="bulan" class="px-3 py-2 border border-[#D8C4B6]/40 rounded-lg focus:ring-[#f9b61a] focus:border-[#f9b61a] text-sm">
                         @for($i = 1; $i <= 12; $i++)
                             <option value="{{ $i }}" {{ $bulan == $i ? 'selected' : '' }}>
                                 {{ ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'][$i-1] }}
                             </option>
                         @endfor
                     </select>
-                    <select name="tahun" class="px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-purple-500 focus:border-transparent">
+                    <select name="tahun" class="px-3 py-2 border border-[#D8C4B6]/40 rounded-lg focus:ring-[#f9b61a] focus:border-[#f9b61a] text-sm">
                         @for($i = date('Y') - 1; $i <= date('Y') + 1; $i++)
                             <option value="{{ $i }}" {{ $tahun == $i ? 'selected' : '' }}>{{ $i }}</option>
                         @endfor
                     </select>
-                    <button type="submit" class="px-4 py-2 bg-purple-600 text-white rounded-md hover:bg-purple-700 transition-colors">
-                        <i class="fas fa-filter mr-2"></i>Filter
+                    <button type="submit" class="inline-flex items-center gap-1.5 rounded-lg border border-[#D8C4B6]/40 bg-white px-4 py-2 text-sm font-medium text-[#1b334e] shadow-sm transition-all hover:shadow-md hover:bg-[#f9b61a]/10">
+                        <i class="fas fa-filter"></i>
+                        Terapkan Filter
                     </button>
+                    <a href="{{ route('koordinator-redaksi.penjadwalan.index') }}" class="inline-flex items-center gap-1.5 rounded-lg border border-[#D8C4B6]/40 bg-white px-4 py-2 text-sm font-medium text-[#1b334e] shadow-sm transition-all hover:shadow-md hover:bg-[#f9b61a]/10">
+                        <i class="fas fa-times"></i>
+                        Reset
+                    </a>
                 </form>
             </div>
             
-            <button onclick="showCreateModal()" class="px-4 py-2 bg-purple-600 text-white rounded-md hover:bg-purple-700 transition-colors">
-                <i class="fas fa-plus mr-2"></i>Tambah Jadwal
+            <button onclick="showCreateModal()" class="inline-flex items-center gap-2 rounded-lg border border-[#D8C4B6]/40 bg-white px-4 py-2 text-sm font-medium text-[#1b334e] shadow-sm transition-all hover:shadow-md hover:bg-[#f9b61a]/10">
+                <i class="fas fa-plus"></i>Tambah Jadwal
             </button>
         </div>
     </div>
 
     <!-- Kalender -->
-    <div class="bg-white rounded-lg shadow-md p-6">
+    <div class="rounded-xl border border-[#D8C4B6]/40 bg-white shadow-sm transition-all hover:shadow-md p-5">
         <div id="calendar" class="w-full"></div>
     </div>
 
     <!-- Legenda -->
-    <div class="bg-white rounded-lg shadow-md p-6">
-        <h3 class="text-lg font-semibold text-gray-800 mb-4">Legenda</h3>
-        <div class="flex flex-wrap gap-4">
+    <div class="rounded-xl border border-[#D8C4B6]/40 bg-white shadow-sm transition-all hover:shadow-md p-5">
+        <div>
+            <h3 class="text-base font-semibold text-[#1b334e]">Legenda</h3>
+            <p class="mt-0.5 text-xs text-gray-600">Keterangan status jadwal</p>
+        </div>
+        <div class="flex flex-wrap gap-4 mt-4">
             <div class="flex items-center gap-2">
-                <div class="w-4 h-4 bg-yellow-400 rounded"></div>
-                <span class="text-sm text-gray-700">Pending</span>
+                <div class="w-4 h-4 bg-[#f9b61a] rounded"></div>
+                <span class="text-xs text-gray-700">Pending</span>
             </div>
             <div class="flex items-center gap-2">
-                <div class="w-4 h-4 bg-green-400 rounded"></div>
-                <span class="text-sm text-gray-700">Selesai</span>
+                <div class="w-4 h-4 bg-green-500 rounded"></div>
+                <span class="text-xs text-gray-700">Selesai</span>
             </div>
             <div class="flex items-center gap-2">
-                <div class="w-4 h-4 bg-red-400 rounded"></div>
-                <span class="text-sm text-gray-700">Dibatalkan</span>
+                <div class="w-4 h-4 bg-red-500 rounded"></div>
+                <span class="text-xs text-gray-700">Dibatalkan</span>
             </div>
         </div>
     </div>
@@ -66,69 +77,69 @@
 <div id="penjadwalanModal" class="hidden fixed z-50 inset-0 overflow-y-auto">
     <div class="flex items-center justify-center min-h-screen px-4">
         <div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" onclick="hideModal()"></div>
-        <div class="bg-white rounded-lg shadow-xl max-w-md w-full relative z-10">
-            <div class="px-6 py-4 border-b border-gray-200">
-                <h3 id="modalTitle" class="text-lg font-medium text-gray-900">Tambah Jadwal</h3>
+        <div class="bg-white rounded-xl border border-[#D8C4B6]/40 shadow-xl max-w-md w-full relative z-10">
+            <div class="px-5 py-4 border-b border-[#D8C4B6]/40">
+                <h3 id="modalTitle" class="text-base font-semibold text-[#1b334e]">Tambah Jadwal</h3>
             </div>
             <form id="penjadwalanForm" method="POST" action="{{ route('koordinator-redaksi.penjadwalan.store') }}">
                 @csrf
                 <div id="methodField"></div>
-                <div class="px-6 py-4 space-y-4">
+                <div class="px-5 py-4 space-y-4">
                     
                     <div>
-                        <label for="user_id" class="block text-sm font-medium text-gray-700 mb-2">
+                        <label for="user_id" class="block text-xs font-medium text-gray-700 mb-1.5">
                             Anggota Redaksi <span class="text-red-500">*</span>
                         </label>
-                        <select name="user_id" id="user_id" required class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-purple-500 focus:border-transparent {{ $errors->has('user_id') ? 'border-red-500' : '' }}">
+                        <select name="user_id" id="user_id" required class="w-full px-3 py-2 border border-[#D8C4B6]/40 rounded-lg focus:ring-[#f9b61a] focus:border-[#f9b61a] text-sm {{ $errors->has('user_id') ? 'border-red-500' : '' }}">
                             <option value="">Pilih Anggota</option>
                             @foreach($anggotaRedaksi as $anggota)
                                 <option value="{{ $anggota->id }}" {{ old('user_id') == $anggota->id ? 'selected' : '' }}>{{ $anggota->name }}</option>
                             @endforeach
                         </select>
                         @error('user_id')
-                            <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                            <p class="mt-1 text-xs text-red-600">{{ $message }}</p>
                         @enderror
                     </div>
                     
                     <div>
-                        <label for="tanggal" class="block text-sm font-medium text-gray-700 mb-2">
+                        <label for="tanggal" class="block text-xs font-medium text-gray-700 mb-1.5">
                             Tanggal <span class="text-red-500">*</span>
                         </label>
-                        <input type="date" name="tanggal" id="tanggal" value="{{ old('tanggal') }}" required class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-purple-500 focus:border-transparent {{ $errors->has('tanggal') ? 'border-red-500' : '' }}">
+                        <input type="date" name="tanggal" id="tanggal" value="{{ old('tanggal') }}" required class="w-full px-3 py-2 border border-[#D8C4B6]/40 rounded-lg focus:ring-[#f9b61a] focus:border-[#f9b61a] text-sm {{ $errors->has('tanggal') ? 'border-red-500' : '' }}">
                         @error('tanggal')
-                            <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                            <p class="mt-1 text-xs text-red-600">{{ $message }}</p>
                         @enderror
                     </div>
                     
                     <div>
-                        <label for="keterangan" class="block text-sm font-medium text-gray-700 mb-2">
+                        <label for="keterangan" class="block text-xs font-medium text-gray-700 mb-1.5">
                             Keterangan <span class="text-gray-400 text-xs">(Opsional)</span>
                         </label>
-                        <textarea name="keterangan" id="keterangan" rows="3" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-purple-500 focus:border-transparent" placeholder="Keterangan tambahan...">{{ old('keterangan') }}</textarea>
+                        <textarea name="keterangan" id="keterangan" rows="3" class="w-full px-3 py-2 border border-[#D8C4B6]/40 rounded-lg focus:ring-[#f9b61a] focus:border-[#f9b61a] text-sm" placeholder="Keterangan tambahan...">{{ old('keterangan') }}</textarea>
                         @error('keterangan')
-                            <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                            <p class="mt-1 text-xs text-red-600">{{ $message }}</p>
                         @enderror
                     </div>
                     
                     <div>
-                        <label for="status" class="block text-sm font-medium text-gray-700 mb-2">
+                        <label for="status" class="block text-xs font-medium text-gray-700 mb-1.5">
                             Status
                         </label>
-                        <select name="status" id="status" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-purple-500 focus:border-transparent">
+                        <select name="status" id="status" class="w-full px-3 py-2 border border-[#D8C4B6]/40 rounded-lg focus:ring-[#f9b61a] focus:border-[#f9b61a] text-sm">
                             <option value="pending" {{ old('status', 'pending') == 'pending' ? 'selected' : '' }}>Pending</option>
                             <option value="completed" {{ old('status') == 'completed' ? 'selected' : '' }}>Selesai</option>
                             <option value="cancelled" {{ old('status') == 'cancelled' ? 'selected' : '' }}>Dibatalkan</option>
                         </select>
                         @error('status')
-                            <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                            <p class="mt-1 text-xs text-red-600">{{ $message }}</p>
                         @enderror
                     </div>
                 </div>
-                <div class="px-6 py-4 border-t border-gray-200 flex justify-end space-x-3">
-                    <button type="button" onclick="hideModal()" class="px-4 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-50">
+                <div class="px-5 py-4 border-t border-[#D8C4B6]/40 flex justify-end space-x-3">
+                    <button type="button" onclick="hideModal()" class="inline-flex items-center gap-1.5 rounded-lg border border-[#D8C4B6]/40 bg-white px-4 py-2 text-sm font-medium text-[#1b334e] shadow-sm transition-all hover:shadow-md hover:bg-[#f9b61a]/10">
                         Batal
                     </button>
-                    <button type="submit" id="submitBtn" class="px-4 py-2 bg-purple-600 border border-transparent rounded-md text-sm font-medium text-white hover:bg-purple-700" data-submit-button>
+                    <button type="submit" id="submitBtn" class="inline-flex items-center gap-1.5 rounded-lg border border-[#D8C4B6]/40 bg-white px-4 py-2 text-sm font-medium text-[#1b334e] shadow-sm transition-all hover:shadow-md hover:bg-[#f9b61a]/10" data-submit-button>
                         Simpan
                     </button>
                 </div>

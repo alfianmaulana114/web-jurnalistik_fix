@@ -17,14 +17,23 @@ class FunfactService
     /**
      * Menampilkan daftar funfact dengan pagination
      * 
+     * @param Request $request
      * @return array
      */
-    public function index(): array
+    public function index(Request $request): array
     {
-        $funfacts = Funfact::with(['creator'])
-            ->latest()
-            ->paginate(10);
-            
+        $query = Funfact::with(['creator']);
+
+        // Filter by search (judul atau isi)
+        if ($request->has('search') && $request->search) {
+            $search = $request->search;
+            $query->where(function($q) use ($search) {
+                $q->where('judul', 'like', '%' . $search . '%')
+                  ->orWhere('isi', 'like', '%' . $search . '%');
+            });
+        }
+
+        $funfacts = $query->latest()->paginate(10)->withQueryString();
         $totalFunfacts = Funfact::count();
             
         return compact('funfacts', 'totalFunfacts');

@@ -15,9 +15,44 @@ class UserController extends Controller
     /**
      * Display a listing of users.
      */
-    public function index(): View
+    public function index(Request $request): View
     {
-        $users = User::latest()->paginate(10);
+        $query = User::query();
+
+        // Filter by search (name, email, atau NIM)
+        if ($request->has('search') && $request->search) {
+            $search = $request->search;
+            $query->where(function($q) use ($search) {
+                $q->where('name', 'like', '%' . $search . '%')
+                  ->orWhere('email', 'like', '%' . $search . '%')
+                  ->orWhere('nim', 'like', '%' . $search . '%');
+            });
+        }
+
+        // Filter by role
+        if ($request->has('role') && $request->role) {
+            $query->where('role', $request->role);
+        }
+
+        // Filter by divisi (berdasarkan role)
+        if ($request->has('divisi') && $request->divisi) {
+            $divisi = $request->divisi;
+            $query->where(function($q) use ($divisi) {
+                if ($divisi === 'redaksi') {
+                    $q->whereIn('role', ['koordinator_redaksi', 'anggota_redaksi']);
+                } elseif ($divisi === 'litbang') {
+                    $q->whereIn('role', ['koordinator_litbang', 'anggota_litbang']);
+                } elseif ($divisi === 'humas') {
+                    $q->whereIn('role', ['koordinator_humas', 'anggota_humas']);
+                } elseif ($divisi === 'media_kreatif') {
+                    $q->whereIn('role', ['koordinator_media_kreatif', 'anggota_media_kreatif']);
+                } elseif ($divisi === 'pengurus') {
+                    $q->whereIn('role', ['sekretaris', 'bendahara']);
+                }
+            });
+        }
+
+        $users = $query->latest()->paginate(10)->withQueryString();
         return view('koordinator-jurnalistik.users.index', compact('users'));
     }
 

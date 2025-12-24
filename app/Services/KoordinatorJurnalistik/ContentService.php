@@ -13,11 +13,37 @@ use Illuminate\Support\Str;
 
 class ContentService
 {
-    public function index(): array
+    public function index(Request $request): array
     {
-        $contents = Content::with(['brief', 'creator', 'berita', 'desain'])
-            ->latest()
-            ->paginate(10);
+        $query = Content::with(['brief', 'creator', 'berita', 'desain']);
+
+        // Filter by jenis_konten
+        if ($request->has('jenis_konten') && $request->jenis_konten) {
+            $query->where('jenis_konten', $request->jenis_konten);
+        }
+
+        // Filter by media_type (berdasarkan berita atau desain)
+        if ($request->has('media_type') && $request->media_type) {
+            if ($request->media_type === 'image') {
+                $query->where(function($q) {
+                    $q->whereHas('berita', function($subQ) {
+                        $subQ->whereNotNull('image');
+                    })->orWhereHas('desain', function($subQ) {
+                        $subQ->where('jenis', 'image');
+                    });
+                });
+            } elseif ($request->media_type === 'video') {
+                $query->where(function($q) {
+                    $q->whereHas('berita', function($subQ) {
+                        $subQ->whereNotNull('video_url');
+                    })->orWhereHas('desain', function($subQ) {
+                        $subQ->where('jenis', 'video');
+                    });
+                });
+            }
+        }
+
+        $contents = $query->latest()->paginate(10)->withQueryString();
         
         // News untuk modal pilihan caption: kecualikan yang sudah punya caption berita
         $usedNewsIdsForCaptions = Content::where('jenis_konten', Content::TYPE_CAPTION_BERITA)

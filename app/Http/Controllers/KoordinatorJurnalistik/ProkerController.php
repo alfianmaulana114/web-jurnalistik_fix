@@ -21,9 +21,9 @@ class ProkerController extends Controller
     /**
      * Display a listing of prokers.
      */
-    public function index(): View
+    public function index(Request $request): View
     {
-        $data = $this->prokerService->index();
+        $data = $this->prokerService->index($request);
         return view('koordinator-jurnalistik.prokers.index', $data);
     }
 

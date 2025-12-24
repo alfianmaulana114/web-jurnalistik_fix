@@ -18,34 +18,34 @@
     
 </head>
 <body class="bg-gray-100">
-    <div class="flex h-screen overflow-hidden">
+    <div class="flex min-h-screen overflow-x-hidden">
         <!-- Sidebar -->
         <div id="sidebar" class="bg-white text-gray-800 w-64 border-r border-gray-200 shadow-sm py-6 px-4 absolute inset-y-0 left-0 transform -translate-x-full md:relative md:translate-x-0 transition duration-200 ease-in-out z-30">
             <div class="flex items-center justify-center space-x-2 px-4 mb-8">
                 <div class="text-center">
-                    <h2 class="text-2xl font-bold text-blue-600">PARAGRAF MUDA</h2>
+                    <h2 class="text-2xl font-bold text-[#1b334e]">PARAGRAF MUDA</h2>
                     <p class="text-xs text-gray-500">Portal Sekretaris</p>
                 </div>
             </div>
 
             <!-- Sidebar Navigation -->
             <nav class="space-y-2">
-                <a href="{{ route('sekretaris.dashboard') }}" class="flex items-center py-2.5 px-4 rounded-lg transition duration-200 hover:bg-blue-50 hover:text-blue-600 {{ request()->routeIs('sekretaris.dashboard') ? 'bg-blue-50 text-blue-600 font-medium' : 'text-gray-600' }}">
+                <a href="{{ route('sekretaris.dashboard') }}" class="flex items-center py-2.5 px-4 rounded-lg transition duration-200 hover:bg-[#1b334e]/10 hover:text-[#1b334e] {{ request()->routeIs('sekretaris.dashboard') ? 'bg-[#1b334e]/10 text-[#1b334e] font-medium' : 'text-gray-600' }}">
                     <i class="fas fa-home mr-3 w-5 text-center"></i>Dashboard
                 </a>
                 
                 <!-- Notulensi -->
-                <a href="{{ route('sekretaris.notulensi.index') }}" class="flex items-center py-2.5 px-4 rounded-lg transition duration-200 hover:bg-blue-50 hover:text-blue-600 {{ request()->routeIs('sekretaris.notulensi.*') ? 'bg-blue-50 text-blue-600 font-medium' : 'text-gray-600' }}">
+                <a href="{{ route('sekretaris.notulensi.index') }}" class="flex items-center py-2.5 px-4 rounded-lg transition duration-200 hover:bg-[#1b334e]/10 hover:text-[#1b334e] {{ request()->routeIs('sekretaris.notulensi.*') ? 'bg-[#1b334e]/10 text-[#1b334e] font-medium' : 'text-gray-600' }}">
                     <i class="fas fa-file-alt mr-3 w-5 text-center"></i>Notulensi Rapat
                 </a>
                 
                 <!-- Proker -->
-                <a href="{{ route('sekretaris.proker.index') }}" class="flex items-center py-2.5 px-4 rounded-lg transition duration-200 hover:bg-blue-50 hover:text-blue-600 {{ request()->routeIs('sekretaris.proker.*') ? 'bg-blue-50 text-blue-600 font-medium' : 'text-gray-600' }}">
+                <a href="{{ route('sekretaris.proker.index') }}" class="flex items-center py-2.5 px-4 rounded-lg transition duration-200 hover:bg-[#1b334e]/10 hover:text-[#1b334e] {{ request()->routeIs('sekretaris.proker.*') ? 'bg-[#1b334e]/10 text-[#1b334e] font-medium' : 'text-gray-600' }}">
                     <i class="fas fa-calendar-check mr-3 w-5 text-center"></i>Program Kerja
                 </a>
                 
                 <!-- Absen -->
-                <a href="{{ route('sekretaris.absen.index') }}" class="flex items-center py-2.5 px-4 rounded-lg transition duration-200 hover:bg-blue-50 hover:text-blue-600 {{ request()->routeIs('sekretaris.absen.*') ? 'bg-blue-50 text-blue-600 font-medium' : 'text-gray-600' }}">
+                <a href="{{ route('sekretaris.absen.index') }}" class="flex items-center py-2.5 px-4 rounded-lg transition duration-200 hover:bg-[#1b334e]/10 hover:text-[#1b334e] {{ request()->routeIs('sekretaris.absen.*') ? 'bg-[#1b334e]/10 text-[#1b334e] font-medium' : 'text-gray-600' }}">
                     <i class="fas fa-user-check mr-3 w-5 text-center"></i>Absen Anggota
                 </a>
                 
@@ -60,6 +60,7 @@
                 </form>
             </nav>
         </div>
+        <div id="backdrop" class="fixed inset-0 bg-black/30 hidden md:hidden z-20"></div>
 
         <!-- Main Content -->
         <div class="flex-1 flex flex-col overflow-hidden">
@@ -71,20 +72,37 @@
                         <i class="fas fa-bars text-gray-600 text-lg"></i>
                     </button>
 
-                    <div class="flex items-center space-x-4">
-                        <h1 class="text-2xl font-semibold text-gray-800">@yield('header', 'Dashboard')</h1>
-                    </div>
+                    <!-- Header title -->
+                    <h2 class="text-xl font-semibold text-gray-800">@yield('header', 'Dashboard')</h2>
 
-                    <div class="flex items-center space-x-4">
-                        <span class="text-sm text-gray-600">
-                            <i class="fas fa-user-circle mr-2"></i>{{ auth()->user()->name }}
-                        </span>
+                    <!-- User dropdown -->
+                    <div class="relative">
+                        <button id="user-menu-button" class="flex items-center space-x-2 focus:outline-none">
+                            <span class="text-gray-700">{{ auth()->user()->name ?? 'Sekretaris' }}</span>
+                            <i class="fas fa-chevron-down text-gray-600 text-sm"></i>
+                        </button>
+                        <!-- Dropdown menu -->
+                        <div id="user-menu" class="hidden absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg py-1 z-50">
+                            <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                                <i class="fas fa-user mr-2"></i>Profil
+                            </a>
+                            <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                                <i class="fas fa-cog mr-2"></i>Pengaturan
+                            </a>
+                            <hr class="my-1">
+                            <form method="POST" action="{{ route('logout') }}" class="block" data-logout-form>
+                                @csrf
+                                <button type="submit" class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" data-logout-button>
+                                    <i class="fas fa-sign-out-alt mr-2"></i>Logout
+                                </button>
+                            </form>
+                        </div>
                     </div>
                 </div>
             </header>
 
-            <!-- Content Area -->
-            <main class="flex-1 overflow-y-auto p-6 bg-gray-50">
+            <!-- Main content -->
+            <main class="flex-1 overflow-x-hidden overflow-y-auto bg-gray-50 p-4 sm:p-6">
                 <div class="max-w-7xl mx-auto space-y-6">
                     @include('partials.flash')
                     @yield('content')
@@ -93,11 +111,36 @@
         </div>
     </div>
 
-    <!-- Mobile Menu Script -->
+    <!-- Scripts -->
     <script>
-        document.getElementById('mobile-menu-button').addEventListener('click', function() {
-            const sidebar = document.getElementById('sidebar');
-            sidebar.classList.toggle('-translate-x-full');
+        const mobileMenuButton = document.getElementById('mobile-menu-button');
+        const sidebar = document.getElementById('sidebar');
+        const backdrop = document.getElementById('backdrop');
+        function openSidebar() {
+            sidebar.classList.remove('-translate-x-full');
+            if (backdrop) backdrop.classList.remove('hidden');
+            if (mobileMenuButton) mobileMenuButton.setAttribute('aria-expanded', 'true');
+        }
+        function closeSidebar() {
+            sidebar.classList.add('-translate-x-full');
+            if (backdrop) backdrop.classList.add('hidden');
+            if (mobileMenuButton) mobileMenuButton.setAttribute('aria-expanded', 'false');
+        }
+        if (mobileMenuButton) mobileMenuButton.addEventListener('click', function() {
+            const isOpen = !sidebar.classList.contains('-translate-x-full');
+            if (isOpen) closeSidebar(); else openSidebar();
+        });
+        if (backdrop) backdrop.addEventListener('click', closeSidebar);
+        document.getElementById('user-menu-button')?.addEventListener('click', function() {
+            document.getElementById('user-menu')?.classList.toggle('hidden');
+        });
+        document.addEventListener('click', function(event) {
+            const userMenu = document.getElementById('user-menu');
+            const userMenuButton = document.getElementById('user-menu-button');
+            if (!userMenuButton || !userMenu) return;
+            if (!userMenuButton.contains(event.target) && !userMenu.contains(event.target)) {
+                userMenu.classList.add('hidden');
+            }
         });
 
         // Global double-click protection HANYA untuk navigasi

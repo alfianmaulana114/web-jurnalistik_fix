@@ -10,9 +10,30 @@ use Illuminate\Validation\Rule;
 
 class ProkerService
 {
-    public function index(): array
+    public function index(Request $request): array
     {
-        $prokers = Proker::latest()->paginate(10);
+        $query = Proker::query();
+
+        // Filter by search (nama_proker atau deskripsi)
+        if ($request->has('search') && $request->search) {
+            $search = $request->search;
+            $query->where(function($q) use ($search) {
+                $q->where('nama_proker', 'like', '%' . $search . '%')
+                  ->orWhere('deskripsi', 'like', '%' . $search . '%');
+            });
+        }
+
+        // Filter by status
+        if ($request->has('status') && $request->status) {
+            $query->where('status', $request->status);
+        }
+
+        // Filter by year
+        if ($request->has('year') && $request->year) {
+            $query->whereYear('tanggal_mulai', $request->year);
+        }
+
+        $prokers = $query->latest()->paginate(10)->withQueryString();
         return compact('prokers');
     }
 

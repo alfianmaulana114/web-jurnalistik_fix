@@ -12,7 +12,7 @@
             <p class="mt-1 text-sm text-gray-600">Kelola program kerja UKM Jurnalistik</p>
         </div>
         <div class="mt-4 sm:mt-0">
-            <a href="{{ route('koordinator-jurnalistik.prokers.create') }}" class="inline-flex items-center px-4 py-2 bg-[#1b334e] border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-[#16283e] focus:outline-none transition ease-in-out duration-150">
+            <a href="{{ route('koordinator-jurnalistik.prokers.create') }}" class="inline-flex items-center px-4 py-2 bg-white text-[#1b334e] border border-[#D8C4B6]/40 rounded-lg font-semibold text-xs uppercase tracking-widest hover:bg-[#f9b61a]/10 hover:shadow-md focus:outline-none transition-all duration-150">
                 <i class="fas fa-plus mr-2"></i>
                 Tambah Proker
             </a>
@@ -20,15 +20,15 @@
     </div>
 
     <!-- Filters -->
-    <div class="bg-white rounded-lg shadow p-6">
+    <div class="bg-white rounded-lg border border-[#D8C4B6]/40 shadow-sm hover:shadow-md transition-all p-6">
         <form method="GET" action="{{ route('koordinator-jurnalistik.prokers.index') }}" class="grid grid-cols-1 md:grid-cols-4 gap-4">
             <div>
                 <label for="search" class="block text-sm font-medium text-gray-700">Cari</label>
-                <input type="text" name="search" id="search" value="{{ request('search') }}" placeholder="Nama proker..." class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-[#1b334e] focus:border-[#1b334e] sm:text-sm">
+                <input type="text" name="search" id="search" value="{{ request('search') }}" placeholder="Nama proker..." class="mt-1 block w-full border-[#D8C4B6]/40 rounded-lg shadow-sm focus:ring-[#f9b61a] focus:border-[#f9b61a] sm:text-sm">
             </div>
             <div>
                 <label for="status" class="block text-sm font-medium text-gray-700">Status</label>
-                <select name="status" id="status" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-[#1b334e] focus:border-[#1b334e] sm:text-sm">
+                <select name="status" id="status" class="mt-1 block w-full border-[#D8C4B6]/40 rounded-lg shadow-sm focus:ring-[#f9b61a] focus:border-[#f9b61a] sm:text-sm">
                     <option value="">Semua Status</option>
                     @foreach(\App\Models\Proker::getAllStatuses() as $key => $label)
                         <option value="{{ $key }}" {{ request('status') == $key ? 'selected' : '' }}>{{ $label }}</option>
@@ -37,83 +37,84 @@
             </div>
             <div>
                 <label for="year" class="block text-sm font-medium text-gray-700">Tahun</label>
-                <select name="year" id="year" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-[#1b334e] focus:border-[#1b334e] sm:text-sm">
+                <select name="year" id="year" class="mt-1 block w-full border-[#D8C4B6]/40 rounded-lg shadow-sm focus:ring-[#f9b61a] focus:border-[#f9b61a] sm:text-sm">
                     <option value="">Semua Tahun</option>
                     @for($year = date('Y'); $year >= date('Y') - 3; $year--)
                         <option value="{{ $year }}" {{ request('year') == $year ? 'selected' : '' }}>{{ $year }}</option>
                     @endfor
                 </select>
             </div>
-            <div class="flex items-end">
-                <button type="submit" class="w-full px-4 py-2 bg-[#1b334e] border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-[#16283e] focus:outline-none transition ease-in-out duration-150">
+            <div class="flex items-end space-x-2">
+                <button type="submit" class="flex-1 px-4 py-2 bg-white text-[#1b334e] border border-[#D8C4B6]/40 rounded-lg font-semibold text-xs uppercase tracking-widest hover:bg-[#f9b61a]/10 hover:shadow-md focus:outline-none transition-all duration-150">
                     <i class="fas fa-search mr-2"></i>
-                    Filter
+                    Terapkan Filter
                 </button>
+                <a href="{{ route('koordinator-jurnalistik.prokers.index') }}" class="px-4 py-2 bg-white text-[#1b334e] border border-[#D8C4B6]/40 rounded-lg font-semibold text-xs uppercase tracking-widest hover:bg-[#f9b61a]/10 focus:outline-none transition-all duration-150">
+                    <i class="fas fa-times mr-2"></i>
+                    Reset
+                </a>
             </div>
         </form>
     </div>
 
     <!-- Statistics Cards -->
     <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
-        <div class="bg-white rounded-lg shadow p-6">
+        <div class="bg-white rounded-lg shadow p-6 border border-[#D8C4B6]">
             <div class="flex items-center">
-                <div class="p-3 rounded-full bg-blue-100 text-blue-600">
+                <div class="p-3 rounded-full bg-[#f9b61a]/10 text-[#f9b61a]">
                     <i class="fas fa-tasks text-xl"></i>
                 </div>
                 <div class="ml-4">
-                    <p class="text-sm font-medium text-gray-600">Total Proker</p>
-                    <p class="text-2xl font-semibold text-gray-900">{{ $prokers->total() }}</p>
+                    <p class="text-sm font-medium text-[#1b334e]">Total Proker</p>
+                    <p class="text-2xl font-semibold text-[#1b334e]">{{ $prokers->total() }}</p>
                 </div>
             </div>
         </div>
-        <div class="bg-white rounded-lg shadow p-6">
+        <div class="bg-white rounded-lg shadow p-6 border border-[#D8C4B6]">
             <div class="flex items-center">
-                <div class="p-3 rounded-full bg-yellow-100 text-yellow-600">
+                <div class="p-3 rounded-full bg-[#f9b61a]/10 text-[#f9b61a]">
                     <i class="fas fa-clock text-xl"></i>
                 </div>
                 <div class="ml-4">
-                    <p class="text-sm font-medium text-gray-600">Planning</p>
-                    <p class="text-2xl font-semibold text-gray-900">{{ $prokers->where('status', 'planning')->count() }}</p>
+                    <p class="text-sm font-medium text-[#1b334e]">Planning</p>
+                    <p class="text-2xl font-semibold text-[#1b334e]">{{ $prokers->where('status', 'planning')->count() }}</p>
                 </div>
             </div>
         </div>
-        <div class="bg-white rounded-lg shadow p-6">
+        <div class="bg-white rounded-lg shadow p-6 border border-[#D8C4B6]">
             <div class="flex items-center">
-                <div class="p-3 rounded-full bg-green-100 text-green-600">
+                <div class="p-3 rounded-full bg-[#f9b61a]/10 text-[#f9b61a]">
                     <i class="fas fa-play text-xl"></i>
                 </div>
                 <div class="ml-4">
-                    <p class="text-sm font-medium text-gray-600">Ongoing</p>
-                    <p class="text-2xl font-semibold text-gray-900">{{ $prokers->where('status', 'ongoing')->count() }}</p>
+                    <p class="text-sm font-medium text-[#1b334e]">Ongoing</p>
+                    <p class="text-2xl font-semibold text-[#1b334e]">{{ $prokers->where('status', 'ongoing')->count() }}</p>
                 </div>
             </div>
         </div>
-        <div class="bg-white rounded-lg shadow p-6">
+        <div class="bg-white rounded-lg shadow p-6 border border-[#D8C4B6]">
             <div class="flex items-center">
-                <div class="p-3 rounded-full bg-gray-100 text-gray-600">
+                <div class="p-3 rounded-full bg-[#f9b61a]/10 text-[#f9b61a]">
                     <i class="fas fa-check text-xl"></i>
                 </div>
                 <div class="ml-4">
                     <p class="text-sm font-medium text-gray-600">Completed</p>
-                    <p class="text-2xl font-semibold text-gray-900">{{ $prokers->where('status', 'completed')->count() }}</p>
+                    <p class="text-2xl font-semibold text-[#1b334e]">{{ $prokers->where('status', 'completed')->count() }}</p>
                 </div>
             </div>
         </div>
     </div>
 
     <!-- Prokers Table -->
-    <div class="bg-white rounded-lg shadow overflow-hidden">
-        <div class="px-6 py-4 border-b border-gray-200">
-            <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
-                <h3 class="text-lg font-medium text-gray-900">Daftar Program Kerja</h3>
-                <input type="text" id="prokerSearch" class="w-full sm:w-64 px-3 py-2 border rounded" placeholder="Cari cepat..." />
-            </div>
+    <div class="bg-white rounded-lg border border-[#D8C4B6]/40 shadow-sm hover:shadow-md transition-all overflow-hidden">
+        <div class="px-6 py-4 border-b border-[#D8C4B6]/40">
+            <h3 class="text-lg font-medium text-gray-900">Daftar Program Kerja</h3>
         </div>
         
         @if($prokers->count() > 0)
         <div class="overflow-x-auto">
-            <table class="min-w-full divide-y divide-gray-200">
-                <thead class="bg-gray-50">
+            <table class="min-w-full divide-y divide-[#D8C4B6]/40">
+                <thead class="bg-[#f9b61a]/5">
                     <tr>
                         <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                             Program Kerja
@@ -135,9 +136,9 @@
                         </th>
                     </tr>
                 </thead>
-                <tbody class="bg-white divide-y divide-gray-200" id="prokersTableBody">
+                <tbody class="bg-white divide-y divide-[#D8C4B6]/40" id="prokersTableBody">
                     @foreach($prokers as $proker)
-                    <tr class="hover:bg-gray-50">
+                    <tr class="hover:bg-[#f9b61a]/5 transition-colors">
                         <td class="px-6 py-4 whitespace-nowrap">
                             <div>
                                 <div class="text-sm font-medium text-gray-900">{{ $proker->nama_proker }}</div>
@@ -176,16 +177,16 @@
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                             <div class="flex items-center space-x-2">
-                                <a href="{{ route('koordinator-jurnalistik.prokers.show', $proker) }}" class="text-[#1b334e] hover:text-[#16283e]" title="Lihat Detail">
+                                <a href="{{ route('koordinator-jurnalistik.prokers.show', $proker) }}" class="text-[#1b334e] hover:bg-[#f9b61a]/10 p-2 rounded-lg transition-all" title="Lihat Detail">
                                     <i class="fas fa-eye"></i>
                                 </a>
-                                <a href="{{ route('koordinator-jurnalistik.prokers.edit', $proker) }}" class="text-yellow-600 hover:text-yellow-900" title="Edit">
+                                <a href="{{ route('koordinator-jurnalistik.prokers.edit', $proker) }}" class="text-[#1b334e] hover:bg-[#f9b61a]/10 p-2 rounded-lg transition-all" title="Edit">
                                     <i class="fas fa-edit"></i>
                                 </a>
                                 <form action="{{ route('koordinator-jurnalistik.prokers.destroy', $proker) }}" method="POST" class="inline" onsubmit="return confirm('Apakah Anda yakin ingin menghapus proker ini?')">
                                     @csrf
                                     @method('DELETE')
-                                    <button type="submit" class="text-red-600 hover:text-red-900" title="Hapus">
+                                    <button type="submit" class="text-red-600 hover:text-red-800" title="Hapus">
                                         <i class="fas fa-trash"></i>
                                     </button>
                                 </form>
@@ -198,7 +199,7 @@
         </div>
 
         <!-- Pagination -->
-        <div class="px-6 py-4 border-t border-gray-200">
+        <div class="px-6 py-4 border-t border-[#D8C4B6]/40">
             {{ $prokers->withQueryString()->links() }}
         </div>
         @else
@@ -206,28 +207,12 @@
             <i class="fas fa-tasks text-4xl text-gray-400 mb-4"></i>
             <h3 class="text-lg font-medium text-gray-900 mb-2">Belum ada program kerja</h3>
             <p class="text-gray-500 mb-6">Mulai dengan membuat program kerja pertama Anda.</p>
-            <a href="{{ route('koordinator-jurnalistik.prokers.create') }}" class="inline-flex items-center px-4 py-2 bg-[#1b334e] border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-[#16283e] focus:outline-none transition ease-in-out duration-150">
+            <a href="{{ route('koordinator-jurnalistik.prokers.create') }}" class="inline-flex items-center px-4 py-2 bg-white border border-[#D8C4B6]/40 rounded-lg font-semibold text-xs text-[#1b334e] uppercase tracking-widest hover:bg-[#f9b61a]/10 hover:shadow-md focus:outline-none transition-all duration-150">
                 <i class="fas fa-plus mr-2"></i>
                 Tambah Proker
             </a>
         </div>
         @endif
     </div>
-@push('scripts')
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-    const input = document.getElementById('prokerSearch');
-    const tbody = document.getElementById('prokersTableBody');
-    if (!input || !tbody) return;
-    input.addEventListener('input', function() {
-        const q = this.value.toLowerCase();
-        Array.from(tbody.querySelectorAll('tr')).forEach(function(row) {
-            const text = row.textContent.toLowerCase();
-            row.style.display = text.includes(q) ? '' : 'none';
-        });
-    });
-});
-</script>
-@endpush
 </div>
 @endsection

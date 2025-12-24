@@ -22,9 +22,9 @@ class ContentController extends Controller
     /**
      * Display a listing of captions.
      */
-    public function index(): View
+    public function index(Request $request): View
     {
-        $data = $this->contentService->index();
+        $data = $this->contentService->index($request);
         return view('koordinator-jurnalistik.contents.index', $data);
     }
 

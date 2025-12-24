@@ -12,11 +12,22 @@ use Illuminate\Support\Facades\Storage;
 
 class DesignService
 {
-    public function index(): array
+    public function index(Request $request): array
     {
-        $designs = Design::with(['berita'])
-            ->latest()
-            ->paginate(10);
+        $query = Design::with(['berita']);
+
+        // Filter by search (judul)
+        if ($request->has('search') && $request->search) {
+            $search = $request->search;
+            $query->where('judul', 'like', '%' . $search . '%');
+        }
+
+        // Filter by jenis
+        if ($request->has('jenis') && $request->jenis) {
+            $query->where('jenis', $request->jenis);
+        }
+
+        $designs = $query->latest()->paginate(10)->withQueryString();
 
         // Berita tersedia untuk pemilihan di modal index (mirip caption)
         // Kecualikan berita yang sudah memiliki desain terkait

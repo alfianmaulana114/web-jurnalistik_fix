@@ -12,18 +12,24 @@ class DashboardService
 {
     public function getDashboardData(): array
     {
-        // Statistik Keuangan
-        $totalPemasukan = $this->getTotalPemasukan();
-        $totalKasAnggota = $this->getTotalKasAnggota();
-        $totalPengeluaran = $this->getTotalPengeluaran();
-        $totalSaldo = ($totalPemasukan + $totalKasAnggota) - $totalPengeluaran;
+        // ============================================
+        // SEMUA DATA DIAMBIL LANGSUNG DARI DATABASE (DINAMIS)
+        // ============================================
+        
+        // Statistik Keuangan - Semua diambil dari database
+        // Pemisahan: kas dan pemasukan terpisah
+        $totalKasAnggota = $this->getTotalKasAnggota(); // Dari tabel kas_anggota
+        $totalPemasukan = $this->getTotalPemasukan(); // Dari tabel pemasukan (TIDAK termasuk kas)
+        $totalPengeluaran = $this->getTotalPengeluaran(); // Dari tabel pengeluaran
+        // Total saldo = kas + pemasukan - pengeluaran (semua dari database)
+        $totalSaldo = ($totalKasAnggota + $totalPemasukan) - $totalPengeluaran;
 
-        // Pemasukan & Pengeluaran Bulan Ini
-        $pemasukanBulanIni = $this->getPemasukanBulanIni();
-        $kasAnggotaBulanIni = $this->getKasAnggotaBulanIni();
-        $pengeluaranBulanIni = $this->getPengeluaranBulanIni();
+        // Pemasukan & Pengeluaran Bulan Ini - Semua dari database berdasarkan tanggal
+        $pemasukanBulanIni = $this->getPemasukanBulanIni(); // Dari tabel pemasukan
+        $kasAnggotaBulanIni = $this->getKasAnggotaBulanIni(); // Dari tabel kas_anggota
+        $pengeluaranBulanIni = $this->getPengeluaranBulanIni(); // Dari tabel pengeluaran
 
-        // Total Anggota
+        // Total Anggota - Dari tabel users
         $totalAnggota = User::count();
 
         // Statistik Kas Anggota
@@ -35,13 +41,10 @@ class DashboardService
         // Ringkasan Per Divisi
         $ringkasanDivisi = $this->getRingkasanPerDivisi();
 
-        // Transaksi Menunggu (merge pemasukan dan pengeluaran)
-        $pendingTransactions = $this->getPendingTransactions();
-
-        // Anggota Belum Bayar
+        // Anggota Belum Bayar (hanya yang belum bayar bulan ini dan sebelumnya, mulai 2025)
         $anggotaBelumBayar = $this->getAnggotaBelumBayar();
 
-        // Transaksi Terbaru (merge pemasukan dan pengeluaran)
+        // Transaksi Terbaru (merge pemasukan, pengeluaran, dan kas)
         $recentTransactions = $this->getRecentTransactions();
 
         return compact(
@@ -56,7 +59,6 @@ class DashboardService
             'kasStats',
             'chartData',
             'ringkasanDivisi',
-            'pendingTransactions',
             'anggotaBelumBayar',
             'recentTransactions'
         );
@@ -64,22 +66,28 @@ class DashboardService
 
     private function getTotalPemasukan(): float
     {
-        return (float) Pemasukan::where('status', Pemasukan::STATUS_VERIFIED)->sum('jumlah');
+        // Pemasukan TIDAK termasuk kas anggota (kas dihitung terpisah)
+        // Menggunakan scope verified() untuk memastikan hanya yang sudah diverifikasi
+        return (float) Pemasukan::verified()->sum('jumlah');
     }
 
     private function getTotalKasAnggota(): float
     {
+        // Total kas anggota yang sudah lunas (dinamis dari database)
         return (float) KasAnggota::where('status_pembayaran', KasAnggota::STATUS_LUNAS)->sum('jumlah_terbayar');
     }
 
     private function getTotalPengeluaran(): float
     {
-        return (float) Pengeluaran::where('status', Pengeluaran::STATUS_PAID)->sum('jumlah');
+        // Menggunakan scope paid() untuk memastikan hanya yang sudah dibayar
+        return (float) Pengeluaran::paid()->sum('jumlah');
     }
 
     private function getPemasukanBulanIni(): float
     {
-        return (float) Pemasukan::where('status', Pemasukan::STATUS_VERIFIED)
+        // Pemasukan bulan ini TIDAK termasuk kas (kas dihitung terpisah)
+        // Menggunakan tanggal_pemasukan untuk filter bulan ini
+        return (float) Pemasukan::verified()
             ->whereYear('tanggal_pemasukan', now()->year)
             ->whereMonth('tanggal_pemasukan', now()->month)
             ->sum('jumlah');
@@ -87,7 +95,9 @@ class DashboardService
 
     private function getKasAnggotaBulanIni(): float
     {
+        // Kas anggota bulan ini berdasarkan tanggal_pembayaran
         return (float) KasAnggota::where('status_pembayaran', KasAnggota::STATUS_LUNAS)
+            ->whereNotNull('tanggal_pembayaran')
             ->whereYear('tanggal_pembayaran', now()->year)
             ->whereMonth('tanggal_pembayaran', now()->month)
             ->sum('jumlah_terbayar');
@@ -95,7 +105,10 @@ class DashboardService
 
     private function getPengeluaranBulanIni(): float
     {
-        return (float) Pengeluaran::where('status', Pengeluaran::STATUS_PAID)
+        // Pengeluaran bulan ini berdasarkan tanggal_pengeluaran
+        // Pastikan tanggal_pengeluaran tidak null
+        return (float) Pengeluaran::paid()
+            ->whereNotNull('tanggal_pengeluaran')
             ->whereYear('tanggal_pengeluaran', now()->year)
             ->whereMonth('tanggal_pengeluaran', now()->month)
             ->sum('jumlah');
@@ -116,29 +129,42 @@ class DashboardService
     {
         $months = [];
         $pemasukan = [];
+        $kas = [];
         $pengeluaran = [];
 
         for ($i = 5; $i >= 0; $i--) {
             $date = now()->subMonths($i);
             $months[] = $date->format('M Y');
             
-            $pemasukanBulan = Pemasukan::where('status', Pemasukan::STATUS_VERIFIED)
+            // Pemasukan TIDAK termasuk kas - menggunakan scope verified()
+            $pemasukanBulan = (float) Pemasukan::verified()
                 ->whereYear('tanggal_pemasukan', $date->year)
                 ->whereMonth('tanggal_pemasukan', $date->month)
                 ->sum('jumlah');
             
-            $pengeluaranBulan = Pengeluaran::where('status', Pengeluaran::STATUS_PAID)
+            // Kas terpisah - berdasarkan tanggal_pembayaran
+            $kasBulan = (float) KasAnggota::where('status_pembayaran', KasAnggota::STATUS_LUNAS)
+                ->whereNotNull('tanggal_pembayaran')
+                ->whereYear('tanggal_pembayaran', $date->year)
+                ->whereMonth('tanggal_pembayaran', $date->month)
+                ->sum('jumlah_terbayar');
+            
+            // Pengeluaran - menggunakan scope paid()
+            $pengeluaranBulan = (float) Pengeluaran::paid()
+                ->whereNotNull('tanggal_pengeluaran')
                 ->whereYear('tanggal_pengeluaran', $date->year)
                 ->whereMonth('tanggal_pengeluaran', $date->month)
                 ->sum('jumlah');
             
-            $pemasukan[] = (float) $pemasukanBulan;
-            $pengeluaran[] = (float) $pengeluaranBulan;
+            $pemasukan[] = $pemasukanBulan;
+            $kas[] = $kasBulan;
+            $pengeluaran[] = $pengeluaranBulan;
         }
 
         return [
             'labels' => $months,
             'pemasukan' => $pemasukan,
+            'kas' => $kas,
             'pengeluaran' => $pengeluaran,
         ];
     }
@@ -197,54 +223,130 @@ class DashboardService
         return $ringkasan;
     }
 
-    private function getPendingTransactions()
-    {
-        $pendingPemasukan = Pemasukan::where('status', Pemasukan::STATUS_PENDING)
-            ->with('creator')
-            ->latest()
-            ->limit(5)
-            ->get();
-
-        $pendingPengeluaran = Pengeluaran::where('status', Pengeluaran::STATUS_PENDING)
-            ->with('creator')
-            ->latest()
-            ->limit(5)
-            ->get();
-
-        // Merge collections
-        return $pendingPemasukan->concat($pendingPengeluaran)->sortByDesc('created_at');
-    }
-
     private function getAnggotaBelumBayar()
     {
-        return KasAnggota::with('user')
-            ->whereNotIn('status_pembayaran', [KasAnggota::STATUS_LUNAS])
-            ->latest()
-            ->limit(5)
-            ->get()
-            ->map(function ($kas) {
-                $kas->jumlah_belum_bayar = KasAnggota::getStandardAmount() - $kas->jumlah_terbayar;
-                $kas->bulan_tahun = ucfirst($kas->periode) . ' ' . $kas->tahun;
-                return $kas;
-            });
+        $currentMonth = now()->month;
+        $currentYear = now()->year;
+        $startYear = 2025; // Kas mulai dari tahun 2025
+        
+        // Mapping bulan ke periode
+        $periodeMap = [
+            1 => 'januari', 2 => 'februari', 3 => 'maret', 4 => 'april',
+            5 => 'mei', 6 => 'juni', 7 => 'juli', 8 => 'agustus',
+            9 => 'september', 10 => 'oktober', 11 => 'november', 12 => 'desember'
+        ];
+        
+        $currentPeriode = $periodeMap[$currentMonth];
+        $allPeriodes = array_keys(KasAnggota::getAllPeriode());
+        $currentPeriodeIndex = array_search($currentPeriode, $allPeriodes);
+        
+        // Ambil semua user yang aktif
+        $users = User::where('id', '>', 0)->get();
+        
+        $anggotaBelumBayar = collect();
+        
+        foreach ($users as $user) {
+            // Cek apakah user punya kas yang belum lunas di bulan ini atau sebelumnya, mulai dari tahun 2025
+            // Cari kas pertama yang belum lunas (mulai dari tahun 2025 sampai bulan ini)
+            $unpaidKas = KasAnggota::where('user_id', $user->id)
+                ->where('tahun', '>=', $startYear)
+                ->where(function($query) use ($currentYear, $currentPeriodeIndex, $allPeriodes) {
+                    // Tahun ini, periode bulan ini atau sebelumnya
+                    $query->where(function($q) use ($currentYear, $currentPeriodeIndex, $allPeriodes) {
+                        if ($currentPeriodeIndex !== false) {
+                            $previousPeriodes = array_slice($allPeriodes, 0, $currentPeriodeIndex + 1);
+                            $q->where('tahun', $currentYear)
+                              ->whereIn('periode', $previousPeriodes);
+                        } else {
+                            $q->where('tahun', $currentYear);
+                        }
+                    })->orWhere('tahun', '<', $currentYear);
+                })
+                ->whereNotIn('status_pembayaran', [KasAnggota::STATUS_LUNAS])
+                ->orderBy('tahun', 'asc')
+                ->orderByRaw("FIELD(periode, 'januari', 'februari', 'maret', 'april', 'mei', 'juni', 'juli', 'agustus', 'september', 'oktober', 'november', 'desember')")
+                ->first();
+            
+            if ($unpaidKas) {
+                $unpaidKas->user = $user;
+                $unpaidKas->jumlah_belum_bayar = KasAnggota::getStandardAmount() - $unpaidKas->jumlah_terbayar;
+                $unpaidKas->bulan_tahun = ucfirst($unpaidKas->periode) . ' ' . $unpaidKas->tahun;
+                
+                // Hitung "belum bayar dari kapan" - cari kas pertama yang belum lunas
+                $firstUnpaid = KasAnggota::where('user_id', $user->id)
+                    ->where('tahun', '>=', $startYear)
+                    ->whereNotIn('status_pembayaran', [KasAnggota::STATUS_LUNAS])
+                    ->orderBy('tahun', 'asc')
+                    ->orderByRaw("FIELD(periode, 'januari', 'februari', 'maret', 'april', 'mei', 'juni', 'juli', 'agustus', 'september', 'oktober', 'november', 'desember')")
+                    ->first();
+                
+                if ($firstUnpaid) {
+                    $unpaidKas->belum_bayar_dari = ucfirst($firstUnpaid->periode) . ' ' . $firstUnpaid->tahun;
+                } else {
+                    $unpaidKas->belum_bayar_dari = ucfirst($unpaidKas->periode) . ' ' . $unpaidKas->tahun;
+                }
+                
+                $anggotaBelumBayar->push($unpaidKas);
+            }
+        }
+        
+        return $anggotaBelumBayar->sortByDesc(function($kas) {
+            $periodeOrder = ['januari', 'februari', 'maret', 'april', 'mei', 'juni', 'juli', 'agustus', 'september', 'oktober', 'november', 'desember'];
+            $periodeIndex = array_search($kas->periode, $periodeOrder);
+            return $kas->tahun . '-' . str_pad($periodeIndex !== false ? $periodeIndex : 0, 2, '0', STR_PAD_LEFT);
+        })->take(5);
     }
 
     private function getRecentTransactions()
     {
-        $recentPemasukan = Pemasukan::where('status', Pemasukan::STATUS_VERIFIED)
+        // Pemasukan terbaru (verified) - menggunakan scope verified()
+        $recentPemasukan = Pemasukan::verified()
             ->with('creator')
-            ->latest()
-            ->limit(5)
-            ->get();
+            ->latest('tanggal_pemasukan')
+            ->limit(10)
+            ->get()
+            ->map(function($item) {
+                $item->type = 'pemasukan';
+                $item->display_date = $item->tanggal_pemasukan ?? $item->created_at;
+                return $item;
+            });
 
-        $recentPengeluaran = Pengeluaran::where('status', Pengeluaran::STATUS_PAID)
+        // Pengeluaran terbaru (paid) - menggunakan scope paid()
+        $recentPengeluaran = Pengeluaran::paid()
             ->with('creator')
-            ->latest()
-            ->limit(5)
-            ->get();
+            ->whereNotNull('tanggal_pengeluaran')
+            ->latest('tanggal_pengeluaran')
+            ->limit(10)
+            ->get()
+            ->map(function($item) {
+                $item->type = 'pengeluaran';
+                $item->display_date = $item->tanggal_pengeluaran ?? $item->created_at;
+                return $item;
+            });
 
-        // Merge collections
-        return $recentPemasukan->concat($recentPengeluaran)->sortByDesc('created_at');
+        // Kas anggota terbaru (lunas)
+        $recentKas = KasAnggota::where('status_pembayaran', KasAnggota::STATUS_LUNAS)
+            ->with('user', 'creator')
+            ->whereNotNull('tanggal_pembayaran')
+            ->latest('tanggal_pembayaran')
+            ->limit(10)
+            ->get()
+            ->map(function($item) {
+                $item->type = 'kas';
+                $item->deskripsi = 'Kas Anggota - ' . $item->user->name;
+                $item->jumlah = $item->jumlah_terbayar;
+                $item->kategori = 'Kas Anggota';
+                $item->status = 'lunas';
+                $item->display_date = $item->tanggal_pembayaran ?? $item->created_at;
+                return $item;
+            });
+
+        // Merge semua transaksi dan urutkan berdasarkan tanggal
+        $allTransactions = $recentPemasukan->concat($recentPengeluaran)->concat($recentKas);
+        
+        return $allTransactions->sortByDesc(function($item) {
+            return $item->display_date ? $item->display_date->timestamp : 0;
+        })->take(10)->values();
     }
 }
 

@@ -11,19 +11,19 @@
     @stack('styles')
 </head>
 <body class="bg-gray-100">
-    <div class="flex h-screen overflow-hidden">
+    <div class="flex min-h-screen overflow-x-hidden">
         <div id="sidebar" class="bg-white text-gray-800 w-64 border-r border-gray-200 shadow-sm py-6 px-4 absolute inset-y-0 left-0 transform -translate-x-full md:relative md:translate-x-0 transition duration-200 ease-in-out z-30">
             <div class="flex items-center justify-center space-x-2 px-4 mb-8">
                 <div class="text-center">
-                    <h2 class="text-2xl font-bold text-green-600">PARAGRAF MUDA</h2>
+                    <h2 class="text-2xl font-bold text-[#1b334e]">PARAGRAF MUDA</h2>
                     <p class="text-xs text-gray-500">Portal Anggota Litbang</p>
                 </div>
             </div>
             <nav class="space-y-2">
-                <a href="{{ route('anggota-litbang.dashboard') }}" class="flex items-center py-2.5 px-4 rounded-lg transition duration-200 hover:bg-green-50 hover:text-green-600 {{ request()->routeIs('anggota-litbang.dashboard') ? 'bg-green-50 text-green-600 font-medium' : 'text-gray-600' }}">
+                <a href="{{ route('anggota-litbang.dashboard') }}" class="flex items-center py-2.5 px-4 rounded-lg transition duration-200 hover:bg-[#1b334e]/10 hover:text-[#1b334e] {{ request()->routeIs('anggota-litbang.dashboard') ? 'bg-[#1b334e]/10 text-[#1b334e] font-medium' : 'text-gray-600' }}">
                     <i class="fas fa-home mr-3 w-5 text-center"></i>Dashboard
                 </a>
-                <a href="{{ route('anggota-litbang.briefs.index') }}" class="flex items-center py-2.5 px-4 rounded-lg transition duration-200 hover:bg-green-50 hover:text-green-600 {{ request()->routeIs('anggota-litbang.briefs.*') ? 'bg-green-50 text-green-600 font-medium' : 'text-gray-600' }}">
+                <a href="{{ route('anggota-litbang.briefs.index') }}" class="flex items-center py-2.5 px-4 rounded-lg transition duration-200 hover:bg-[#1b334e]/10 hover:text-[#1b334e] {{ request()->routeIs('anggota-litbang.briefs.*') ? 'bg-[#1b334e]/10 text-[#1b334e] font-medium' : 'text-gray-600' }}">
                     <i class="fas fa-file-alt mr-3 w-5 text-center"></i>Brief
                 </a>
                 <hr class="my-4 border-gray-200">
@@ -35,6 +35,7 @@
                 </form>
             </nav>
         </div>
+        <div id="backdrop" class="fixed inset-0 bg-black/30 hidden md:hidden z-20"></div>
         <div class="flex-1 flex flex-col overflow-hidden">
             <header class="bg-white/80 backdrop-blur border-b border-gray-200">
                 <div class="flex items-center justify-between px-6 py-4">
@@ -65,7 +66,7 @@
                     </div>
                 </div>
             </header>
-            <main class="flex-1 overflow-x-hidden overflow-y-auto bg-gray-50 p-6">
+            <main class="flex-1 overflow-x-hidden overflow-y-auto bg-gray-50 p-4 sm:p-6">
                 <div class="max-w-7xl mx-auto space-y-6">
                     @include('partials.flash')
                     @yield('content')
@@ -74,18 +75,31 @@
         </div>
     </div>
     <script>
-        document.getElementById('mobile-menu-button').addEventListener('click', function() {
-            const sidebar = document.getElementById('sidebar');
-            sidebar.classList.toggle('-translate-x-full');
-            const expanded = !sidebar.classList.contains('-translate-x-full');
-            this.setAttribute('aria-expanded', expanded ? 'true' : 'false');
+        const mobileMenuButton = document.getElementById('mobile-menu-button');
+        const sidebar = document.getElementById('sidebar');
+        const backdrop = document.getElementById('backdrop');
+        function openSidebar() {
+            sidebar.classList.remove('-translate-x-full');
+            if (backdrop) backdrop.classList.remove('hidden');
+            if (mobileMenuButton) mobileMenuButton.setAttribute('aria-expanded', 'true');
+        }
+        function closeSidebar() {
+            sidebar.classList.add('-translate-x-full');
+            if (backdrop) backdrop.classList.add('hidden');
+            if (mobileMenuButton) mobileMenuButton.setAttribute('aria-expanded', 'false');
+        }
+        if (mobileMenuButton) mobileMenuButton.addEventListener('click', function() {
+            const isOpen = !sidebar.classList.contains('-translate-x-full');
+            if (isOpen) closeSidebar(); else openSidebar();
         });
-        document.getElementById('user-menu-button').addEventListener('click', function() {
-            document.getElementById('user-menu').classList.toggle('hidden');
+        if (backdrop) backdrop.addEventListener('click', closeSidebar);
+        document.getElementById('user-menu-button')?.addEventListener('click', function() {
+            document.getElementById('user-menu')?.classList.toggle('hidden');
         });
         document.addEventListener('click', function(event) {
             const userMenu = document.getElementById('user-menu');
             const userMenuButton = document.getElementById('user-menu-button');
+            if (!userMenuButton || !userMenu) return;
             if (!userMenuButton.contains(event.target) && !userMenu.contains(event.target)) {
                 userMenu.classList.add('hidden');
             }

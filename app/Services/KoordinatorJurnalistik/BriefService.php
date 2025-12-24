@@ -9,12 +9,25 @@ use Illuminate\View\View;
 
 class BriefService
 {
-    public function index(): array
+    public function index(Request $request): array
     {
-        $briefs = Brief::with(['contents'])
-            ->latest()
-            ->paginate(10);
-            
+        $query = Brief::with(['contents']);
+
+        // Filter by search (judul atau isi_brief)
+        if ($request->has('search') && $request->search) {
+            $search = $request->search;
+            $query->where(function($q) use ($search) {
+                $q->where('judul', 'like', '%' . $search . '%')
+                  ->orWhere('isi_brief', 'like', '%' . $search . '%');
+            });
+        }
+
+        // Filter by tanggal
+        if ($request->has('tanggal') && $request->tanggal) {
+            $query->whereDate('tanggal', $request->tanggal);
+        }
+
+        $briefs = $query->latest()->paginate(10)->withQueryString();
         $totalBriefs = Brief::count();
             
         return compact('briefs', 'totalBriefs');

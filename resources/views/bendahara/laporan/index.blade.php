@@ -88,6 +88,18 @@
                     <option value="bendahara">Bendahara</option>
                 </select>
             </div>
+
+            <!-- Filter Button -->
+            <div class="flex items-end space-x-2">
+                <button type="button" onclick="applyFilter()" class="inline-flex items-center gap-1.5 rounded-lg border border-[#D8C4B6]/40 bg-white px-4 py-2 text-sm font-medium text-[#1b334e] shadow-sm transition-all hover:shadow-md hover:bg-[#f9b61a]/10">
+                    <i class="fas fa-search"></i>
+                    Terapkan Filter
+                </button>
+                <button type="button" onclick="resetFilter()" class="inline-flex items-center gap-1.5 rounded-lg border border-[#D8C4B6]/40 bg-white px-4 py-2 text-sm font-medium text-[#1b334e] shadow-sm transition-all hover:shadow-md hover:bg-[#f9b61a]/10">
+                    <i class="fas fa-undo"></i>
+                    Reset
+                </button>
+            </div>
         </form>
     </div>
 
@@ -268,15 +280,28 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 
-    // Auto-submit filter form
-    const filterInputs = document.querySelectorAll('#filterForm select, #filterForm input');
-    filterInputs.forEach(input => {
-        input.addEventListener('change', function() {
-            // Here you would typically submit the form or make an AJAX request
-            console.log('Filter changed:', this.name, this.value);
-        });
-    });
+    // Form hanya submit saat tombol "Terapkan Filter" ditekan (tidak auto-submit)
+    // Tidak ada auto-submit, form hanya submit saat tombol ditekan
 });
+
+function applyFilter() {
+    const form = document.getElementById('filterForm');
+    const formData = new FormData(form);
+    const params = new URLSearchParams();
+    
+    for (const [key, value] of formData.entries()) {
+        if (value) {
+            params.append(key, value);
+        }
+    }
+    
+    window.location.href = window.location.pathname + '?' + params.toString();
+}
+
+function resetFilter() {
+    document.getElementById('filterForm').reset();
+    window.location.href = window.location.pathname;
+}
 
 function viewReport(type) {
     // Get current filter values

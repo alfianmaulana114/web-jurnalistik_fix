@@ -83,11 +83,12 @@ class KoordinatorJurnalistikController extends Controller
     /**
      * Menampilkan daftar semua berita untuk Koordinator Jurnalistik.
      *
+     * @param Request $request
      * @return View
      */
-    public function newsIndex(): View
+    public function newsIndex(Request $request): View
     {
-        $data = app(\App\Services\KoordinatorJurnalistik\NewsService::class)->index();
+        $data = app(\App\Services\KoordinatorJurnalistik\NewsService::class)->index($request);
         return view('koordinator-jurnalistik.news.index', $data);
     }
 

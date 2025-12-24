@@ -21,9 +21,9 @@ class BriefController extends Controller
     /**
      * Display a listing of briefs.
      */
-    public function index(): View
+    public function index(Request $request): View
     {
-        $data = $this->briefService->index();
+        $data = $this->briefService->index($request);
         return view('koordinator-jurnalistik.briefs.index', $data);
     }
 

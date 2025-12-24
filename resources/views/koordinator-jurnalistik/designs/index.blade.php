@@ -12,30 +12,56 @@
             <p class="mt-1 text-sm text-gray-600">Kelola desain media sederhana</p>
         </div>
         <div class="flex items-center space-x-3">
-            <a href="{{ route('koordinator-jurnalistik.designs.create') }}" class="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-[#1b334e] hover:bg-[#16283e] focus:outline-none">
+            <a href="{{ route('koordinator-jurnalistik.designs.create') }}" class="inline-flex items-center px-4 py-2 border border-[#D8C4B6]/40 rounded-lg shadow-sm text-sm font-medium text-[#1b334e] bg-white hover:bg-[#f9b61a]/10 hover:shadow-md focus:outline-none transition-all">
                 <i class="fas fa-plus mr-2"></i>
                 Tambah Desain
             </a>
-            <button type="button" onclick="openNewsSelectionModal()" class="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-[#1b334e] hover:bg-[#16283e] focus:outline-none">
+            <button type="button" onclick="openNewsSelectionModal()" class="inline-flex items-center px-4 py-2 border border-[#D8C4B6]/40 rounded-lg shadow-sm text-sm font-medium text-[#1b334e] bg-white hover:bg-[#f9b61a]/10 hover:shadow-md focus:outline-none transition-all">
                 <i class="fas fa-newspaper mr-2"></i>
                 Pilih Berita untuk Desain
             </button>
         </div>
     </div>
 
-    <!-- Designs Table -->
-    <div class="bg-white shadow rounded-lg overflow-hidden">
-        <div class="px-6 py-4 border-b border-gray-200">
-            <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
-                <h3 class="text-lg font-medium text-gray-900">Daftar Desain</h3>
-                <input type="text" id="designsSearchClient" class="w-full sm:w-64 px-3 py-2 border rounded" placeholder="Cari cepat..." />
+    <!-- Filters -->
+    <div class="bg-white rounded-lg border border-[#D8C4B6]/40 shadow-sm hover:shadow-md transition-all p-6">
+        <form method="GET" action="{{ route('koordinator-jurnalistik.designs.index') }}" class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div>
+                <label for="search" class="block text-sm font-medium text-gray-700">Cari</label>
+                <input type="text" name="search" id="search" value="{{ request('search') }}" placeholder="Judul desain..." class="mt-1 block w-full border-[#D8C4B6]/40 rounded-lg shadow-sm focus:ring-[#f9b61a] focus:border-[#f9b61a] sm:text-sm">
             </div>
+            <div>
+                <label for="jenis" class="block text-sm font-medium text-gray-700">Jenis</label>
+                <select name="jenis" id="jenis" class="mt-1 block w-full border-[#D8C4B6]/40 rounded-lg shadow-sm focus:ring-[#f9b61a] focus:border-[#f9b61a] sm:text-sm">
+                    <option value="">Semua Jenis</option>
+                    @foreach(\App\Models\Design::getJenisOptions() as $key => $label)
+                        <option value="{{ $key }}" {{ request('jenis') == $key ? 'selected' : '' }}>{{ $label }}</option>
+                    @endforeach
+                </select>
+            </div>
+            <div class="flex items-end space-x-2">
+                <button type="submit" class="flex-1 px-4 py-2 bg-white text-[#1b334e] border border-[#D8C4B6]/40 rounded-lg font-semibold text-xs uppercase tracking-widest hover:bg-[#f9b61a]/10 hover:shadow-md focus:outline-none transition-all duration-150">
+                    <i class="fas fa-search mr-2"></i>
+                    Terapkan Filter
+                </button>
+                <a href="{{ route('koordinator-jurnalistik.designs.index') }}" class="px-4 py-2 bg-white text-[#1b334e] border border-[#D8C4B6]/40 rounded-lg font-semibold text-xs uppercase tracking-widest hover:bg-[#f9b61a]/10 focus:outline-none transition-all duration-150">
+                    <i class="fas fa-times mr-2"></i>
+                    Reset
+                </a>
+            </div>
+        </form>
+    </div>
+
+    <!-- Designs Table -->
+    <div class="bg-white border border-[#D8C4B6]/40 shadow-sm hover:shadow-md transition-all rounded-lg overflow-hidden">
+        <div class="px-6 py-4 border-b border-[#D8C4B6]/40">
+            <h3 class="text-lg font-medium text-gray-900">Daftar Desain</h3>
         </div>
         
         @if($designs && $designs->count() > 0)
             <div class="overflow-x-auto">
-                <table class="min-w-full divide-y divide-gray-200">
-                    <thead class="bg-gray-50">
+                <table class="min-w-full divide-y divide-[#D8C4B6]/40">
+                    <thead class="bg-[#f9b61a]/5">
                         <tr>
                             <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Judul</th>
                             <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Jenis</th>
@@ -46,37 +72,37 @@
                             <th scope="col" class="relative px-6 py-3"><span class="sr-only">Actions</span></th>
                         </tr>
                     </thead>
-                    <tbody class="bg-white divide-y divide-gray-200" id="designsTableBody">
+                    <tbody class="bg-white divide-y divide-[#D8C4B6]/40" id="designsTableBody">
                         @foreach($designs as $design)
-                            <tr class="hover:bg-gray-50">
+                            <tr class="hover:bg-[#f9b61a]/5 transition-colors">
                                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                                    <a href="{{ route('koordinator-jurnalistik.designs.show', $design) }}" class="font-medium hover:text-red-600">
+                                    <a href="{{ route('koordinator-jurnalistik.designs.show', $design) }}" class="font-medium hover:text-[#f9b61a]">
                                         {{ Str::limit($design->judul, 60) }}
                                     </a>
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap text-sm">
                                     @php($jenisOptions = \App\Models\Design::getJenisOptions())
                                     @if($design->jenis === 'desain')
-                                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-[#1b334e]/10 text-[#1b334e]">
                                             {{ $jenisOptions[$design->jenis] ?? ucfirst($design->jenis) }}
                                         </span>
                                     @elseif($design->jenis === 'video')
-                                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">
+                                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-[#f9b61a]/10 text-[#f9b61a]">
                                             {{ $jenisOptions[$design->jenis] ?? ucfirst($design->jenis) }}
                                         </span>
                                     @elseif($design->jenis === 'funfact')
-                                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-purple-100 text-purple-800">
+                                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-[#1b334e]/10 text-[#1b334e]">
                                             {{ $jenisOptions[$design->jenis] ?? ucfirst($design->jenis) }}
                                         </span>
                                     @else
-                                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
+                                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-[#D8C4B6] text-[#1b334e]">
                                             {{ $jenisOptions[$design->jenis] ?? ucfirst($design->jenis) }}
                                         </span>
                                     @endif
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                                     @if($design->berita)
-                                        <a href="{{ route('koordinator-jurnalistik.news.show', $design->berita) }}" class="text-blue-600 hover:text-blue-800">
+                                        <a href="{{ route('koordinator-jurnalistik.news.show', $design->berita) }}" class="text-[#1b334e] hover:text-[#f9b61a]">
                                             {{ Str::limit($design->berita->title ?? $design->berita->judul ?? 'Berita', 40) }}
                                         </a>
                                     @else
@@ -85,7 +111,7 @@
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap text-sm">
                                     @if($design->media_url)
-                                        <a href="{{ $design->media_url }}" target="_blank" rel="noopener" class="text-blue-600 hover:text-blue-800">
+                                        <a href="{{ $design->media_url }}" target="_blank" rel="noopener" class="text-[#1b334e] hover:text-[#f9b61a]">
                                             {{ Str::limit($design->media_url, 40) }}
                                         </a>
                                     @else
@@ -101,16 +127,16 @@
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                                     <div class="flex items-center space-x-2">
-                                        <a href="{{ route('koordinator-jurnalistik.designs.show', $design) }}" class="text-blue-600 hover:text-blue-900" title="Lihat Detail">
+                                        <a href="{{ route('koordinator-jurnalistik.designs.show', $design) }}" class="text-[#1b334e] hover:bg-[#f9b61a]/10 p-2 rounded-lg transition-all" title="Lihat Detail">
                                             <i class="fas fa-eye"></i>
                                         </a>
-                                        <a href="{{ route('koordinator-jurnalistik.designs.edit', $design) }}" class="text-yellow-600 hover:text-yellow-900" title="Edit">
+                                        <a href="{{ route('koordinator-jurnalistik.designs.edit', $design) }}" class="text-[#1b334e] hover:bg-[#f9b61a]/10 p-2 rounded-lg transition-all" title="Edit">
                                             <i class="fas fa-edit"></i>
                                         </a>
                                         <form action="{{ route('koordinator-jurnalistik.designs.destroy', $design) }}" method="POST" class="inline" onsubmit="return confirm('Apakah Anda yakin ingin menghapus desain ini?')">
                                             @csrf
                                             @method('DELETE')
-                                            <button type="submit" class="text-red-600 hover:text-red-900" title="Hapus">
+                                            <button type="submit" class="text-red-600 hover:text-red-800" title="Hapus">
                                                 <i class="fas fa-trash"></i>
                                             </button>
                                         </form>
@@ -124,7 +150,7 @@
 
             <!-- Pagination -->
             @if(method_exists($designs, 'links'))
-                <div class="px-6 py-4 border-t border-gray-200">
+                <div class="px-6 py-4 border-t border-[#D8C4B6]/40">
                     {{ $designs->links() }}
                 </div>
             @endif
@@ -133,7 +159,7 @@
                 <i class="fas fa-palette text-4xl text-gray-400 mb-4"></i>
                 <h3 class="text-lg font-medium text-gray-900 mb-2">Belum ada desain</h3>
                 <p class="text-gray-500 mb-4">Mulai dengan membuat entri desain pertama Anda.</p>
-                <a href="{{ route('koordinator-jurnalistik.designs.create') }}" class="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-[#1b334e] hover:bg-[#16283e] focus:outline-none">
+                <a href="{{ route('koordinator-jurnalistik.designs.create') }}" class="inline-flex items-center px-4 py-2 border border-[#D8C4B6]/40 rounded-lg shadow-sm text-sm font-medium text-[#1b334e] bg-white hover:bg-[#f9b61a]/10 hover:shadow-md focus:outline-none transition-all">
                     <i class="fas fa-plus mr-2"></i>
                     Tambah Desain Pertama
                 </a>
@@ -151,14 +177,14 @@
 
         <!-- Pencarian -->
         <div class="px-6 py-4 border-b flex-shrink-0">
-            <input type="text" id="newsSearch" placeholder="Cari berita..." class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#1b334e]" onkeyup="filterNews()">
+            <input type="text" id="newsSearch" placeholder="Cari berita..." class="w-full border border-[#D8C4B6]/40 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#f9b61a]" onkeyup="filterNews()">
         </div>
 
         <!-- Daftar Berita -->
         <div class="overflow-y-auto flex-1">
             <div class="px-6 py-4 space-y-3">
                 @forelse($availableNews as $news)
-                    <div class="news-item border border-gray-200 rounded-lg p-4 cursor-pointer hover:bg-gray-50 transition-colors" data-news-id="{{ $news->id }}" onclick="selectNews(this)">
+                    <div class="news-item border border-[#D8C4B6]/40 rounded-lg p-4 cursor-pointer hover:bg-[#f9b61a]/5 transition-colors" data-news-id="{{ $news->id }}" onclick="selectNews(this)">
                         <h4 class="font-semibold text-gray-800">{{ $news->title ?? $news->judul }}</h4>
                         <p class="text-sm text-gray-600 mt-1">{{ Str::limit(strip_tags($news->content ?? $news->isi ?? ''), 150) }}</p>
                         <div class="flex items-center justify-between mt-2">
@@ -177,8 +203,8 @@
 
         <!-- Footer -->
         <div class="bg-gray-50 px-6 py-4 border-t flex justify-end space-x-3 flex-shrink-0">
-            <button type="button" onclick="closeNewsSelectionModal()" class="px-4 py-2 text-gray-600 border border-gray-300 rounded-lg hover:bg-gray-100 transition-colors">Batal</button>
-            <button type="button" id="createDesignBtn" onclick="createDesignForSelectedNews()" class="px-4 py-2 bg-[#1b334e] text-white rounded-lg hover:bg-[#16283e] transition-colors disabled:bg-gray-400 disabled:cursor-not-allowed" disabled>Buat Desain</button>
+            <button type="button" onclick="closeNewsSelectionModal()" class="px-4 py-2 text-[#1b334e] border border-[#D8C4B6]/40 rounded-lg hover:bg-[#f9b61a]/10 transition-all">Batal</button>
+            <button type="button" id="createDesignBtn" onclick="createDesignForSelectedNews()" class="px-4 py-2 bg-white text-[#1b334e] border border-[#D8C4B6]/40 rounded-lg hover:bg-[#f9b61a]/10 hover:shadow-md transition-all disabled:bg-gray-400 disabled:cursor-not-allowed" disabled>Buat Desain</button>
         </div>
     </div>
 </div>
@@ -208,7 +234,7 @@ function filterNews() {
 }
 
 function selectNews(el) {
-    document.querySelectorAll('.news-item').forEach(item => item.classList.remove('border-green-500','bg-green-50'));
+    document.querySelectorAll('.news-item').forEach(item => item.classList.remove('border-[#1b334e]','bg-[#1b334e]/5'));
     el.classList.add('border-[#1b334e]','bg-[#1b334e]/5');
     selectedNewsId = el.getAttribute('data-news-id');
     const btn = document.getElementById('createDesignBtn');
@@ -231,20 +257,4 @@ document.addEventListener('click', function(event) {
     }
 });
 </script>
-@push('scripts')
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-    const input = document.getElementById('designsSearchClient');
-    const tbody = document.getElementById('designsTableBody');
-    if (!input || !tbody) return;
-    input.addEventListener('input', function() {
-        const q = this.value.toLowerCase();
-        Array.from(tbody.querySelectorAll('tr')).forEach(function(row) {
-            const text = row.textContent.toLowerCase();
-            row.style.display = text.includes(q) ? '' : 'none';
-        });
-    });
-});
-</script>
-@endpush
 @endsection

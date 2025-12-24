@@ -21,9 +21,9 @@ class DesignController extends Controller
     /**
      * Display a listing of designs.
      */
-    public function index(): View
+    public function index(Request $request): View
     {
-        $data = $this->designService->index();
+        $data = $this->designService->index($request);
         return view('koordinator-jurnalistik.designs.index', $data);
     }
 

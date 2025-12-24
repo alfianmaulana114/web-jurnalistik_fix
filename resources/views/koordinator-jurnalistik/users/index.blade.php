@@ -12,7 +12,7 @@
             <p class="mt-1 text-sm text-gray-600">Kelola anggota UKM Jurnalistik</p>
         </div>
         <div class="mt-4 sm:mt-0">
-            <a href="{{ route('koordinator-jurnalistik.users.create') }}" class="inline-flex items-center px-4 py-2 bg-[#1b334e] border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-[#16283e] focus:outline-none transition ease-in-out duration-150">
+            <a href="{{ route('koordinator-jurnalistik.users.create') }}" class="inline-flex items-center px-4 py-2 bg-white text-[#1b334e] border border-[#D8C4B6]/40 rounded-lg font-semibold text-xs uppercase tracking-widest hover:bg-[#f9b61a]/10 hover:shadow-md focus:outline-none transition-all duration-150">
                 <i class="fas fa-plus mr-2"></i>
                 Tambah User
             </a>
@@ -22,69 +22,69 @@
     <!-- Statistics Cards -->
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         <!-- Total Users -->
-        <div class="bg-white rounded-lg shadow p-6">
+        <div class="bg-white rounded-lg shadow p-6 border border-[#D8C4B6]">
             <div class="flex items-center">
-                <div class="p-3 rounded-full bg-blue-100 text-blue-600">
+                <div class="p-3 rounded-full bg-[#f9b61a]/10 text-[#f9b61a]">
                     <i class="fas fa-users text-xl"></i>
                 </div>
                 <div class="ml-4">
                     <p class="text-sm font-medium text-gray-600">Total User</p>
-                    <p class="text-2xl font-semibold text-gray-900">{{ $users->total() ?? 0 }}</p>
+                    <p class="text-2xl font-semibold text-[#1b334e]">{{ $users->total() ?? 0 }}</p>
                 </div>
             </div>
         </div>
 
         <!-- Koordinator -->
-        <div class="bg-white rounded-lg shadow p-6">
+        <div class="bg-white rounded-lg shadow p-6 border border-[#D8C4B6]">
             <div class="flex items-center">
-                <div class="p-3 rounded-full bg-green-100 text-green-600">
+                <div class="p-3 rounded-full bg-[#f9b61a]/10 text-[#f9b61a]">
                     <i class="fas fa-user-tie text-xl"></i>
                 </div>
                 <div class="ml-4">
                     <p class="text-sm font-medium text-gray-600">Koordinator</p>
-                    <p class="text-2xl font-semibold text-gray-900">{{ $koordinatorCount ?? 0 }}</p>
+                    <p class="text-2xl font-semibold text-[#1b334e]">{{ $koordinatorCount ?? 0 }}</p>
                 </div>
             </div>
         </div>
 
         <!-- Anggota -->
-        <div class="bg-white rounded-lg shadow p-6">
+        <div class="bg-white rounded-lg shadow p-6 border border-[#D8C4B6]">
             <div class="flex items-center">
-                <div class="p-3 rounded-full bg-yellow-100 text-yellow-600">
+                <div class="p-3 rounded-full bg-[#f9b61a]/10 text-[#f9b61a]">
                     <i class="fas fa-user-friends text-xl"></i>
                 </div>
                 <div class="ml-4">
                     <p class="text-sm font-medium text-gray-600">Anggota</p>
-                    <p class="text-2xl font-semibold text-gray-900">{{ $anggotaCount ?? 0 }}</p>
+                    <p class="text-2xl font-semibold text-[#1b334e]">{{ $anggotaCount ?? 0 }}</p>
                 </div>
             </div>
         </div>
 
         <!-- Pengurus -->
-        <div class="bg-white rounded-lg shadow p-6">
+        <div class="bg-white rounded-lg shadow p-6 border border-[#D8C4B6]">
             <div class="flex items-center">
-                <div class="p-3 rounded-full bg-purple-100 text-purple-600">
+                <div class="p-3 rounded-full bg-[#f9b61a]/10 text-[#f9b61a]">
                     <i class="fas fa-user-cog text-xl"></i>
                 </div>
                 <div class="ml-4">
                     <p class="text-sm font-medium text-gray-600">Pengurus</p>
-                    <p class="text-2xl font-semibold text-gray-900">{{ $pengurusCount ?? 0 }}</p>
+                    <p class="text-2xl font-semibold text-[#1b334e]">{{ $pengurusCount ?? 0 }}</p>
                 </div>
             </div>
         </div>
     </div>
 
     <!-- Filters -->
-    <div class="bg-white rounded-lg shadow p-6">
+    <div class="bg-white rounded-lg border border-[#D8C4B6]/40 shadow-sm hover:shadow-md transition-all p-6">
         <form method="GET" action="{{ route('koordinator-jurnalistik.users.index') }}" class="grid grid-cols-1 md:grid-cols-4 gap-4">
             <div>
                 <label for="search" class="block text-sm font-medium text-gray-700">Cari</label>
-                <input type="text" name="search" id="search" value="{{ request('search') }}" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-[#1b334e] focus:border-[#1b334e] sm:text-sm" placeholder="Nama, email, atau NIM">
+                <input type="text" name="search" id="search" value="{{ request('search') }}" class="mt-1 block w-full border-[#D8C4B6]/40 rounded-lg shadow-sm focus:ring-[#f9b61a] focus:border-[#f9b61a] sm:text-sm" placeholder="Nama, email, atau NIM">
             </div>
 
             <div>
                 <label for="role" class="block text-sm font-medium text-gray-700">Role</label>
-                <select name="role" id="role" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-[#1b334e] focus:border-[#1b334e] sm:text-sm">
+                <select name="role" id="role" class="mt-1 block w-full border-[#D8C4B6]/40 rounded-lg shadow-sm focus:ring-[#f9b61a] focus:border-[#f9b61a] sm:text-sm">
                     <option value="">Semua Role</option>
                     <option value="koordinator_jurnalistik" {{ request('role') === 'koordinator_jurnalistik' ? 'selected' : '' }}>Koordinator Jurnalistik</option>
                     <option value="koordinator_redaksi" {{ request('role') === 'koordinator_redaksi' ? 'selected' : '' }}>Koordinator Redaksi</option>
@@ -102,7 +102,7 @@
 
             <div>
                 <label for="divisi" class="block text-sm font-medium text-gray-700">Divisi</label>
-                <select name="divisi" id="divisi" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-[#1b334e] focus:border-[#1b334e] sm:text-sm">
+                <select name="divisi" id="divisi" class="mt-1 block w-full border-[#D8C4B6]/40 rounded-lg shadow-sm focus:ring-[#f9b61a] focus:border-[#f9b61a] sm:text-sm">
                     <option value="">Semua Divisi</option>
                     <option value="redaksi" {{ request('divisi') === 'redaksi' ? 'selected' : '' }}>Redaksi</option>
                     <option value="litbang" {{ request('divisi') === 'litbang' ? 'selected' : '' }}>Litbang</option>
@@ -113,11 +113,11 @@
             </div>
 
             <div class="flex items-end space-x-2">
-                <button type="submit" class="inline-flex items-center px-4 py-2 bg-[#1b334e] border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-[#16283e] focus:outline-none transition ease-in-out duration-150">
+                <button type="submit" class="inline-flex items-center px-4 py-2 bg-white text-[#1b334e] border border-[#D8C4B6]/40 rounded-lg font-semibold text-xs uppercase tracking-widest hover:bg-[#f9b61a]/10 hover:shadow-md focus:outline-none transition-all duration-150">
                     <i class="fas fa-search mr-2"></i>
-                    Filter
+                    Terapkan Filter
                 </button>
-                <a href="{{ route('koordinator-jurnalistik.users.index') }}" class="inline-flex items-center px-4 py-2 bg-gray-300 border border-transparent rounded-md font-semibold text-xs text-gray-700 uppercase tracking-widest hover:bg-gray-400 focus:bg-gray-400 active:bg-gray-500 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 transition ease-in-out duration-150">
+                <a href="{{ route('koordinator-jurnalistik.users.index') }}" class="inline-flex items-center px-4 py-2 bg-white text-[#1b334e] border border-[#D8C4B6]/40 rounded-lg font-semibold text-xs uppercase tracking-widest hover:bg-[#f9b61a]/10 focus:outline-none transition-all duration-150">
                     <i class="fas fa-times mr-2"></i>
                     Reset
                 </a>
@@ -126,17 +126,14 @@
     </div>
 
     <!-- Users Table -->
-    <div class="bg-white rounded-lg shadow overflow-hidden">
-        <div class="px-6 py-4 border-b border-gray-200">
-            <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
-                <h3 class="text-lg font-medium text-gray-900">Daftar User</h3>
-                <input type="text" id="usersSearchClient" class="w-full sm:w-64 px-3 py-2 border rounded" placeholder="Cari cepat..." />
-            </div>
+    <div class="bg-white rounded-lg border border-[#D8C4B6]/40 shadow-sm hover:shadow-md transition-all overflow-hidden">
+        <div class="px-6 py-4 border-b border-[#D8C4B6]/40">
+            <h3 class="text-lg font-medium text-gray-900">Daftar User</h3>
         </div>
         @if($users->count() > 0)
             <div class="overflow-x-auto">
-                <table class="min-w-full divide-y divide-gray-200">
-                    <thead class="bg-gray-50">
+                <table class="min-w-full divide-y divide-[#D8C4B6]/40">
+                    <thead class="bg-[#f9b61a]/5">
                         <tr>
                             <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                 User
@@ -158,14 +155,14 @@
                             </th>
                         </tr>
                     </thead>
-                    <tbody class="bg-white divide-y divide-gray-200" id="usersTableBody">
+                    <tbody class="bg-white divide-y divide-[#D8C4B6]/40" id="usersTableBody">
                         @foreach($users as $user)
-                            <tr class="hover:bg-gray-50">
+                            <tr class="hover:bg-[#f9b61a]/5 transition-colors">
                                 <td class="px-6 py-4 whitespace-nowrap">
                                     <div class="flex items-center">
                                         <div class="flex-shrink-0 h-10 w-10">
-                                            <div class="h-10 w-10 rounded-full bg-red-100 flex items-center justify-center">
-                                                <span class="text-sm font-medium text-red-600">
+                                            <div class="h-10 w-10 rounded-full bg-[#f9b61a]/10 flex items-center justify-center">
+                                                <span class="text-sm font-medium text-[#f9b61a]">
                                                     {{ strtoupper(substr($user->name, 0, 2)) }}
                                                 </span>
                                             </div>
@@ -237,17 +234,17 @@
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                                     <div class="flex items-center justify-end space-x-2">
-                                        <a href="{{ route('koordinator-jurnalistik.users.show', $user) }}" class="text-red-600 hover:text-red-900" title="Lihat Detail">
+                                        <a href="{{ route('koordinator-jurnalistik.users.show', $user) }}" class="text-[#1b334e] hover:bg-[#f9b61a]/10 p-2 rounded-lg transition-all" title="Lihat Detail">
                                             <i class="fas fa-eye"></i>
                                         </a>
-                                        <a href="{{ route('koordinator-jurnalistik.users.edit', $user) }}" class="text-blue-600 hover:text-blue-900" title="Edit">
+                                        <a href="{{ route('koordinator-jurnalistik.users.edit', $user) }}" class="text-[#1b334e] hover:bg-[#f9b61a]/10 p-2 rounded-lg transition-all" title="Edit">
                                             <i class="fas fa-edit"></i>
                                         </a>
                                         @if($user->id !== auth()->id())
                                             <form action="{{ route('koordinator-jurnalistik.users.destroy', $user) }}" method="POST" class="inline" onsubmit="return confirm('Apakah Anda yakin ingin menghapus user ini?')">
                                                 @csrf
                                                 @method('DELETE')
-                                                <button type="submit" class="text-red-600 hover:text-red-900" title="Hapus">
+                                                <button type="submit" class="text-red-600 hover:text-red-800" title="Hapus">
                                                     <i class="fas fa-trash"></i>
                                                 </button>
                                             </form>
@@ -261,7 +258,7 @@
             </div>
 
             <!-- Pagination -->
-            <div class="bg-white px-4 py-3 border-t border-gray-200 sm:px-6">
+            <div class="bg-white px-4 py-3 border-t border-[#D8C4B6]/40 sm:px-6">
                 {{ $users->links() }}
             </div>
         @else
@@ -276,7 +273,7 @@
                     @endif
                 </p>
                 @if(!request()->hasAny(['search', 'role', 'divisi']))
-                    <a href="{{ route('koordinator-jurnalistik.users.create') }}" class="inline-flex items-center px-4 py-2 bg-[#1b334e] border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-[#16283e] focus:outline-none transition ease-in-out duration-150">
+                    <a href="{{ route('koordinator-jurnalistik.users.create') }}" class="inline-flex items-center px-4 py-2 bg-white text-[#1b334e] border border-[#D8C4B6]/40 rounded-lg font-semibold text-xs uppercase tracking-widest hover:bg-[#f9b61a]/10 hover:shadow-md focus:outline-none transition-all duration-150">
                         <i class="fas fa-plus mr-2"></i>
                         Tambah User Pertama
                     </a>
@@ -286,43 +283,4 @@
     </div>
 </div>
 
-@push('scripts')
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-    // Auto-submit form when filters change
-    const filterForm = document.querySelector('form');
-    const filterInputs = filterForm.querySelectorAll('select, input[name="search"]');
-    
-    filterInputs.forEach(input => {
-        if (input.type === 'text') {
-            // For search input, use debounce
-            let timeout;
-            input.addEventListener('input', function() {
-                clearTimeout(timeout);
-                timeout = setTimeout(() => {
-                    filterForm.submit();
-                }, 500);
-            });
-        } else {
-            // For select inputs, submit immediately
-            input.addEventListener('change', function() {
-                filterForm.submit();
-            });
-        }
-    });
-
-    const quickInput = document.getElementById('usersSearchClient');
-    const tbody = document.getElementById('usersTableBody');
-    if (quickInput && tbody) {
-        quickInput.addEventListener('input', function() {
-            const q = this.value.toLowerCase();
-            Array.from(tbody.querySelectorAll('tr')).forEach(function(row) {
-                const text = row.textContent.toLowerCase();
-                row.style.display = text.includes(q) ? '' : 'none';
-            });
-        });
-    }
-});
-</script>
-@endpush
 @endsection

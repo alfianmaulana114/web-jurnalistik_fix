@@ -16,11 +16,37 @@ class NewsService
     /**
      * Mengambil daftar berita untuk index Koordinator Jurnalistik.
      *
+     * @param Request $request
      * @return array
      */
-    public function index(): array
+    public function index(Request $request): array
     {
-        $news = News::with(['user', 'category', 'type', 'genres', 'approval.user'])->latest()->paginate(10);
+        $query = News::with(['user', 'category', 'type', 'genres', 'approval.user']);
+
+        // Filter by search (title atau content)
+        if ($request->has('search') && $request->search) {
+            $search = $request->search;
+            $query->where(function($q) use ($search) {
+                $q->where('title', 'like', '%' . $search . '%')
+                  ->orWhere('content', 'like', '%' . $search . '%');
+            });
+        }
+
+        // Filter by category
+        if ($request->has('category') && $request->category) {
+            $query->where('category_id', $request->category);
+        }
+
+        // Filter by approval status
+        if ($request->has('approval') && $request->approval) {
+            if ($request->approval === 'approved') {
+                $query->whereHas('approval');
+            } elseif ($request->approval === 'pending') {
+                $query->whereDoesntHave('approval');
+            }
+        }
+
+        $news = $query->latest()->paginate(10)->withQueryString();
         return compact('news');
     }
 

@@ -37,8 +37,15 @@
                     <option value="pengurus" {{ ($divisi ?? '')==='pengurus' ? 'selected' : '' }}>Pengurus</option>
                 </select>
             </div>
-            <div class="flex items-end">
-                <button type="submit" class="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700">Terapkan</button>
+            <div class="flex items-end space-x-2">
+                <button type="submit" class="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700">
+                    <i class="fas fa-search mr-2"></i>
+                    Terapkan Filter
+                </button>
+                <a href="{{ route('bendahara.kas-anggota.riwayat') }}" class="px-4 py-2 bg-gray-200 text-gray-700 rounded-md hover:bg-gray-300">
+                    <i class="fas fa-times mr-2"></i>
+                    Reset
+                </a>
             </div>
         </form>
     </div>

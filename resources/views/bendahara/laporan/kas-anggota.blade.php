@@ -302,13 +302,8 @@
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    // Auto-submit filter form
-    const filterInputs = document.querySelectorAll('#filterForm select');
-    filterInputs.forEach(input => {
-        input.addEventListener('change', function() {
-            document.getElementById('filterForm').submit();
-        });
-    });
+    // Form hanya submit saat tombol Filter ditekan (tidak auto-submit)
+    // Tidak ada auto-submit, form hanya submit saat tombol Filter ditekan
 });
 
 function exportReport() {

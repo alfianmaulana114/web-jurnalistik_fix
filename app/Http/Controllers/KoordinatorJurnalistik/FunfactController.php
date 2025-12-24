@@ -31,11 +31,12 @@ class FunfactController extends Controller
     /**
      * Display a listing of funfacts.
      * 
+     * @param Request $request
      * @return View
      */
-    public function index(): View
+    public function index(Request $request): View
     {
-        $data = $this->funfactService->index();
+        $data = $this->funfactService->index($request);
         return view('koordinator-jurnalistik.funfacts.index', $data);
     }
 

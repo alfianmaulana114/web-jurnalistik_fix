@@ -3,77 +3,77 @@
 @section('title', 'Manajemen Pengeluaran')
 
 @section('content')
-<div class="container mx-auto px-4 py-6">
-    <!-- Header -->
-    <div class="flex justify-between items-center mb-6">
+<div class="space-y-6">
+    <!-- Header Actions -->
+    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
         <div>
-            <h1 class="text-2xl font-bold text-gray-800">Manajemen Pengeluaran</h1>
-            <p class="text-gray-600 mt-1">Kelola semua pengeluaran organisasi</p>
+            <h1 class="text-2xl font-bold text-gray-900">Manajemen Pengeluaran</h1>
+            <p class="mt-1 text-sm text-gray-600">Kelola semua pengeluaran organisasi</p>
         </div>
         <a href="{{ route('bendahara.pengeluaran.create') }}" 
-           class="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 transition-colors">
-            <i class="fas fa-plus mr-2"></i>Tambah Pengeluaran
+           class="inline-flex items-center gap-2 rounded-lg border border-[#D8C4B6]/40 bg-white px-4 py-2 text-sm font-medium text-[#1b334e] shadow-sm transition-all hover:shadow-md hover:bg-[#f9b61a]/10">
+            <i class="fas fa-plus"></i>Tambah Pengeluaran
         </a>
     </div>
 
     <!-- Statistics Cards -->
-    <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
-        <div class="bg-white rounded-lg shadow-sm p-4 border-l-4 border-red-500">
-            <div class="flex items-center">
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+        <div class="group relative overflow-hidden rounded-xl border border-[#D8C4B6]/40 bg-white p-5 shadow-sm transition-all hover:shadow-md">
+            <div class="flex items-center justify-between">
                 <div class="flex-1">
                     <p class="text-sm font-medium text-gray-600">Total Pengeluaran</p>
-                    <p class="text-2xl font-bold text-red-600">Rp {{ number_format($statistics['total'] ?? 0, 0, ',', '.') }}</p>
+                    <p class="mt-2 text-2xl font-bold tracking-tight text-[#1b334e]">Rp {{ number_format($statistics['total'] ?? 0, 0, ',', '.') }}</p>
                 </div>
-                <div class="p-3 bg-red-100 rounded-full">
-                    <i class="fas fa-money-bill-wave text-red-600"></i>
+                <div class="flex h-12 w-12 items-center justify-center rounded-lg bg-[#f9b61a]/10 text-[#f9b61a] transition-colors group-hover:bg-[#f9b61a] group-hover:text-white">
+                    <i class="fas fa-money-bill-wave text-xl"></i>
                 </div>
             </div>
         </div>
 
-        <div class="bg-white rounded-lg shadow-sm p-4 border-l-4 border-green-500">
-            <div class="flex items-center">
+        <div class="group relative overflow-hidden rounded-xl border border-[#D8C4B6]/40 bg-white p-5 shadow-sm transition-all hover:shadow-md">
+            <div class="flex items-center justify-between">
                 <div class="flex-1">
                     <p class="text-sm font-medium text-gray-600">Terverifikasi</p>
-                    <p class="text-2xl font-bold text-green-600">Rp {{ number_format($statistics['verified'] ?? 0, 0, ',', '.') }}</p>
+                    <p class="mt-2 text-2xl font-bold tracking-tight text-[#1b334e]">Rp {{ number_format($statistics['verified'] ?? 0, 0, ',', '.') }}</p>
                 </div>
-                <div class="p-3 bg-green-100 rounded-full">
-                    <i class="fas fa-check-circle text-green-600"></i>
+                <div class="flex h-12 w-12 items-center justify-center rounded-lg bg-[#f9b61a]/10 text-[#f9b61a] transition-colors group-hover:bg-[#f9b61a] group-hover:text-white">
+                    <i class="fas fa-check-circle text-xl"></i>
                 </div>
             </div>
         </div>
 
-        <div class="bg-white rounded-lg shadow-sm p-4 border-l-4 border-yellow-500">
-            <div class="flex items-center">
+        <div class="group relative overflow-hidden rounded-xl border border-[#D8C4B6]/40 bg-white p-5 shadow-sm transition-all hover:shadow-md">
+            <div class="flex items-center justify-between">
                 <div class="flex-1">
                     <p class="text-sm font-medium text-gray-600">Pending</p>
-                    <p class="text-2xl font-bold text-yellow-600">Rp {{ number_format($statistics['pending'] ?? 0, 0, ',', '.') }}</p>
+                    <p class="mt-2 text-2xl font-bold tracking-tight text-[#1b334e]">Rp {{ number_format($statistics['pending'] ?? 0, 0, ',', '.') }}</p>
                 </div>
-                <div class="p-3 bg-yellow-100 rounded-full">
-                    <i class="fas fa-clock text-yellow-600"></i>
+                <div class="flex h-12 w-12 items-center justify-center rounded-lg bg-[#f9b61a]/10 text-[#f9b61a] transition-colors group-hover:bg-[#f9b61a] group-hover:text-white">
+                    <i class="fas fa-clock text-xl"></i>
                 </div>
             </div>
         </div>
 
-        <div class="bg-white rounded-lg shadow-sm p-4 border-l-4 border-blue-500">
-            <div class="flex items-center">
+        <div class="group relative overflow-hidden rounded-xl border border-[#D8C4B6]/40 bg-white p-5 shadow-sm transition-all hover:shadow-md">
+            <div class="flex items-center justify-between">
                 <div class="flex-1">
                     <p class="text-sm font-medium text-gray-600">Bulan Ini</p>
-                    <p class="text-2xl font-bold text-blue-600">Rp {{ number_format($statistics['current_month'] ?? 0, 0, ',', '.') }}</p>
+                    <p class="mt-2 text-2xl font-bold tracking-tight text-[#1b334e]">Rp {{ number_format($statistics['current_month'] ?? 0, 0, ',', '.') }}</p>
                 </div>
-                <div class="p-3 bg-blue-100 rounded-full">
-                    <i class="fas fa-calendar-alt text-blue-600"></i>
+                <div class="flex h-12 w-12 items-center justify-center rounded-lg bg-[#f9b61a]/10 text-[#f9b61a] transition-colors group-hover:bg-[#f9b61a] group-hover:text-white">
+                    <i class="fas fa-calendar-alt text-xl"></i>
                 </div>
             </div>
         </div>
     </div>
 
     <!-- Filters -->
-    <div class="bg-white rounded-lg shadow-sm p-4 mb-6">
+    <div class="rounded-lg border border-[#D8C4B6]/40 bg-white shadow-sm transition-all hover:shadow-md p-5">
         <form method="GET" action="{{ route('bendahara.pengeluaran.index') }}" class="grid grid-cols-1 md:grid-cols-5 gap-4">
             <!-- Kategori Filter -->
             <div>
-                <label for="kategori" class="block text-sm font-medium text-gray-700 mb-1">Kategori</label>
-                <select name="kategori" id="kategori" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                <label for="kategori" class="block text-xs font-medium text-gray-700 mb-1.5">Kategori</label>
+                <select name="kategori" id="kategori" class="w-full px-3 py-2 border border-[#D8C4B6]/40 rounded-lg focus:outline-none focus:ring-[#f9b61a] focus:border-[#f9b61a]">
                     <option value="">Semua Kategori</option>
                     <option value="operasional" {{ request('kategori') === 'operasional' ? 'selected' : '' }}>Operasional</option>
                     <option value="acara" {{ request('kategori') === 'acara' ? 'selected' : '' }}>Acara</option>
@@ -86,8 +86,8 @@
 
             <!-- Status Filter -->
             <div>
-                <label for="status" class="block text-sm font-medium text-gray-700 mb-1">Status</label>
-                <select name="status" id="status" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                <label for="status" class="block text-xs font-medium text-gray-700 mb-1.5">Status</label>
+                <select name="status" id="status" class="w-full px-3 py-2 border border-[#D8C4B6]/40 rounded-lg focus:outline-none focus:ring-[#f9b61a] focus:border-[#f9b61a]">
                     <option value="">Semua Status</option>
                     <option value="pending" {{ request('status') === 'pending' ? 'selected' : '' }}>Pending</option>
                     <option value="verified" {{ request('status') === 'verified' ? 'selected' : '' }}>Terverifikasi</option>
@@ -96,8 +96,8 @@
 
             <!-- Month Filter -->
             <div>
-                <label for="bulan" class="block text-sm font-medium text-gray-700 mb-1">Bulan</label>
-                <select name="bulan" id="bulan" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                <label for="bulan" class="block text-xs font-medium text-gray-700 mb-1.5">Bulan</label>
+                <select name="bulan" id="bulan" class="w-full px-3 py-2 border border-[#D8C4B6]/40 rounded-lg focus:outline-none focus:ring-[#f9b61a] focus:border-[#f9b61a]">
                     <option value="">Semua Bulan</option>
                     @for($i = 1; $i <= 12; $i++)
                         <option value="{{ $i }}" {{ request('bulan') == $i ? 'selected' : '' }}>
@@ -109,8 +109,8 @@
 
             <!-- Year Filter -->
             <div>
-                <label for="tahun" class="block text-sm font-medium text-gray-700 mb-1">Tahun</label>
-                <select name="tahun" id="tahun" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                <label for="tahun" class="block text-xs font-medium text-gray-700 mb-1.5">Tahun</label>
+                <select name="tahun" id="tahun" class="w-full px-3 py-2 border border-[#D8C4B6]/40 rounded-lg focus:outline-none focus:ring-[#f9b61a] focus:border-[#f9b61a]">
                     <option value="">Semua Tahun</option>
                     @for($year = date('Y'); $year >= date('Y') - 3; $year--)
                         <option value="{{ $year }}" {{ request('tahun') == $year ? 'selected' : '' }}>{{ $year }}</option>
@@ -120,33 +120,34 @@
 
             <!-- Search -->
             <div>
-                <label for="search" class="block text-sm font-medium text-gray-700 mb-1">Cari</label>
-                <div class="flex">
-                    <input type="text" 
-                           name="search" 
-                           id="search" 
-                           value="{{ request('search') }}"
-                           placeholder="Deskripsi, kode transaksi..."
-                           class="flex-1 px-3 py-2 border border-gray-300 rounded-l-md focus:outline-none focus:ring-2 focus:ring-blue-500">
-                    <button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded-r-md hover:bg-blue-700">
-                        <i class="fas fa-search"></i>
-                    </button>
-                </div>
+                <label for="search" class="block text-xs font-medium text-gray-700 mb-1.5">Cari</label>
+                <input type="text" 
+                       name="search" 
+                       id="search" 
+                       value="{{ request('search') }}"
+                       placeholder="Deskripsi, kode transaksi..."
+                       class="w-full px-3 py-2 border border-[#D8C4B6]/40 rounded-lg focus:outline-none focus:ring-[#f9b61a] focus:border-[#f9b61a]">
+            </div>
+
+            <!-- Filter Button -->
+            <div class="flex items-end space-x-2">
+                <button type="submit" class="inline-flex items-center gap-1.5 rounded-lg border border-[#D8C4B6]/40 bg-white px-4 py-2 text-sm font-medium text-[#1b334e] shadow-sm transition-all hover:shadow-md hover:bg-[#f9b61a]/10">
+                    <i class="fas fa-search"></i>
+                    Terapkan Filter
+                </button>
+                <a href="{{ route('bendahara.pengeluaran.index') }}" class="inline-flex items-center gap-1.5 rounded-lg border border-[#D8C4B6]/40 bg-white px-4 py-2 text-sm font-medium text-[#1b334e] shadow-sm transition-all hover:shadow-md hover:bg-[#f9b61a]/10">
+                    <i class="fas fa-undo"></i>
+                    Reset
+                </a>
             </div>
         </form>
-
-        <div class="flex justify-end mt-4">
-            <a href="{{ route('bendahara.pengeluaran.index') }}" class="px-3 py-2 bg-gray-200 text-gray-700 rounded-md hover:bg-gray-300 text-sm">
-                <i class="fas fa-undo mr-1"></i>Reset Filter
-            </a>
-        </div>
     </div>
 
     <!-- Pengeluaran Table -->
-    <div class="bg-white rounded-lg shadow-sm overflow-hidden">
+    <div class="rounded-lg border border-[#D8C4B6]/40 bg-white shadow-sm transition-all hover:shadow-md overflow-hidden">
         <div class="overflow-x-auto">
-            <table class="min-w-full divide-y divide-gray-200">
-                <thead class="bg-gray-50">
+            <table class="min-w-full divide-y divide-[#D8C4B6]/40">
+                <thead class="bg-[#f9b61a]/5">
                     <tr>
                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">#</th>
                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tanggal</th>
@@ -159,9 +160,9 @@
                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Aksi</th>
                     </tr>
                 </thead>
-                <tbody class="bg-white divide-y divide-gray-200">
+                <tbody class="bg-white divide-y divide-[#D8C4B6]/40">
                     @forelse($pengeluaran as $index => $item)
-                        <tr class="hover:bg-gray-50">
+                        <tr class="hover:bg-[#f9b61a]/5 transition-colors">
                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                                 {{ $pengeluaran->firstItem() + $index }}
                             </td>
@@ -175,11 +176,11 @@
                                 </div>
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap">
-                                <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-purple-100 text-purple-800">
+                                <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-[#1b334e] text-white">
                                     {{ $item->getKategoriLabel() }}
                                 </span>
                             </td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-red-600">
+                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-[#1b334e]">
                                 Rp {{ number_format($item->jumlah, 0, ',', '.') }}
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
@@ -187,7 +188,7 @@
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap">
                                 <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full 
-                                    {{ in_array($item->status, ['approved','paid']) ? 'bg-green-100 text-green-800' : ($item->status === 'rejected' ? 'bg-red-100 text-red-800' : 'bg-yellow-100 text-yellow-800') }}">
+                                    {{ in_array($item->status, ['approved','paid']) ? 'bg-green-50 text-green-700' : ($item->status === 'rejected' ? 'bg-red-50 text-red-700' : 'bg-[#f9b61a]/10 text-[#1b334e]') }}">
                                     {{ $item->getStatusLabel() }}
                                 </span>
                             </td>
@@ -197,11 +198,11 @@
                             <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
                                 <div class="flex space-x-2">
                                     <a href="{{ route('bendahara.pengeluaran.show', $item) }}" 
-                                       class="text-blue-600 hover:text-blue-900" title="Lihat Detail">
+                                       class="text-[#1b334e] hover:bg-[#f9b61a]/10 p-2 rounded-lg transition-all" title="Lihat Detail">
                                         <i class="fas fa-eye"></i>
                                     </a>
                                     <a href="{{ route('bendahara.pengeluaran.edit', $item) }}" 
-                                       class="text-yellow-600 hover:text-yellow-900" title="Edit">
+                                       class="text-[#1b334e] hover:bg-[#f9b61a]/10 p-2 rounded-lg transition-all" title="Edit">
                                         <i class="fas fa-edit"></i>
                                     </a>
                                     @if($item->status === 'pending')
@@ -209,7 +210,7 @@
                                             @csrf
                                             @method('PATCH')
                                             <button type="submit" 
-                                                    class="text-green-600 hover:text-green-900" 
+                                                    class="text-[#1b334e] hover:bg-[#f9b61a]/10 p-2 rounded-lg transition-all" 
                                                     title="Setujui"
                                                     onclick="return confirm('Setujui pengeluaran ini?')">
                                                 <i class="fas fa-check"></i>
@@ -220,7 +221,7 @@
                                         @csrf
                                         @method('DELETE')
                                         <button type="submit" 
-                                                class="text-red-600 hover:text-red-900" 
+                                                class="text-red-600 hover:bg-red-50 p-2 rounded-lg transition-all" 
                                                 title="Hapus"
                                                 onclick="return confirm('Apakah Anda yakin ingin menghapus pengeluaran ini?')">
                                             <i class="fas fa-trash"></i>
@@ -231,10 +232,15 @@
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="9" class="px-6 py-12 text-center text-gray-500">
-                                <i class="fas fa-inbox text-4xl mb-4"></i>
-                                <p class="text-lg font-medium">Belum ada data pengeluaran</p>
-                                <p class="text-sm">Klik tombol "Tambah Pengeluaran" untuk menambah data pertama</p>
+                            <td colspan="9" class="px-6 py-12 text-center">
+                                <div class="flex flex-col items-center">
+                                    <i class="fas fa-inbox text-6xl text-gray-400 mb-4"></i>
+                                    <h5 class="text-lg font-medium text-gray-900 mb-2">Belum ada pengeluaran</h5>
+                                    <p class="text-gray-500 mb-4">Mulai dengan menambahkan pengeluaran pertama Anda.</p>
+                                    <a href="{{ route('bendahara.pengeluaran.create') }}" class="inline-flex items-center gap-2 rounded-lg border border-[#D8C4B6]/40 bg-white px-4 py-2 text-sm font-medium text-[#1b334e] shadow-sm transition-all hover:shadow-md hover:bg-[#f9b61a]/10">
+                                        <i class="fas fa-plus"></i>Tambah Pengeluaran Pertama
+                                    </a>
+                                </div>
                             </td>
                         </tr>
                     @endforelse
@@ -244,7 +250,7 @@
 
         <!-- Pagination -->
         @if($pengeluaran->hasPages())
-            <div class="px-6 py-3 border-t border-gray-200">
+            <div class="px-6 py-4 border-t border-[#D8C4B6]/40">
                 {{ $pengeluaran->appends(request()->query())->links() }}
             </div>
         @endif
@@ -252,18 +258,9 @@
 </div>
 
 <script>
-// Auto-submit form when filter changes
+// Form hanya submit saat tombol Filter ditekan (tidak auto-submit)
 document.addEventListener('DOMContentLoaded', function() {
-    const filterSelects = ['kategori', 'status', 'bulan', 'tahun'];
-    
-    filterSelects.forEach(function(selectId) {
-        const select = document.getElementById(selectId);
-        if (select) {
-            select.addEventListener('change', function() {
-                this.form.submit();
-            });
-        }
-    });
+    // Tidak ada auto-submit, form hanya submit saat tombol Filter ditekan
 });
 </script>
 @endsection

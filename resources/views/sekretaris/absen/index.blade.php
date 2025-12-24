@@ -37,11 +37,15 @@
                 <label for="search" class="block text-sm font-medium text-gray-700">Cari</label>
                 <input type="text" name="search" id="search" value="{{ request('search') }}" placeholder="Nama anggota..." class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
             </div>
-            <div class="flex items-end">
-                <button type="submit" class="w-full px-4 py-2 bg-gray-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-gray-700">
+            <div class="flex items-end space-x-2">
+                <button type="submit" class="flex-1 px-4 py-2 bg-gray-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-gray-700">
                     <i class="fas fa-search mr-2"></i>
-                    Filter
+                    Terapkan Filter
                 </button>
+                <a href="{{ route('sekretaris.absen.index') }}" class="px-4 py-2 bg-gray-200 border border-transparent rounded-md font-semibold text-xs text-gray-700 uppercase tracking-widest hover:bg-gray-300">
+                    <i class="fas fa-times mr-2"></i>
+                    Reset
+                </a>
             </div>
         </form>
     </div>

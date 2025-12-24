@@ -4,20 +4,20 @@
 
 @section('content')
 <div class="container mx-auto px-4 py-6">
-    <div class="bg-white rounded-lg shadow-md">
-        <div class="flex justify-between items-center p-6 border-b border-gray-200">
+    <div class="bg-white rounded-lg border border-[#D8C4B6]/40 shadow-sm hover:shadow-md transition-all">
+        <div class="flex justify-between items-center p-6 border-b border-[#D8C4B6]/40">
             <h3 class="text-xl font-semibold text-gray-800">Daftar Caption</h3>
             <div class="flex space-x-3">
                 <a href="{{ route('koordinator-jurnalistik.contents.create') }}" 
-                   class="bg-[#1b334e] hover:bg-[#16283e] text-white px-4 py-2 rounded-md text-sm font-medium transition duration-200 flex items-center">
+                   class="bg-white text-[#1b334e] hover:bg-[#f9b61a]/10 hover:shadow-md border border-[#D8C4B6]/40 px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 flex items-center">
                     <i class="fas fa-plus mr-2"></i> Buat Caption Baru
                 </a>
                 <button onclick="openNewsSelectionModal()" 
-                        class="bg-[#1b334e] hover:bg-[#16283e] text-white px-4 py-2 rounded-md text-sm font-medium transition duration-200 flex items-center">
+                        class="bg-white text-[#1b334e] hover:bg-[#f9b61a]/10 hover:shadow-md border border-[#D8C4B6]/40 px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 flex items-center">
                     <i class="fas fa-newspaper mr-2"></i> Pilih Berita untuk Caption
                 </button>
                 <button onclick="openDesignSelectionModal()" 
-                        class="bg-[#1b334e] hover:bg-[#16283e] text-white px-4 py-2 rounded-md text-sm font-medium transition duration-200 flex items-center">
+                        class="bg-white text-[#1b334e] hover:bg-[#f9b61a]/10 hover:shadow-md border border-[#D8C4B6]/40 px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 flex items-center">
                     <i class="fas fa-palette mr-2"></i> Pilih Desain untuk Caption
                 </button>
             </div>
@@ -26,45 +26,42 @@
             <div class="p-6">
 
             <!-- Filter Section -->
-            <div class="mb-6 p-4 bg-gray-50 rounded-lg">
-                <button type="button" onclick="toggleFilter()" class="text-[#1b334e] hover:text-[#16283e] font-medium">
-                    <i class="fas fa-filter mr-2"></i>Filter Caption
-                </button>
-                <div id="filterSection" class="hidden mt-4 grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div class="mb-6 p-4 bg-[#f9b61a]/5 rounded-lg border border-[#D8C4B6]/40">
+                <form method="GET" action="{{ route('koordinator-jurnalistik.contents.index') }}" class="grid grid-cols-1 md:grid-cols-3 gap-4">
                     <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-2">Jenis Caption</label>
-                        <select id="jenisFilter" class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        <label for="jenis_konten" class="block text-sm font-medium text-gray-700 mb-2">Jenis Caption</label>
+                        <select name="jenis_konten" id="jenis_konten" class="w-full border border-[#D8C4B6]/40 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#f9b61a]">
                             <option value="">Semua Jenis</option>
-                            <option value="caption_berita">Caption Berita Redaksi</option>
-                            <option value="caption_media_kreatif">Caption Media Kreatif</option>
+                            <option value="caption_berita" {{ request('jenis_konten') == 'caption_berita' ? 'selected' : '' }}>Caption Berita Redaksi</option>
+                            <option value="caption_media_kreatif" {{ request('jenis_konten') == 'caption_media_kreatif' ? 'selected' : '' }}>Caption Media Kreatif</option>
                         </select>
                     </div>
 
                     <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-2">Tipe Media</label>
-                        <select id="mediaFilter" class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        <label for="media_type" class="block text-sm font-medium text-gray-700 mb-2">Tipe Media</label>
+                        <select name="media_type" id="media_type" class="w-full border border-[#D8C4B6]/40 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#f9b61a]">
                             <option value="">Semua Tipe</option>
-                            <option value="image">Gambar</option>
-                            <option value="video">Video</option>
+                            <option value="image" {{ request('media_type') == 'image' ? 'selected' : '' }}>Gambar</option>
+                            <option value="video" {{ request('media_type') == 'video' ? 'selected' : '' }}>Video</option>
                         </select>
                     </div>
-                </div>
-                <div class="mt-4 hidden" id="filterButtons">
-                    <button type="button" onclick="applyFilter()" class="bg-[#1b334e] text-white px-4 py-2 rounded-md text-sm mr-2 hover:bg-[#16283e]">
-                        Terapkan Filter
-                    </button>
-                    <button type="button" onclick="resetFilter()" class="bg-gray-500 text-white px-4 py-2 rounded-md text-sm hover:bg-gray-600">
-                        Reset Filter
-                    </button>
-                </div>
+
+                    <div class="flex items-end space-x-2">
+                        <button type="submit" class="flex-1 bg-white text-[#1b334e] border border-[#D8C4B6]/40 px-4 py-2 rounded-lg text-sm hover:bg-[#f9b61a]/10 hover:shadow-md transition-all">
+                            <i class="fas fa-search mr-2"></i>
+                            Terapkan Filter
+                        </button>
+                        <a href="{{ route('koordinator-jurnalistik.contents.index') }}" class="bg-white text-[#1b334e] border border-[#D8C4B6]/40 px-4 py-2 rounded-lg text-sm hover:bg-[#f9b61a]/10 transition-all">
+                            <i class="fas fa-times mr-2"></i>
+                            Reset
+                        </a>
+                    </div>
+                </form>
             </div>
 
             <div class="overflow-x-auto">
-                <div class="px-2 pb-3">
-                    <input type="text" id="contentsSearchClient" class="w-full sm:w-80 px-3 py-2 border rounded" placeholder="Cari cepat caption..." />
-                </div>
-                <table class="min-w-full bg-white border border-gray-200 rounded-lg">
-                            <thead class="bg-gray-50">
+                <table class="min-w-full bg-white border border-[#D8C4B6]/40 rounded-lg">
+                            <thead class="bg-[#f9b61a]/5">
                                 <tr>
                                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-12">#</th>
                                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Judul Caption</th>
@@ -75,39 +72,39 @@
                                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Aksi</th>
                                 </tr>
                             </thead>
-                            <tbody class="bg-white divide-y divide-gray-200" id="contentsTableBody">
+                            <tbody class="bg-white divide-y divide-[#D8C4B6]/40" id="contentsTableBody">
                                 @forelse($contents as $content)
-                                    <tr class="hover:bg-gray-50">
+                                    <tr class="hover:bg-[#f9b61a]/5 transition-colors">
                                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ $loop->iteration + ($contents->currentPage() - 1) * $contents->perPage() }}</td>
                                         <td class="px-6 py-4 whitespace-nowrap">
                                             <div class="text-sm font-medium text-gray-900">{{ $content->judul }}</div>
                                             
                                             <!-- News Reference -->
                                             @if($content->isCaptionBerita() && $content->berita()->exists())
-                                                <div class="text-sm text-blue-600">
+                                                <div class="text-sm text-[#1b334e]">
                                                     <i class="fas fa-newspaper mr-1"></i> Berita: {{ $content->berita->title }}
                                                 </div>
                                             @endif
                                             
                                             <!-- Design Reference -->
                                             @if(($content->isCaptionMediaKreatif() || $content->isCaptionDesain()) && $content->desain()->exists())
-                                                <div class="text-sm text-purple-600">
+                                                <div class="text-sm text-[#f9b61a]">
                                                     <i class="fas fa-palette mr-1"></i> Desain: {{ $content->desain->judul }}
                                                 </div>
                                             @endif
                                         </td>
                                         <td class="px-6 py-4 whitespace-nowrap">
-                                            <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-blue-100 text-blue-800">
+                                            <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-[#1b334e]/10 text-[#1b334e]">
                                                 {{ App\Models\Content::getCaptionTypes()[$content->jenis_konten] ?? $content->jenis_konten }}
                                             </span>
                                         </td>
                                         <td class="px-6 py-4 whitespace-nowrap">
                                             @if($content->isCaptionBerita() && $content->berita()->exists())
-                                                <div class="text-sm text-blue-600">
+                                                <div class="text-sm text-[#1b334e]">
                                                     <i class="fas fa-newspaper mr-1"></i> {{ $content->berita->title }}
                                                 </div>
                                             @elseif(($content->isCaptionMediaKreatif() || $content->isCaptionDesain()) && $content->desain()->exists())
-                                                <div class="text-sm text-purple-600">
+                                                <div class="text-sm text-[#f9b61a]">
                                                     <i class="fas fa-palette mr-1"></i> {{ $content->desain->judul }}
                                                 </div>
                                             @else
@@ -124,11 +121,11 @@
                                         <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
                                             <div class="flex space-x-2">
                                                 <a href="{{ route('koordinator-jurnalistik.contents.show', $content) }}" 
-                                                   class="text-blue-600 hover:text-blue-900" title="Lihat Detail">
+                                                   class="text-[#1b334e] hover:bg-[#f9b61a]/10 p-2 rounded-lg transition-all" title="Lihat Detail">
                                                     <i class="fas fa-eye"></i>
                                                 </a>
                                                 <a href="{{ route('koordinator-jurnalistik.contents.edit', $content) }}" 
-                                                   class="text-yellow-600 hover:text-yellow-900" title="Edit">
+                                                   class="text-[#1b334e] hover:bg-[#f9b61a]/10 p-2 rounded-lg transition-all" title="Edit">
                                                     <i class="fas fa-edit"></i>
                                                 </a>
                                                 <form action="{{ route('koordinator-jurnalistik.contents.destroy', $content) }}" 
@@ -136,7 +133,7 @@
                                                       onsubmit="return confirm('Yakin ingin menghapus caption ini?')">
                                                     @csrf
                                                     @method('DELETE')
-                                                    <button type="submit" class="text-red-600 hover:text-red-900" title="Hapus">
+                                                    <button type="submit" class="text-red-600 hover:text-red-800" title="Hapus">
                                                         <i class="fas fa-trash"></i>
                                                     </button>
                                                 </form>
@@ -151,7 +148,7 @@
                                                 <h5 class="text-lg font-medium text-gray-900 mb-2">Belum ada caption</h5>
                                                 <p class="text-gray-500 mb-4">Mulai dengan membuat caption pertama Anda.</p>
                                                 <a href="{{ route('koordinator-jurnalistik.contents.create') }}" 
-                                                   class="bg-[#1b334e] hover:bg-[#16283e] text-white px-4 py-2 rounded-md text-sm font-medium transition duration-200 flex items-center">
+                                                   class="bg-white text-[#1b334e] hover:bg-[#f9b61a]/10 hover:shadow-md border border-[#D8C4B6]/40 px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 flex items-center">
                                                     <i class="fas fa-plus mr-2"></i> Buat Caption Baru
                                                 </a>
                                             </div>
@@ -187,7 +184,7 @@
                 type="text" 
                 id="newsSearch" 
                 placeholder="Cari berita..." 
-                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1b334e] focus:border-transparent"
+                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#f9b61a] focus:border-transparent"
                 onkeyup="filterNews()"
             >
         </div>
@@ -196,14 +193,14 @@
         <div class="overflow-y-auto max-h-96">
             <div class="px-6 py-4 space-y-3">
                 @forelse($availableNews as $news)
-                <div class="news-item border border-gray-200 rounded-lg p-4 cursor-pointer hover:bg-gray-50 transition-colors"
+                <div class="news-item border border-[#D8C4B6]/40 rounded-lg p-4 cursor-pointer hover:bg-[#f9b61a]/5 transition-colors"
                      data-news-id="{{ $news->id }}"
                      onclick="selectNews(this)">
                     <h4 class="font-semibold text-gray-800">{{ $news->title }}</h4>
                             <p class="text-sm text-gray-600 mt-1">{{ Str::limit(strip_tags($news->content), 150) }}</p>
                             <div class="flex items-center justify-between mt-2">
                                 <span class="text-xs text-gray-500">{{ $news->created_at->format('d M Y') }}</span>
-                                <span class="text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded">{{ $news->category->name ?? 'Uncategorized' }}</span>
+                                <span class="text-xs bg-[#1b334e]/10 text-[#1b334e] px-2 py-1 rounded">{{ $news->category->name ?? 'Uncategorized' }}</span>
                             </div>
                 </div>
                 @empty
@@ -222,13 +219,13 @@
         <div class="bg-gray-50 px-6 py-4 border-t flex justify-end space-x-3">
             <button type="button" 
                     onclick="closeNewsSelectionModal()" 
-                    class="px-4 py-2 text-gray-600 border border-gray-300 rounded-lg hover:bg-gray-100 transition-colors">
+                    class="px-4 py-2 text-[#1b334e] border border-[#D8C4B6]/40 rounded-lg hover:bg-[#f9b61a]/10 transition-all">
                 Batal
             </button>
             <button type="button" 
                     id="createCaptionBtn"
                     onclick="createCaptionForSelectedNews()" 
-                    class="px-4 py-2 bg-[#1b334e] text-white rounded-lg hover:bg-[#16283e] transition-colors disabled:bg-gray-400 disabled:cursor-not-allowed"
+                    class="px-4 py-2 bg-white text-[#1b334e] border border-[#D8C4B6]/40 rounded-lg hover:bg-[#f9b61a]/10 hover:shadow-md transition-all disabled:bg-gray-400 disabled:cursor-not-allowed"
                     disabled>
                 Buat Caption
             </button>
@@ -251,7 +248,7 @@
                 type="text" 
                 id="designSearch" 
                 placeholder="Cari desain..." 
-                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#f9b61a] focus:border-transparent"
                 onkeyup="filterDesigns()"
             >
         </div>
@@ -260,7 +257,7 @@
         <div class="overflow-y-auto flex-1">
             <div class="px-6 py-4 space-y-3">
                 @forelse($availableDesigns as $design)
-                <div class="design-item border border-gray-200 rounded-lg p-4 cursor-pointer hover:bg-gray-50 transition-colors"
+                <div class="design-item border border-[#D8C4B6]/40 rounded-lg p-4 cursor-pointer hover:bg-[#f9b61a]/5 transition-colors"
                      data-design-id="{{ $design->id }}"
                      data-design-title="{{ $design->judul }}"
                      onclick="selectDesign(this)">
@@ -292,13 +289,13 @@
         <div class="bg-gray-50 px-6 py-4 border-t flex justify-end space-x-3 flex-shrink-0">
             <button type="button" 
                     onclick="closeDesignSelectionModal()" 
-                    class="px-4 py-2 text-gray-600 border border-gray-300 rounded-lg hover:bg-gray-100 transition-colors">
+                    class="px-4 py-2 text-[#1b334e] border border-[#D8C4B6]/40 rounded-lg hover:bg-[#f9b61a]/10 transition-all">
                 Batal
             </button>
             <button type="button" 
                     id="createDesignCaptionBtn"
                     onclick="createCaptionForSelectedDesign()" 
-                    class="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors disabled:bg-gray-400 disabled:cursor-not-allowed"
+                    class="px-4 py-2 bg-white text-[#1b334e] border border-[#D8C4B6]/40 rounded-lg hover:bg-[#f9b61a]/10 hover:shadow-md transition-all disabled:bg-gray-400 disabled:cursor-not-allowed"
                     disabled>
                 Buat Caption
             </button>
@@ -346,7 +343,7 @@ function filterNews() {
 function selectNews(element) {
     // Remove previous selection
     document.querySelectorAll('.news-item').forEach(item => {
-        item.classList.remove('border-blue-500', 'bg-blue-50');
+        item.classList.remove('border-[#1b334e]', 'bg-[#1b334e]/5');
     });
     
     // Add selection to clicked item
@@ -408,7 +405,7 @@ function filterDesigns() {
 function selectDesign(element) {
     // Remove previous selection
     document.querySelectorAll('.design-item').forEach(item => {
-        item.classList.remove('border-purple-500', 'bg-purple-50');
+        item.classList.remove('border-[#1b334e]', 'bg-[#1b334e]/5');
     });
     
     element.classList.add('border-[#1b334e]', 'bg-[#1b334e]/5');
@@ -425,50 +422,8 @@ function createCaptionForSelectedDesign() {
     }
 }
 
-function toggleFilter() {
-    const filterSection = document.getElementById('filterSection');
-    const filterButtons = document.getElementById('filterButtons');
-    filterSection.classList.toggle('hidden');
-    filterButtons.classList.toggle('hidden');
-}
+// Filter sekarang menggunakan form GET, tidak perlu JavaScript untuk applyFilter/resetFilter
 
-function applyFilter() {
-    const jenis = document.getElementById('jenisFilter').value;
-    const status = document.getElementById('statusFilter').value;
-    const media = document.getElementById('mediaFilter').value;
-    
-    const params = new URLSearchParams();
-    if (jenis) params.append('jenis_konten', jenis);
-    if (status) params.append('status', status);
-    if (media) params.append('media_type', media);
-    
-    const url = new URL(window.location.href);
-    url.search = params.toString();
-    window.location.href = url.toString();
-}
-
-function resetFilter() {
-    document.getElementById('jenisFilter').value = '';
-    document.getElementById('statusFilter').value = '';
-    document.getElementById('mediaFilter').value = '';
-    
-    const url = new URL(window.location.href);
-    url.search = '';
-    window.location.href = url.toString();
-}
-
-document.addEventListener('DOMContentLoaded', function() {
-    const input = document.getElementById('contentsSearchClient');
-    const tbody = document.getElementById('contentsTableBody');
-    if (!input || !tbody) return;
-    input.addEventListener('input', function() {
-        const q = this.value.toLowerCase();
-        Array.from(tbody.querySelectorAll('tr')).forEach(function(row) {
-            const text = row.textContent.toLowerCase();
-            row.style.display = text.includes(q) ? '' : 'none';
-        });
-    });
-});
 </script>
 @endpush
 @endsection

@@ -22,8 +22,13 @@ class PenjadwalanService
             User::ROLE_KOORDINATOR_LITBANG,
         ])->orderBy('name')->get();
 
+        // Filter penjadwalan hanya untuk anggota litbang
+        $litbangUserIds = $anggotaLitbang->pluck('id');
+        
         $penjadwalan = Penjadwalan::with(['user', 'creator'])
-            ->byBulanTahun($bulan, $tahun)
+            ->whereIn('user_id', $litbangUserIds)
+            ->whereYear('tanggal', $tahun)
+            ->whereMonth('tanggal', $bulan)
             ->orderBy('tanggal')
             ->orderBy('user_id')
             ->get();
