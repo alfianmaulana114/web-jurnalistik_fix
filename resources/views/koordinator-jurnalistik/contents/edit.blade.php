@@ -11,14 +11,30 @@
             @csrf
             @method('PUT')
             
+            <div class="mb-4">
+                <div class="inline-flex rounded-md shadow-sm" role="group">
+                    <button type="button" class="px-4 py-2 text-sm font-medium border border-gray-300 rounded-l-md bg-blue-600 text-white" data-lang-toggle="id">Indonesia</button>
+                    <button type="button" class="px-4 py-2 text-sm font-medium border border-gray-300 rounded-r-md bg-white text-gray-700" data-lang-toggle="en">English</button>
+                </div>
+            </div>
+
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <!-- Judul Caption -->
-                <div class="col-span-2">
-                    <label for="judul" class="block text-sm font-medium text-gray-700 mb-2">Judul Caption</label>
-                    <input type="text" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-400 focus:border-transparent @error('judul') border-red-500 @enderror" 
-                           id="judul" name="judul" value="{{ old('judul', $content->judul) }}" 
+                <div class="col-span-2" data-lang-section="id">
+                    <label for="judul_id" class="block text-sm font-medium text-gray-700 mb-2">Judul Caption (Indonesia)</label>
+                    <input type="text" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-400 focus:border-transparent @error('judul_id') border-red-500 @enderror" 
+                           id="judul_id" name="judul_id" value="{{ old('judul_id', optional($content->translations->firstWhere('locale','id'))->judul ?? $content->judul) }}" 
                            placeholder="Masukkan judul caption (opsional)">
-                    @error('judul')
+                    @error('judul_id')
+                        <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
+                    @enderror
+                </div>
+                <div class="col-span-2 hidden" data-lang-section="en">
+                    <label for="judul_en" class="block text-sm font-medium text-gray-700 mb-2">Caption Title (English)</label>
+                    <input type="text" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-400 focus:border-transparent @error('judul_en') border-red-500 @enderror" 
+                           id="judul_en" name="judul_en" value="{{ old('judul_en', optional($content->translations->firstWhere('locale','en'))->judul) }}" 
+                           placeholder="Enter caption title (optional)">
+                    @error('judul_en')
                         <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
                     @enderror
                 </div>
@@ -86,12 +102,21 @@
                 </div>
 
                 <!-- Caption Content -->
-                <div class="col-span-2">
-                    <label for="caption" class="block text-sm font-medium text-gray-700 mb-2">Isi Caption <span class="text-red-500">*</span></label>
-                    <textarea class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-400 focus:border-transparent @error('caption') border-red-500 @enderror" 
-                              id="caption" name="caption" rows="6" required 
-                              placeholder="Tulis caption yang menarik dan informatif...">{{ old('caption', $content->caption) }}</textarea>
-                    @error('caption')
+                <div class="col-span-2" data-lang-section="id">
+                    <label for="caption_id" class="block text-sm font-medium text-gray-700 mb-2">Isi Caption (Indonesia) <span class="text-red-500">*</span></label>
+                    <textarea class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-400 focus:border-transparent @error('caption_id') border-red-500 @enderror" 
+                              id="caption_id" name="caption_id" rows="6" required 
+                              placeholder="Tulis caption yang menarik dan informatif...">{{ old('caption_id', optional($content->translations->firstWhere('locale','id'))->caption ?? $content->caption) }}</textarea>
+                    @error('caption_id')
+                        <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
+                    @enderror
+                </div>
+                <div class="col-span-2 hidden" data-lang-section="en">
+                    <label for="caption_en" class="block text-sm font-medium text-gray-700 mb-2">Isi Caption (English) <span class="text-red-500">*</span></label>
+                    <textarea class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-400 focus:border-transparent @error('caption_en') border-red-500 @enderror" 
+                              id="caption_en" name="caption_en" rows="6" required 
+                              placeholder="Write a compelling and informative caption...">{{ old('caption_en', optional($content->translations->firstWhere('locale','en'))->caption) }}</textarea>
+                    @error('caption_en')
                         <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
                     @enderror
                 </div>
@@ -178,6 +203,22 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Event listeners
     jenisKontenSelect.addEventListener('change', handleJenisKontenChange);
+    const toggleButtons = document.querySelectorAll('[data-lang-toggle]');
+    const sections = document.querySelectorAll('[data-lang-section]');
+    toggleButtons.forEach(btn => {
+        btn.addEventListener('click', () => {
+            const lang = btn.getAttribute('data-lang-toggle');
+            toggleButtons.forEach(b => {
+                b.classList.remove('bg-blue-600','text-white');
+                b.classList.add('bg-white','text-gray-700');
+            });
+            btn.classList.add('bg-blue-600','text-white');
+            btn.classList.remove('bg-white','text-gray-700');
+            sections.forEach(sec => {
+                sec.classList.toggle('hidden', sec.getAttribute('data-lang-section') !== lang);
+            });
+        });
+    });
     
     // Double click protection
     const form = document.querySelector('form');

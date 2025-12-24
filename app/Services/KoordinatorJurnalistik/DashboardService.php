@@ -2,7 +2,6 @@
 
 namespace App\Services\KoordinatorJurnalistik;
 
-use App\Models\Comment;
 use App\Models\News;
 use App\Models\User;
 use App\Models\Proker;
@@ -35,7 +34,7 @@ class DashboardService
     public function getDashboardData(): array
     {
         $newsCount = News::count();
-        $commentCount = Comment::count();
+        $commentCount = 0;
         $userCount = User::count();
         $totalViews = News::sum('views');
 
@@ -90,20 +89,15 @@ class DashboardService
             ->pluck('count', 'month')
             ->toArray();
 
-        $monthlyComments = Comment::select(DB::raw('MONTH(created_at) as month'), DB::raw('COUNT(*) as count'))
-            ->whereYear('created_at', Carbon::now()->year)
-            ->groupBy('month')
-            ->orderBy('month')
-            ->pluck('count', 'month')
-            ->toArray();
+        $monthlyComments = [];
 
         $months = range(1, 12);
         $monthlyLabels = ['Jan','Feb','Mar','Apr','Mei','Jun','Jul','Agu','Sep','Okt','Nov','Des'];
         $newsData = array_map(fn($m) => $monthlyNews[$m] ?? 0, $months);
-        $commentData = array_map(fn($m) => $monthlyComments[$m] ?? 0, $months);
+        $commentData = array_map(fn($m) => 0, $months);
 
         $recentNews = News::with('user')->latest()->take(5)->get();
-        $recentComments = Comment::with('news')->latest()->take(5)->get();
+        $recentComments = collect();
         $recentProkers = $this->safeQuery(function () {
             return Proker::with('creator')->latest()->take(5)->get();
         }, collect());
@@ -112,12 +106,11 @@ class DashboardService
         }, collect());
 
         return compact(
-            'newsCount','commentCount','userCount','totalViews',
-            'divisiStats','prokerStats','recentNews','recentComments','recentProkers','urgentBriefs',
-            'monthlyLabels','newsData','commentData'
+            'newsCount','userCount','totalViews',
+            'divisiStats','prokerStats','recentNews','recentProkers','urgentBriefs',
+            'monthlyLabels','newsData'
         ) + [
             'totalNews' => $newsCount,
-            'totalComments' => $commentCount,
             'totalUsers' => $userCount,
             'divisionStats' => $divisiStats,
         ];

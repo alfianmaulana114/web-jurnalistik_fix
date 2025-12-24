@@ -9,39 +9,54 @@ use Illuminate\View\View;
 
 class HomeController extends Controller
 {
+    /**
+     * Model News untuk query data berita publik.
+     */
     private $news;
 
+    /**
+     * Inisialisasi dependency model News.
+     */
     public function __construct(News $news)
     {
         $this->news = $news;
     }
 
+    /**
+     * Menampilkan halaman beranda publik.
+     *
+     * Memuat headline, daftar berita terbaru, dan bagian media partner.
+     * Hanya berita yang sudah disetujui dan memiliki caption yang ditampilkan.
+     *
+     * @return View
+     */
     public function index(): View
     {
-        // Berita terbaru untuk headline
-        $latestNews = $this->news->with(['category', 'type', 'genres'])
-                                ->latest()
-                                ->first();
+        // Query base untuk berita yang sudah approved dan punya caption
+        $baseQuery = $this->news->with(['category', 'type', 'genres'])
+                                ->whereHas('caption')
+                                ->approved()
+                                ->latest();
 
-        // Berita terbaru untuk grid 3 kolom
-        $recentNews = $this->news->with(['category', 'type', 'genres'])
-                                ->latest()
-                                ->skip(1)  // Skip berita headline
-                                ->take(3)
-                                ->get();
+        // Berita terbaru untuk headline
+        $latestNews = (clone $baseQuery)->first();
+
+        // Berita terbaru untuk grid 3 kolom (skip 1 jika ada latestNews)
+        $recentNewsQuery = clone $baseQuery;
+        if ($latestNews) {
+            $recentNewsQuery->where('id', '!=', $latestNews->id);
+        }
+        $recentNews = $recentNewsQuery->take(3)->get();
 
         // Berita untuk media partner
-        $mediaPartnerNews = $this->news->with(['category', 'type', 'genres'])
-                                      ->where('news_type_id', 2) // Sesuaikan dengan ID tipe berita media partner
-                                      ->latest()
+        $mediaPartnerNews = (clone $baseQuery)
+                                      ->where('news_type_id', 2)
                                       ->take(3)
                                       ->get();
 
         // Semua berita untuk bagian "Seluruh Berita"
-        $allNews = $this->news->with(['category', 'type', 'genres'])
-                             ->latest()
-                             ->paginate(5);
+        $allNews = (clone $baseQuery)->paginate(5);
 
-        return view('home', compact('latestNews', 'recentNews', 'mediaPartnerNews', 'allNews'));
+        return view('public.home', compact('latestNews', 'recentNews', 'mediaPartnerNews', 'allNews'));
     }
 }

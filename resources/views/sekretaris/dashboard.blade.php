@@ -1,3 +1,7 @@
+{{-- Dashboard Sekretaris
+    - Ringkasan administrasi: notulensi, proker, absen
+    - Navigasi cepat untuk operasional sekretariat
+--}}
 @extends('layouts.sekretaris')
 
 @section('title', 'Dashboard')

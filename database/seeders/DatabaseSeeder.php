@@ -14,7 +14,6 @@ class DatabaseSeeder extends Seeder
             NewsSeeder::class,
             ProkerSeeder::class, // Moved up
             DesignSeeder::class, 
-            CommentSeeder::class,
             BriefSeeder::class,
             ContentSeeder::class,
         ]);

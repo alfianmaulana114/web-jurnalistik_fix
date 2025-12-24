@@ -1,3 +1,7 @@
+{{-- Dashboard Koordinator Jurnalistik
+    - Ikhtisar aktivitas redaksi, konten, desain, funfact, proker
+    - Gunakan komponen untuk kartu statistik dan list
+--}}
 @extends('layouts.koordinator-jurnalistik')
 
 @section('title', 'Dashboard')
@@ -6,14 +10,14 @@
 @section('content')
 <div class="space-y-6">
     <!-- Welcome Section -->
-    <div class="bg-gradient-to-r from-red-500 to-red-600 rounded-lg shadow-lg p-6 text-white">
+    <div class="bg-gradient-to-r from-[#1b334e] to-[#16283e] rounded-lg shadow-lg p-6 text-white">
         <div class="flex items-center justify-between">
             <div>
                 <h1 class="text-2xl font-bold">Selamat Datang, {{ auth()->user()->name }}!</h1>
-                <p class="text-red-100 mt-1">Kelola aktivitas UKM Jurnalistik dengan mudah</p>
+                <p class="text-white/70 mt-1">Kelola aktivitas UKM Jurnalistik dengan mudah</p>
             </div>
             <div class="hidden md:block">
-                <i class="fas fa-newspaper text-6xl text-red-200"></i>
+                <i class="fas fa-newspaper text-6xl text-white/40"></i>
             </div>
         </div>
     </div>
@@ -23,7 +27,7 @@
         <!-- Total News -->
         <div class="bg-white rounded-lg shadow p-6">
             <div class="flex items-center">
-                <div class="p-3 rounded-full bg-blue-100 text-blue-600">
+                <div class="p-3 rounded-full bg-[#1b334e]/10 text-[#1b334e]">
                     <i class="fas fa-newspaper text-xl"></i>
                 </div>
                 <div class="ml-4">
@@ -33,23 +37,11 @@
             </div>
         </div>
 
-        <!-- Total Comments -->
-        <div class="bg-white rounded-lg shadow p-6">
-            <div class="flex items-center">
-                <div class="p-3 rounded-full bg-green-100 text-green-600">
-                    <i class="fas fa-comments text-xl"></i>
-                </div>
-                <div class="ml-4">
-                    <p class="text-sm font-medium text-gray-600">Total Komentar</p>
-                    <p class="text-2xl font-semibold text-gray-900">{{ $totalComments }}</p>
-                </div>
-            </div>
-        </div>
 
         <!-- Total Users -->
         <div class="bg-white rounded-lg shadow p-6">
             <div class="flex items-center">
-                <div class="p-3 rounded-full bg-purple-100 text-purple-600">
+                <div class="p-3 rounded-full bg-[#1b334e]/10 text-[#1b334e]">
                     <i class="fas fa-users text-xl"></i>
                 </div>
                 <div class="ml-4">
@@ -62,12 +54,76 @@
         <!-- Total Views -->
         <div class="bg-white rounded-lg shadow p-6">
             <div class="flex items-center">
-                <div class="p-3 rounded-full bg-yellow-100 text-yellow-600">
+                <div class="p-3 rounded-full bg-[#1b334e]/10 text-[#1b334e]">
                     <i class="fas fa-eye text-xl"></i>
                 </div>
                 <div class="ml-4">
                     <p class="text-sm font-medium text-gray-600">Total Views</p>
                     <p class="text-2xl font-semibold text-gray-900">{{ number_format($totalViews) }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div class="bg-white rounded-lg shadow">
+            <div class="p-6 border-b border-gray-200">
+                <h3 class="text-lg font-semibold text-gray-900">Status Kas Anggota</h3>
+            </div>
+            <div class="p-6">
+                @php
+                    $kasBelumBayar = \App\Models\KasAnggota::where('status_pembayaran', \App\Models\KasAnggota::STATUS_BELUM_BAYAR)->count();
+                    $kasSebagian = \App\Models\KasAnggota::where('status_pembayaran', \App\Models\KasAnggota::STATUS_SEBAGIAN)->count();
+                    $kasLunas = \App\Models\KasAnggota::where('status_pembayaran', \App\Models\KasAnggota::STATUS_LUNAS)->count();
+                    $kasTerlambat = \App\Models\KasAnggota::where('status_pembayaran', \App\Models\KasAnggota::STATUS_TERLAMBAT)->count();
+                @endphp
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                    <div class="text-center">
+                        <p class="text-2xl font-bold text-[#1b334e]">{{ $kasBelumBayar }}</p>
+                        <p class="text-sm text-gray-600">Belum Bayar</p>
+                    </div>
+                    <div class="text-center">
+                        <p class="text-2xl font-bold text-[#1b334e]">{{ $kasSebagian }}</p>
+                        <p class="text-sm text-gray-600">Sebagian</p>
+                    </div>
+                    <div class="text-center">
+                        <p class="text-2xl font-bold text-[#1b334e]">{{ $kasLunas }}</p>
+                        <p class="text-sm text-gray-600">Lunas</p>
+                    </div>
+                    <div class="text-center">
+                        <p class="text-2xl font-bold text-[#1b334e]">{{ $kasTerlambat }}</p>
+                        <p class="text-sm text-gray-600">Terlambat</p>
+                    </div>
+                </div>
+                <div class="mt-6">
+                    <button type="button" id="showUnpaidKasBtn" class="px-4 py-2 bg-[#1b334e] text-white rounded hover:bg-[#16283e]">Lihat yang Belum Bayar</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="bg-white rounded-lg shadow">
+            <div class="p-6 border-b border-gray-200">
+                <h3 class="text-lg font-semibold text-gray-900">Ringkasan Keuangan</h3>
+            </div>
+            <div class="p-6">
+                @php
+                    $totalPemasukan = \App\Models\Pemasukan::verified()->sum('jumlah');
+                    $totalPengeluaran = \App\Models\Pengeluaran::paid()->sum('jumlah');
+                    $saldo = $totalPemasukan - $totalPengeluaran;
+                @endphp
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div class="p-4 bg-gray-50 rounded">
+                        <p class="text-sm text-gray-600">Pemasukan Terverifikasi</p>
+                        <p class="text-2xl font-bold text-[#1b334e]">Rp {{ number_format($totalPemasukan, 0, ',', '.') }}</p>
+                    </div>
+                    <div class="p-4 bg-gray-50 rounded">
+                        <p class="text-sm text-gray-600">Pengeluaran Dibayar</p>
+                        <p class="text-2xl font-bold text-[#1b334e]">Rp {{ number_format($totalPengeluaran, 0, ',', '.') }}</p>
+                    </div>
+                    <div class="p-4 bg-gray-50 rounded">
+                        <p class="text-sm text-gray-600">Saldo</p>
+                        <p class="text-2xl font-bold text-[#1b334e]">Rp {{ number_format($saldo, 0, ',', '.') }}</p>
+                    </div>
                 </div>
             </div>
         </div>
@@ -128,15 +184,15 @@
             <div class="p-6">
                 <div class="grid grid-cols-3 gap-4 mb-6">
                     <div class="text-center">
-                        <p class="text-2xl font-bold text-blue-600">{{ $prokerStats['total'] }}</p>
+                        <p class="text-2xl font-bold text-[#1b334e]">{{ $prokerStats['total'] }}</p>
                         <p class="text-sm text-gray-600">Total Proker</p>
                     </div>
                     <div class="text-center">
-                        <p class="text-2xl font-bold text-green-600">{{ $prokerStats['active'] }}</p>
+                        <p class="text-2xl font-bold text-[#1b334e]">{{ $prokerStats['active'] }}</p>
                         <p class="text-sm text-gray-600">Sedang Berjalan</p>
                     </div>
                     <div class="text-center">
-                        <p class="text-2xl font-bold text-gray-600">{{ $prokerStats['completed'] }}</p>
+                        <p class="text-2xl font-bold text-[#1b334e]">{{ $prokerStats['completed'] }}</p>
                         <p class="text-sm text-gray-600">Selesai</p>
                     </div>
                 </div>
@@ -185,7 +241,7 @@
             <div class="p-6 border-b border-gray-200">
                 <div class="flex items-center justify-between">
                     <h3 class="text-lg font-semibold text-gray-900">Brief Mendesak</h3>
-                    <a href="{{ route('koordinator-jurnalistik.briefs.index') }}" class="text-red-600 hover:text-red-800 text-sm font-medium">
+                    <a href="{{ route('koordinator-jurnalistik.briefs.index') }}" class="text-[#1b334e] hover:text-[#16283e] text-sm font-medium">
                         Lihat Semua
                     </a>
                 </div>
@@ -224,7 +280,7 @@
             <div class="p-6 border-b border-gray-200">
                 <div class="flex items-center justify-between">
                     <h3 class="text-lg font-semibold text-gray-900">Berita Terbaru</h3>
-                    <a href="{{ route('koordinator-jurnalistik.news.index') }}" class="text-red-600 hover:text-red-800 text-sm font-medium">
+                    <a href="{{ route('koordinator-jurnalistik.news.index') }}" class="text-[#1b334e] hover:text-[#16283e] text-sm font-medium">
                         Lihat Semua
                     </a>
                 </div>
@@ -246,8 +302,7 @@
                             <div class="flex items-center mt-2 text-xs text-gray-500">
                                 <i class="fas fa-eye mr-1"></i>
                                 {{ $news->views }} views
-                                <i class="fas fa-comments ml-3 mr-1"></i>
-                                {{ $news->comments_count }} komentar
+                                
                             </div>
                         </div>
                     </div>
@@ -258,34 +313,49 @@
             </div>
         </div>
 
-        <!-- Recent Comments -->
-        <div class="bg-white rounded-lg shadow">
-            <div class="p-6 border-b border-gray-200">
-                <div class="flex items-center justify-between">
-                    <h3 class="text-lg font-semibold text-gray-900">Komentar Terbaru</h3>
-                    <a href="{{ route('koordinator-jurnalistik.comments.index') }}" class="text-red-600 hover:text-red-800 text-sm font-medium">
-                        Lihat Semua
-                    </a>
+    </div>
+    <!-- Modal: Unpaid Kas -->
+    <div id="unpaidKasModal" class="hidden fixed inset-0 z-50">
+        <div class="flex items-center justify-center min-h-screen px-4">
+            <div class="fixed inset-0 bg-black/40" onclick="document.getElementById('unpaidKasModal').classList.add('hidden')"></div>
+            <div class="bg-white rounded-lg shadow-xl max-w-2xl w-full relative z-10">
+                <div class="px-6 py-4 border-b border-gray-200 flex items-center justify-between">
+                    <h3 class="text-lg font-medium text-gray-900">Daftar Kas Belum Bayar</h3>
+                    <button class="text-gray-600" onclick="document.getElementById('unpaidKasModal').classList.add('hidden')"><i class="fas fa-times"></i></button>
                 </div>
-            </div>
-            <div class="p-6">
-                <div class="space-y-4">
-                    @forelse($recentComments as $comment)
-                    <div class="border-l-4 border-red-200 pl-4">
-                        <div class="flex items-start justify-between">
-                            <div class="flex-1">
-                                <p class="font-medium text-gray-900">{{ $comment->name }}</p>
-                                <p class="text-sm text-gray-600 mt-1">{{ Str::limit($comment->content, 80) }}</p>
-                                <p class="text-xs text-gray-500 mt-2">
-                                    Pada: <a href="#" class="text-red-600 hover:text-red-800">{{ Str::limit($comment->news->title, 30) }}</a>
-                                </p>
-                            </div>
-                            <span class="text-xs text-gray-500">{{ $comment->created_at->diffForHumans() }}</span>
+                <div class="p-6">
+                    @php
+                        $unpaidKas = \App\Models\KasAnggota::where('status_pembayaran', \App\Models\KasAnggota::STATUS_BELUM_BAYAR)->with('user')->orderBy('tahun', 'desc')->get();
+                    @endphp
+                    @if($unpaidKas->count() === 0)
+                        <p class="text-gray-500">Semua anggota sudah membayar.</p>
+                    @else
+                        <div class="overflow-x-auto">
+                            <table class="min-w-full divide-y divide-gray-200">
+                                <thead class="bg-gray-50">
+                                    <tr>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Anggota</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Periode</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tahun</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Jumlah Terbayar</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="bg-white divide-y divide-gray-200">
+                                    @foreach($unpaidKas as $kas)
+                                    <tr>
+                                        <td class="px-6 py-4 text-sm text-gray-900">{{ $kas->user->name ?? '-' }}</td>
+                                        <td class="px-6 py-4 text-sm text-gray-900">{{ ucfirst($kas->periode) }}</td>
+                                        <td class="px-6 py-4 text-sm text-gray-900">{{ $kas->tahun }}</td>
+                                        <td class="px-6 py-4 text-sm text-gray-900">Rp {{ number_format($kas->jumlah_terbayar, 0, ',', '.') }}</td>
+                                    </tr>
+                                    @endforeach
+                                </tbody>
+                            </table>
                         </div>
-                    </div>
-                    @empty
-                    <p class="text-gray-500 text-center py-4">Belum ada komentar</p>
-                    @endforelse
+                    @endif
+                </div>
+                <div class="px-6 py-4 border-t border-gray-200 flex justify-end">
+                    <button class="px-4 py-2 bg-[#1b334e] text-white rounded hover:bg-[#16283e]" onclick="document.getElementById('unpaidKasModal').classList.add('hidden')">Tutup</button>
                 </div>
             </div>
         </div>
@@ -304,14 +374,8 @@
             datasets: [{
                 label: 'Berita',
                 data: {!! json_encode($newsData) !!},
-                borderColor: 'rgb(239, 68, 68)',
-                backgroundColor: 'rgba(239, 68, 68, 0.1)',
-                tension: 0.4
-            }, {
-                label: 'Komentar',
-                data: {!! json_encode($commentData) !!},
-                borderColor: 'rgb(59, 130, 246)',
-                backgroundColor: 'rgba(59, 130, 246, 0.1)',
+                borderColor: '#1b334e',
+                backgroundColor: 'rgba(27, 51, 78, 0.1)',
                 tension: 0.4
             }]
         },
@@ -329,6 +393,10 @@
                 }
             }
         }
+    });
+
+    document.getElementById('showUnpaidKasBtn')?.addEventListener('click', function() {
+        document.getElementById('unpaidKasModal').classList.remove('hidden');
     });
 </script>
 @endpush

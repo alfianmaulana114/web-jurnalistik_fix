@@ -21,11 +21,21 @@
                 </div>
             </div>
 
+            <div class="mb-4">
+                <div class="inline-flex rounded-md shadow-sm" role="group">
+                    <button type="button" class="px-4 py-2 text-sm font-medium border border-gray-300 rounded-l-md bg-blue-600 text-white" data-lang-toggle="id">Indonesia</button>
+                    <button type="button" class="px-4 py-2 text-sm font-medium border border-gray-300 rounded-r-md bg-white text-gray-700" data-lang-toggle="en">English</button>
+                </div>
+            </div>
+
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <!-- Title -->
-                <div class="col-span-2">
-                    <label class="block text-sm font-medium text-gray-700 mb-2">Judul</label>
-                    <input type="text" name="title" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-400 focus:border-transparent" required>
+                <div class="col-span-2" data-lang-section="id">
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Judul (Indonesia)</label>
+                    <input type="text" name="title_id" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-400 focus:border-transparent" required>
+                </div>
+                <div class="col-span-2 hidden" data-lang-section="en">
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Title (English)</label>
+                    <input type="text" name="title_en" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-400 focus:border-transparent" required>
                 </div>
 
                 <!-- Category & Type -->
@@ -72,27 +82,32 @@
                     @enderror
                 </div>
 
-                <!-- Meta Description -->
-                <div class="col-span-2">
-                    <label class="block text-sm font-medium text-gray-700 mb-2">Meta Description</label>
-                    <textarea name="meta_description" rows="2" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-400 focus:border-transparent" required></textarea>
+                
+
+                <div data-lang-section="id">
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Tags (Indonesia)</label>
+                    <input type="text" name="tags_id" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-400 focus:border-transparent" required>
+                </div>
+                <div data-lang-section="en" class="hidden">
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Tags (English)</label>
+                    <input type="text" name="tags_en" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-400 focus:border-transparent" required>
+                </div>
+                <div data-lang-section="id">
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Keyword (Indonesia)</label>
+                    <input type="text" name="keyword_id" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-400 focus:border-transparent">
+                </div>
+                <div data-lang-section="en" class="hidden">
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Keyword (English)</label>
+                    <input type="text" name="keyword_en" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-400 focus:border-transparent">
                 </div>
 
-                <!-- Tags & Keyword -->
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-2">Tags</label>
-                    <input type="text" name="tags" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-400 focus:border-transparent" required>
+                <div class="col-span-2" data-lang-section="id">
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Konten (Indonesia)</label>
+                    <textarea name="content_id" id="content" required></textarea>
                 </div>
-
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-2">Keyword</label>
-                    <input type="text" name="keyword" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-400 focus:border-transparent">
-                </div>
-
-                <!-- Content -->
-                <div class="col-span-2">
-                    <label class="block text-sm font-medium text-gray-700 mb-2">Konten</label>
-                    <textarea name="content" id="content" required></textarea>
+                <div class="col-span-2 hidden" data-lang-section="en">
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Content (English)</label>
+                    <textarea name="content_en" id="content_en" required></textarea>
                 </div>
             </div>
 
@@ -344,6 +359,43 @@ document.addEventListener('DOMContentLoaded', function() {
         submitBtn.disabled = true;
         submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Menyimpan...';
     });
+    const toggleButtons = document.querySelectorAll('[data-lang-toggle]');
+    const sections = document.querySelectorAll('[data-lang-section]');
+    toggleButtons.forEach(btn => {
+        btn.addEventListener('click', () => {
+            const lang = btn.getAttribute('data-lang-toggle');
+            toggleButtons.forEach(b => {
+                b.classList.remove('bg-blue-600','text-white');
+                b.classList.add('bg-white','text-gray-700');
+            });
+            btn.classList.add('bg-blue-600','text-white');
+            btn.classList.remove('bg-white','text-gray-700');
+            sections.forEach(sec => {
+                sec.classList.toggle('hidden', sec.getAttribute('data-lang-section') !== lang);
+            });
+        });
+    });
+
+    if (typeof $ !== 'undefined' && $('#content_en').length) {
+        $('#content_en').summernote({
+            height: 300,
+            callbacks: {
+                onImageUpload: function(files) {
+                    const form = new FormData();
+                    form.append('image', files[0]);
+                    $.ajax({
+                        url: '/admin/upload-image',
+                        method: 'POST',
+                        data: form,
+                        processData: false,
+                        contentType: false,
+                        headers: { 'X-CSRF-TOKEN': $("meta[name='csrf-token']").attr('content') },
+                        success: function(url) { $('#content_en').summernote('insertImage', url); }
+                    });
+                }
+            }
+        });
+    }
 });
 </script>
 @endpush

@@ -90,6 +90,8 @@ class User extends Authenticatable
             self::ROLE_BENDAHARA => route('bendahara.dashboard'),
             self::ROLE_SEKRETARIS => route('sekretaris.dashboard'),
             self::ROLE_KOORDINATOR_REDAKSI => route('koordinator-redaksi.dashboard'),
+            self::ROLE_KOORDINATOR_LITBANG => route('koordinator-litbang.dashboard'),
+            self::ROLE_ANGGOTA_LITBANG => route('anggota-litbang.dashboard'),
             default => route('home'),
         };
     }

@@ -6,13 +6,16 @@
 
 @section('content')
 <div class="bg-white rounded-lg shadow-md">
-    <div class="flex justify-between items-center p-4 border-b">
+    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between p-4 border-b gap-3">
         <h2 class="text-lg font-semibold text-gray-700">Daftar Berita</h2>
-        <a href="{{ route('koordinator-jurnalistik.news.create') }}" class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-md text-sm font-medium">
+        <a href="{{ route('koordinator-jurnalistik.news.create') }}" class="bg-[#1b334e] hover:bg-[#16283e] text-white px-4 py-2 rounded-md text-sm font-medium">
             <i class="fas fa-plus mr-2"></i>Tambah Berita
         </a>
     </div>
     <div class="p-4">
+        <div class="mb-4">
+            <input type="text" id="newsSearch" placeholder="Cari judul, kategori, penulis..." class="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-[#1b334e] focus:border-transparent">
+        </div>
         <div class="overflow-x-auto">
             <table class="min-w-full divide-y divide-gray-200">
                 <thead class="bg-gray-50">
@@ -24,10 +27,11 @@
                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Penulis</th>
                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Views</th>
                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tanggal</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Persetujuan</th>
                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Aksi</th>
                     </tr>
                 </thead>
-                <tbody class="bg-white divide-y divide-gray-200">
+                <tbody class="bg-white divide-y divide-gray-200" id="newsTableBody">
                     @foreach($news as $item)
                     <tr>
                         <td class="px-6 py-4">
@@ -54,6 +58,28 @@
                         <td class="px-6 py-4 whitespace-nowrap">
                             <div class="text-sm text-gray-500">{{ $item->created_at->format('d M Y') }}</div>
                         </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm">
+                            @php
+                                $approval = $item->approval()->with('user')->first();
+                                $isAllowed = auth()->check() && in_array(auth()->user()->role, [\App\Models\User::ROLE_KOORDINATOR_JURNALISTIK, \App\Models\User::ROLE_KOORDINATOR_REDAKSI, \App\Models\User::ROLE_ANGGOTA_REDAKSI]);
+                                $isApprover = $approval && auth()->check() && $approval->user_id === auth()->id();
+                            @endphp
+                            <div class="flex items-center space-x-2">
+                                @if($approval)
+                                    <span class="px-2 py-1 bg-green-100 text-green-700 rounded text-xs">Disetujui oleh: {{ $approval->user->name ?? 'Unknown' }}</span>
+                                @else
+                                    <span class="px-2 py-1 bg-gray-100 text-gray-700 rounded text-xs">Belum disetujui</span>
+                                @endif
+                                @if($isAllowed && !$approval)
+                                    <form action="{{ route('news.approve', $item->id) }}" method="POST">
+                                        @csrf
+                                        <button type="submit" class="px-3 py-1 bg-green-600 text-white rounded text-xs hover:bg-green-700">
+                                            Approve
+                                        </button>
+                                    </form>
+                                @endif
+                            </div>
+                        </td>
                         <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
                             <a href="{{ route('news.show', $item->slug) }}" class="text-green-500 hover:text-green-700 mr-3" target="_blank">
                                 <i class="fas fa-eye"></i>
@@ -79,4 +105,20 @@
         </div>
     </div>
 </div>
+@push('scripts')
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const input = document.getElementById('newsSearch');
+    const tbody = document.getElementById('newsTableBody');
+    if (!input || !tbody) return;
+    input.addEventListener('input', function() {
+        const q = this.value.toLowerCase();
+        Array.from(tbody.querySelectorAll('tr')).forEach(function(row) {
+            const text = row.textContent.toLowerCase();
+            row.style.display = text.includes(q) ? '' : 'none';
+        });
+    });
+});
+</script>
+@endpush
 @endsection

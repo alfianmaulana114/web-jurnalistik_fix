@@ -9,16 +9,21 @@
 
         <!-- Fonts -->
         <link rel="preconnect" href="https://fonts.bunny.net">
-        <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
+        <link href="https://fonts.bunny.net/css?family=instrument-sans:400,500,600&display=swap" rel="stylesheet" />
 
         <!-- Scripts -->
         @vite(['resources/css/app.css', 'resources/js/app.js'])
     </head>
     <body class="font-sans antialiased">
-        <div class="min-h-screen bg-gray-100">
-            @unless(request()->routeIs('home'))
+            @php
+                $rn = \Illuminate\Support\Facades\Route::currentRouteName();
+                $isPublic = str_starts_with($rn, 'home') || str_starts_with($rn, 'news.') || str_starts_with($rn, 'public.');
+                $shouldShowAdminNav = auth()->check() && !$isPublic;
+            @endphp
+        <div class="min-h-screen {{ $isPublic ? 'bg-white' : 'bg-gray-100' }}">
+            @if($shouldShowAdminNav)
                 @include('layouts.navigation')
-            @endunless
+            @endif
 
             <!-- Page Heading -->
             @isset($header)

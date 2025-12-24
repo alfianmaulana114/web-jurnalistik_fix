@@ -6,12 +6,12 @@
 @section('content')
 <div class="space-y-6">
     <!-- Header Actions -->
-    <div class="flex items-center justify-between">
+    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
         <div>
             <h1 class="text-2xl font-bold text-gray-900">Funfact</h1>
             <p class="mt-1 text-sm text-gray-600">Kelola funfact untuk konten menarik</p>
         </div>
-        <a href="{{ route('koordinator-jurnalistik.funfacts.create') }}" class="inline-flex items-center px-4 py-2 bg-red-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-red-700 focus:bg-red-700 active:bg-red-900 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 transition ease-in-out duration-150">
+        <a href="{{ route('koordinator-jurnalistik.funfacts.create') }}" class="inline-flex items-center px-4 py-2 bg-[#1b334e] border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-[#16283e] focus:outline-none transition ease-in-out duration-150">
             <i class="fas fa-plus mr-2"></i>
             Tambah Funfact
         </a>
@@ -51,9 +51,12 @@
     <!-- Funfacts Table -->
     <div class="bg-white rounded-lg shadow overflow-hidden">
         <div class="px-6 py-4 border-b border-gray-200">
-            <div class="flex items-center justify-between">
+            <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
                 <h3 class="text-lg font-medium text-gray-900">Daftar Funfact</h3>
-                <span class="text-sm text-gray-500">{{ $funfacts->total() }} funfact ditemukan</span>
+                <div class="flex items-center gap-2">
+                    <input type="text" id="funfactsSearch" class="w-full sm:w-64 px-3 py-2 border rounded" placeholder="Cari funfact..." />
+                    <span class="text-sm text-gray-500">{{ $funfacts->total() }} funfact ditemukan</span>
+                </div>
             </div>
         </div>
 
@@ -69,7 +72,7 @@
                         <th scope="col" class="relative px-6 py-3"><span class="sr-only">Actions</span></th>
                     </tr>
                 </thead>
-                <tbody class="bg-white divide-y divide-gray-200">
+                <tbody class="bg-white divide-y divide-gray-200" id="funfactsTableBody">
                     @foreach($funfacts as $funfact)
                     <tr class="hover:bg-gray-50">
                         <td class="px-6 py-4">
@@ -151,13 +154,29 @@
             <i class="fas fa-lightbulb text-4xl text-gray-400 mb-4"></i>
             <h3 class="text-lg font-medium text-gray-900 mb-2">Belum ada funfact</h3>
             <p class="text-gray-500 mb-6">Mulai dengan membuat funfact pertama Anda.</p>
-            <a href="{{ route('koordinator-jurnalistik.funfacts.create') }}" class="inline-flex items-center px-4 py-2 bg-red-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-red-700 focus:bg-red-700 active:bg-red-900 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 transition ease-in-out duration-150">
+            <a href="{{ route('koordinator-jurnalistik.funfacts.create') }}" class="inline-flex items-center px-4 py-2 bg-[#1b334e] border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-[#16283e] focus:outline-none transition ease-in-out duration-150">
                 <i class="fas fa-plus mr-2"></i>
                 Tambah Funfact Pertama
             </a>
         </div>
         @endif
     </div>
+@push('scripts')
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const input = document.getElementById('funfactsSearch');
+    const tbody = document.getElementById('funfactsTableBody');
+    if (!input || !tbody) return;
+    input.addEventListener('input', function() {
+        const q = this.value.toLowerCase();
+        Array.from(tbody.querySelectorAll('tr')).forEach(function(row) {
+            const text = row.textContent.toLowerCase();
+            row.style.display = text.includes(q) ? '' : 'none';
+        });
+    });
+});
+</script>
+@endpush
 </div>
 @endsection
 

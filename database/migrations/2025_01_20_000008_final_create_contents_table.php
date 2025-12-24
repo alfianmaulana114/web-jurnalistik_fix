@@ -17,13 +17,7 @@ return new class extends Migration
             $table->id();
             $table->string('judul');
             $table->text('caption');
-            $table->enum('jenis_konten', ['caption_berita', 'caption_media_kreatif'])->default('caption_berita');
-            $table->string('media_type')->nullable()->comment('foto, video untuk media kreatif');
-            $table->string('media_path')->nullable()->comment('Path file media untuk caption');
-            $table->text('media_description')->nullable()->comment('Deskripsi media yang di-caption');
-            $table->text('berita_referensi')->nullable()->comment('Referensi berita asli untuk caption berita');
-            $table->string('sumber')->nullable();
-            $table->text('catatan_editor')->nullable();
+            $table->enum('jenis_konten', ['caption_berita', 'caption_media_kreatif', 'caption_desain'])->default('caption_berita');
             $table->foreignId('brief_id')->nullable()->constrained('briefs')->onDelete('set null');
             $table->foreignId('berita_id')->nullable()->constrained('news')->onDelete('set null');
             $table->unsignedBigInteger('desain_id')->nullable();

@@ -20,14 +20,8 @@ class Content extends Model
         'judul',
         'caption',
         'jenis_konten',
-        'media_type',
-        'media_path',
-        'media_description',
-        'berita_referensi',
         'desain_id',
         'berita_id',
-        'sumber',
-        'catatan_editor',
         'brief_id',
         'created_by',
         'published_at',
@@ -50,11 +44,7 @@ class Content extends Model
     const TYPE_CAPTION_MEDIA_KREATIF = 'caption_media_kreatif';
     const TYPE_CAPTION_DESAIN = 'caption_desain';
 
-    /**
-     * Media type constants
-     */
-    const MEDIA_TYPE_FOTO = 'foto';
-    const MEDIA_TYPE_VIDEO = 'video';
+    
 
     /**
      * Status constants
@@ -77,16 +67,6 @@ class Content extends Model
         ];
     }
 
-    /**
-     * Get all available media types
-     */
-    public static function getMediaTypes(): array
-    {
-        return [
-            self::MEDIA_TYPE_FOTO => 'Foto',
-            self::MEDIA_TYPE_VIDEO => 'Video',
-        ];
-    }
 
     /**
      * Get all available statuses
@@ -134,6 +114,11 @@ class Content extends Model
         return $this->hasMany(Design::class);
     }
 
+    public function translations(): HasMany
+    {
+        return $this->hasMany(ContentTranslation::class);
+    }
+
     /**
      * Get the design related to this content (for caption desain)
      */
@@ -174,13 +159,6 @@ class Content extends Model
         return self::getCaptionTypes()[$this->jenis_konten] ?? $this->jenis_konten;
     }
 
-    /**
-     * Get media type label
-     */
-    public function getMediaTypeLabel(): string
-    {
-        return self::getMediaTypes()[$this->media_type] ?? $this->media_type;
-    }
 
     /**
      * Get status label
@@ -245,21 +223,6 @@ class Content extends Model
         return $this->jenis_konten === self::TYPE_CAPTION_MEDIA_KREATIF;
     }
 
-    /**
-     * Check if media is photo
-     */
-    public function isPhoto(): bool
-    {
-        return $this->media_type === self::MEDIA_TYPE_FOTO;
-    }
-
-    /**
-     * Check if media is video
-     */
-    public function isVideo(): bool
-    {
-        return $this->media_type === self::MEDIA_TYPE_VIDEO;
-    }
 
     /**
      * Scope for published contents
@@ -301,19 +264,4 @@ class Content extends Model
         return $query->where('jenis_konten', self::TYPE_CAPTION_MEDIA_KREATIF);
     }
 
-    /**
-     * Scope for photo captions
-     */
-    public function scopePhotoCaption($query)
-    {
-        return $query->where('media_type', self::MEDIA_TYPE_FOTO);
-    }
-
-    /**
-     * Scope for video captions
-     */
-    public function scopeVideoCaption($query)
-    {
-        return $query->where('media_type', self::MEDIA_TYPE_VIDEO);
-    }
 }

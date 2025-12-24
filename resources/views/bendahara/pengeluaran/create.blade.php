@@ -172,11 +172,11 @@
             </div>
 
             <!-- Action Buttons -->
-            <div class="mt-8 flex justify-end space-x-4">
-                <a href="{{ route('bendahara.pengeluaran.index') }}" class="px-4 py-2 bg-gray-200 text-gray-700 rounded-md hover:bg-gray-300 transition-colors">
+            <div class="mt-8 flex flex-col sm:flex-row justify-end gap-3">
+                <a href="{{ route('bendahara.pengeluaran.index') }}" class="w-full sm:w-auto px-4 py-2 bg-gray-200 text-gray-700 rounded-md hover:bg-gray-300 transition-colors text-sm sm:text-base">
                     Batal
                 </a>
-                <button type="submit" id="submitBtn" class="px-6 py-3 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors">
+                <button type="submit" id="submitBtn" class="w-full sm:w-auto px-6 py-3 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors text-sm sm:text-base">
                     <i class="fas fa-save mr-2"></i>Simpan Pengeluaran
                 </button>
             </div>

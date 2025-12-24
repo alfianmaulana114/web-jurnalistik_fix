@@ -7,11 +7,16 @@ use App\Http\Controllers\KoordinatorJurnalistik\BriefController;
 use App\Http\Controllers\KoordinatorJurnalistik\ContentController;
 use App\Http\Controllers\KoordinatorJurnalistik\DesignController;
 use App\Http\Controllers\KoordinatorJurnalistik\UserController;
-use App\Http\Controllers\KoordinatorJurnalistik\CommentController;
 use App\Http\Controllers\KoordinatorJurnalistik\FunfactController as KoordinatorJurnalistikFunfactController;
 use App\Http\Controllers\KoordinatorRedaksi\KoordinatorRedaksiController;
 use App\Http\Controllers\KoordinatorRedaksi\PenjadwalanController;
 use App\Http\Controllers\KoordinatorRedaksi\FunfactController as KoordinatorRedaksiFunfactController;
+use App\Http\Controllers\KoordinatorLitbang\KoordinatorLitbangController;
+use App\Http\Controllers\KoordinatorLitbang\PenjadwalanController as KoordinatorLitbangPenjadwalanController;
+use App\Http\Controllers\KoordinatorHumas\KoordinatorHumasController as KoordinatorHumasController;
+use App\Http\Controllers\KoordinatorHumas\ContentController as KoordinatorHumasContentController;
+use App\Http\Controllers\KoordinatorHumas\PenjadwalanController as KoordinatorHumasPenjadwalanController;
+use App\Http\Controllers\KoordinatorLitbang\BriefController as KoordinatorLitbangBriefController;
 use App\Http\Controllers\Sekretaris\SekretarisController;
 use App\Http\Controllers\Sekretaris\AbsenController;
 use App\Http\Controllers\Bendahara\BendaharaController;
@@ -72,9 +77,7 @@ Route::prefix('koordinator-jurnalistik')->name('koordinator-jurnalistik.')->midd
     // Funfact Routes
     Route::resource('funfacts', KoordinatorJurnalistikFunfactController::class);
     
-    // Comments Routes
-    Route::get('/comments', [CommentController::class, 'index'])->name('comments.index');
-    Route::delete('/comments/{comment}', [CommentController::class, 'destroy'])->name('comments.destroy');
+    
     
     // Temp Image Routes
     Route::post('/temp-images', [TempImageController::class, 'store'])->name('temp-images.store');
@@ -103,6 +106,41 @@ Route::prefix('koordinator-redaksi')->name('koordinator-redaksi.')->middleware([
     // Temp Image Routes
     Route::post('/temp-images', [TempImageController::class, 'store'])->name('temp-images.store');
     Route::delete('/temp-images/{tempImage}', [TempImageController::class, 'destroy'])->name('temp-images.destroy');
+});
+
+// Koordinator Litbang Routes
+Route::prefix('koordinator-litbang')->name('koordinator-litbang.')->middleware(['auth', 'role:koordinator_litbang'])->group(function () {
+    Route::get('/dashboard', [KoordinatorLitbangController::class, 'dashboard'])->name('dashboard');
+
+    // Brief Routes (sama seperti koordinator jurnalistik)
+    Route::resource('briefs', KoordinatorLitbangBriefController::class);
+
+    // Penjadwalan Routes (untuk anggota litbang)
+    Route::resource('penjadwalan', KoordinatorLitbangPenjadwalanController::class);
+});
+
+// Koordinator Humas Routes
+Route::prefix('koordinator-humas')->name('koordinator-humas.')->middleware(['auth', 'role:koordinator_humas'])->group(function () {
+    Route::get('/dashboard', [KoordinatorHumasController::class, 'dashboard'])->name('dashboard');
+    Route::resource('contents', KoordinatorHumasContentController::class);
+    Route::resource('penjadwalan', KoordinatorHumasPenjadwalanController::class);
+});
+
+// Koordinator Media Kreatif Routes
+Route::prefix('koordinator-media-kreatif')->name('koordinator-media-kreatif.')->middleware(['auth', 'role:koordinator_media_kreatif'])->group(function () {
+    Route::get('/dashboard', [\App\Http\Controllers\KoordinatorMediaKreatif\KoordinatorMediaKreatifController::class, 'dashboard'])->name('dashboard');
+    Route::resource('designs', \App\Http\Controllers\KoordinatorMediaKreatif\DesignController::class);
+    Route::get('penjadwalan', [\App\Http\Controllers\KoordinatorMediaKreatif\PenjadwalanController::class, 'index'])->name('penjadwalan.index');
+    Route::post('penjadwalan', [\App\Http\Controllers\KoordinatorMediaKreatif\PenjadwalanController::class, 'store'])->name('penjadwalan.store');
+    Route::get('penjadwalan/{id}/edit', [\App\Http\Controllers\KoordinatorMediaKreatif\PenjadwalanController::class, 'edit'])->name('penjadwalan.edit');
+    Route::put('penjadwalan/{id}', [\App\Http\Controllers\KoordinatorMediaKreatif\PenjadwalanController::class, 'update'])->name('penjadwalan.update');
+    Route::delete('penjadwalan/{id}', [\App\Http\Controllers\KoordinatorMediaKreatif\PenjadwalanController::class, 'destroy'])->name('penjadwalan.destroy');
+});
+
+// Anggota Litbang Routes
+Route::prefix('anggota-litbang')->name('anggota-litbang.')->middleware(['auth', 'role:anggota_litbang'])->group(function () {
+    Route::get('/dashboard', [\App\Http\Controllers\AnggotaLitbang\AnggotaLitbangController::class, 'dashboard'])->name('dashboard');
+    Route::resource('briefs', \App\Http\Controllers\AnggotaLitbang\BriefController::class);
 });
 
 // Sekretaris Routes
@@ -179,25 +217,21 @@ Route::prefix('bendahara')->name('bendahara.')->middleware(['auth', 'role:bendah
     Route::put('/kas-settings', [BendaharaController::class, 'kasSettingsUpdate'])->name('kas-settings.update');
 });
 
-// Public News Routes - Menggunakan slug seperti sebelumnya
+// Public News Routes
 Route::prefix('news')->name('news.')->group(function () {
-    Route::get('/{news:slug}', function (News $news) {
-        // Increment views
-        $news->increment('views');
-        
-        // Reload dengan relationships
-        $news->load(['user', 'category', 'type', 'genres', 'comments']);
-        
-        return view('news.show', compact('news'));
-    })->name('show');
-    
-    // Public Comment Store (tidak perlu auth, tapi tetap aman dengan CSRF dan rate limiting)
-    Route::post('/{news:slug}/comments', [\App\Http\Controllers\KoordinatorJurnalistik\CommentController::class, 'store'])
-        ->middleware('throttle:5,60') // 5 requests per 60 minutes
-        ->name('comments.store');
+    Route::get('/{news:slug}', [\App\Http\Controllers\Public\NewsController::class, 'show'])->name('show');
 });
 
-// Comment Routes - Admin/Koordinator (perlu auth dan role koordinator jurnalistik)
-Route::middleware(['auth', 'role:koordinator_jurnalistik'])->group(function () {
-    Route::delete('/comments/{comment}', [\App\Http\Controllers\KoordinatorJurnalistik\CommentController::class, 'destroy'])->name('comments.destroy');
-});
+// Public Listing Routes
+Route::get('/kategori/{segment}', [\App\Http\Controllers\Public\ListingController::class, 'category'])->name('public.category');
+Route::get('/tipe/{segment}', [\App\Http\Controllers\Public\ListingController::class, 'type'])->name('public.type');
+Route::view('/tentang', 'public.about')->name('public.about');
+
+// News Approval Routes - akses: koordinator jurnalistik, koordinator redaksi, anggota redaksi
+Route::middleware(['auth', 'role:koordinator_jurnalistik,koordinator_redaksi,anggota_redaksi'])
+    ->group(function () {
+        Route::post('/news/{id}/approve', [\App\Http\Controllers\NewsApprovalController::class, 'approve'])
+            ->name('news.approve');
+    });
+
+//

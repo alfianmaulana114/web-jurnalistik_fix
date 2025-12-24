@@ -16,7 +16,7 @@
                 </div>
                 <div class="flex space-x-2">
                     <a href="{{ route('koordinator-jurnalistik.news.edit', $news->id) }}" 
-                       class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors">
+                       class="px-4 py-2 bg-[#1b334e] text-white rounded-md hover:bg-[#16283e] transition-colors">
                         <i class="fas fa-edit mr-2"></i>Edit
                     </a>
                     <a href="{{ route('koordinator-jurnalistik.news.index') }}" 
@@ -100,10 +100,6 @@
                     <div class="text-center">
                         <div class="text-2xl font-bold text-blue-600">{{ $news->views }}</div>
                         <div class="text-sm text-gray-500">Views</div>
-                    </div>
-                    <div class="text-center">
-                        <div class="text-2xl font-bold text-green-600">{{ $news->comments_count ?? 0 }}</div>
-                        <div class="text-sm text-gray-500">Komentar</div>
                     </div>
                     <div class="text-center">
                         <div class="text-2xl font-bold text-purple-600">{{ $news->created_at->diffForHumans() }}</div>

@@ -102,10 +102,6 @@
                         <div class="text-sm text-gray-500">Views</div>
                     </div>
                     <div class="text-center">
-                        <div class="text-2xl font-bold text-green-600">{{ $news->comments_count ?? 0 }}</div>
-                        <div class="text-sm text-gray-500">Komentar</div>
-                    </div>
-                    <div class="text-center">
                         <div class="text-2xl font-bold text-purple-600">{{ $news->created_at->diffForHumans() }}</div>
                         <div class="text-sm text-gray-500">Dipublikasi</div>
                     </div>

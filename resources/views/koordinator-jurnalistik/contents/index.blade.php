@@ -9,25 +9,25 @@
             <h3 class="text-xl font-semibold text-gray-800">Daftar Caption</h3>
             <div class="flex space-x-3">
                 <a href="{{ route('koordinator-jurnalistik.contents.create') }}" 
-                   class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md text-sm font-medium transition duration-200 flex items-center">
+                   class="bg-[#1b334e] hover:bg-[#16283e] text-white px-4 py-2 rounded-md text-sm font-medium transition duration-200 flex items-center">
                     <i class="fas fa-plus mr-2"></i> Buat Caption Baru
                 </a>
                 <button onclick="openNewsSelectionModal()" 
-                        class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-md text-sm font-medium transition duration-200 flex items-center">
+                        class="bg-[#1b334e] hover:bg-[#16283e] text-white px-4 py-2 rounded-md text-sm font-medium transition duration-200 flex items-center">
                     <i class="fas fa-newspaper mr-2"></i> Pilih Berita untuk Caption
                 </button>
                 <button onclick="openDesignSelectionModal()" 
-                        class="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-md text-sm font-medium transition duration-200 flex items-center">
+                        class="bg-[#1b334e] hover:bg-[#16283e] text-white px-4 py-2 rounded-md text-sm font-medium transition duration-200 flex items-center">
                     <i class="fas fa-palette mr-2"></i> Pilih Desain untuk Caption
                 </button>
             </div>
         </div>
         
-        <div class="p-6">
+            <div class="p-6">
 
             <!-- Filter Section -->
             <div class="mb-6 p-4 bg-gray-50 rounded-lg">
-                <button type="button" onclick="toggleFilter()" class="text-blue-600 hover:text-blue-800 font-medium">
+                <button type="button" onclick="toggleFilter()" class="text-[#1b334e] hover:text-[#16283e] font-medium">
                     <i class="fas fa-filter mr-2"></i>Filter Caption
                 </button>
                 <div id="filterSection" class="hidden mt-4 grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -50,7 +50,7 @@
                     </div>
                 </div>
                 <div class="mt-4 hidden" id="filterButtons">
-                    <button type="button" onclick="applyFilter()" class="bg-blue-600 text-white px-4 py-2 rounded-md text-sm mr-2 hover:bg-blue-700">
+                    <button type="button" onclick="applyFilter()" class="bg-[#1b334e] text-white px-4 py-2 rounded-md text-sm mr-2 hover:bg-[#16283e]">
                         Terapkan Filter
                     </button>
                     <button type="button" onclick="resetFilter()" class="bg-gray-500 text-white px-4 py-2 rounded-md text-sm hover:bg-gray-600">
@@ -60,6 +60,9 @@
             </div>
 
             <div class="overflow-x-auto">
+                <div class="px-2 pb-3">
+                    <input type="text" id="contentsSearchClient" class="w-full sm:w-80 px-3 py-2 border rounded" placeholder="Cari cepat caption..." />
+                </div>
                 <table class="min-w-full bg-white border border-gray-200 rounded-lg">
                             <thead class="bg-gray-50">
                                 <tr>
@@ -72,7 +75,7 @@
                                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Aksi</th>
                                 </tr>
                             </thead>
-                            <tbody class="bg-white divide-y divide-gray-200">
+                            <tbody class="bg-white divide-y divide-gray-200" id="contentsTableBody">
                                 @forelse($contents as $content)
                                     <tr class="hover:bg-gray-50">
                                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ $loop->iteration + ($contents->currentPage() - 1) * $contents->perPage() }}</td>
@@ -148,7 +151,7 @@
                                                 <h5 class="text-lg font-medium text-gray-900 mb-2">Belum ada caption</h5>
                                                 <p class="text-gray-500 mb-4">Mulai dengan membuat caption pertama Anda.</p>
                                                 <a href="{{ route('koordinator-jurnalistik.contents.create') }}" 
-                                                   class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md text-sm font-medium transition duration-200 flex items-center">
+                                                   class="bg-[#1b334e] hover:bg-[#16283e] text-white px-4 py-2 rounded-md text-sm font-medium transition duration-200 flex items-center">
                                                     <i class="fas fa-plus mr-2"></i> Buat Caption Baru
                                                 </a>
                                             </div>
@@ -174,7 +177,7 @@
 <div id="newsSelectionModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center hidden z-50">
     <div class="bg-white rounded-lg shadow-lg w-full max-w-4xl max-h-[80vh] overflow-hidden">
         <!-- Modal Header -->
-        <div class="bg-blue-600 px-6 py-4">
+            <div class="bg-[#1b334e] px-6 py-4">
             <h3 class="text-lg font-semibold text-white">Pilih Berita untuk Caption</h3>
         </div>
         
@@ -184,7 +187,7 @@
                 type="text" 
                 id="newsSearch" 
                 placeholder="Cari berita..." 
-                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1b334e] focus:border-transparent"
                 onkeyup="filterNews()"
             >
         </div>
@@ -225,7 +228,7 @@
             <button type="button" 
                     id="createCaptionBtn"
                     onclick="createCaptionForSelectedNews()" 
-                    class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors disabled:bg-gray-400 disabled:cursor-not-allowed"
+                    class="px-4 py-2 bg-[#1b334e] text-white rounded-lg hover:bg-[#16283e] transition-colors disabled:bg-gray-400 disabled:cursor-not-allowed"
                     disabled>
                 Buat Caption
             </button>
@@ -237,9 +240,9 @@
 <div id="designSelectionModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center hidden z-50">
     <div class="bg-white rounded-lg shadow-lg w-full max-w-4xl max-h-[80vh] flex flex-col">
         <!-- Modal Header -->
-        <div class="bg-purple-600 px-6 py-4 flex-shrink-0">
+        <div class="bg-[#1b334e] px-6 py-4 flex-shrink-0">
             <h3 class="text-lg font-semibold text-white">Pilih Desain untuk Caption</h3>
-            <p class="text-xs text-purple-100">Menampilkan desain tanpa terkait berita</p>
+            <p class="text-xs text-white/80">Menampilkan desain tanpa terkait berita</p>
         </div>
         
         <!-- Search Bar -->
@@ -269,7 +272,7 @@
                     <div class="flex items-center justify-between mt-2">
                         <span class="text-xs text-gray-500">{{ $design->created_at->format('d M Y') }}</span>
                         @if($design->media_url)
-                            <a href="{{ $design->media_url }}" target="_blank" class="text-xs bg-purple-100 text-purple-800 px-2 py-1 rounded">Lihat Media</a>
+                            <a href="{{ $design->media_url }}" target="_blank" class="text-xs bg-[#1b334e]/10 text-[#1b334e] px-2 py-1 rounded">Lihat Media</a>
                         @endif
                     </div>
                 </div>
@@ -320,7 +323,7 @@ function closeNewsSelectionModal() {
     
     // Reset selection
     document.querySelectorAll('.news-item').forEach(item => {
-        item.classList.remove('border-blue-500', 'bg-blue-50');
+        item.classList.remove('border-[#1b334e]', 'bg-[#1b334e]/5');
     });
 }
 
@@ -347,7 +350,7 @@ function selectNews(element) {
     });
     
     // Add selection to clicked item
-    element.classList.add('border-blue-500', 'bg-blue-50');
+    element.classList.add('border-[#1b334e]', 'bg-[#1b334e]/5');
     selectedNewsId = element.getAttribute('data-news-id');
     document.getElementById('createCaptionBtn').disabled = false;
 }
@@ -383,7 +386,7 @@ function closeDesignSelectionModal() {
     document.getElementById('createDesignCaptionBtn').disabled = true;
     // Reset selection
     document.querySelectorAll('.design-item').forEach(item => {
-        item.classList.remove('border-purple-500', 'bg-purple-50');
+        item.classList.remove('border-[#1b334e]', 'bg-[#1b334e]/5');
     });
 }
 
@@ -408,7 +411,7 @@ function selectDesign(element) {
         item.classList.remove('border-purple-500', 'bg-purple-50');
     });
     
-    element.classList.add('border-purple-500', 'bg-purple-50');
+    element.classList.add('border-[#1b334e]', 'bg-[#1b334e]/5');
     selectedDesignId = element.getAttribute('data-design-id');
     document.getElementById('createDesignCaptionBtn').disabled = false;
 }
@@ -453,6 +456,19 @@ function resetFilter() {
     url.search = '';
     window.location.href = url.toString();
 }
+
+document.addEventListener('DOMContentLoaded', function() {
+    const input = document.getElementById('contentsSearchClient');
+    const tbody = document.getElementById('contentsTableBody');
+    if (!input || !tbody) return;
+    input.addEventListener('input', function() {
+        const q = this.value.toLowerCase();
+        Array.from(tbody.querySelectorAll('tr')).forEach(function(row) {
+            const text = row.textContent.toLowerCase();
+            row.style.display = text.includes(q) ? '' : 'none';
+        });
+    });
+});
 </script>
 @endpush
 @endsection

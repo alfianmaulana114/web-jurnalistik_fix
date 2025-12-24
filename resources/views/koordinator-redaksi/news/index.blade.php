@@ -23,6 +23,7 @@
                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Penulis</th>
                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Views</th>
                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tanggal</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Persetujuan</th>
                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Aksi</th>
                     </tr>
                 </thead>
@@ -52,6 +53,28 @@
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap">
                             <div class="text-sm text-gray-500">{{ $item->created_at->format('d M Y') }}</div>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm">
+                            @php
+                                $approval = $item->approval()->with('user')->first();
+                                $isAllowed = auth()->check() && in_array(auth()->user()->role, [\App\Models\User::ROLE_KOORDINATOR_JURNALISTIK, \App\Models\User::ROLE_KOORDINATOR_REDAKSI, \App\Models\User::ROLE_ANGGOTA_REDAKSI]);
+                                $isApprover = $approval && auth()->check() && $approval->user_id === auth()->id();
+                            @endphp
+                            <div class="flex items-center space-x-2">
+                                @if($approval)
+                                    <span class="px-2 py-1 bg-green-100 text-green-700 rounded text-xs">Disetujui oleh: {{ $approval->user->name ?? 'Unknown' }}</span>
+                                @else
+                                    <span class="px-2 py-1 bg-gray-100 text-gray-700 rounded text-xs">Belum disetujui</span>
+                                @endif
+                                @if($isAllowed && !$approval)
+                                    <form action="{{ route('news.approve', $item->id) }}" method="POST">
+                                        @csrf
+                                        <button type="submit" class="px-3 py-1 bg-green-600 text-white rounded text-xs hover:bg-green-700">
+                                            Approve
+                                        </button>
+                                    </form>
+                                @endif
+                            </div>
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
                             <a href="{{ route('news.show', $item->slug) }}" class="text-green-500 hover:text-green-700 mr-3" target="_blank" title="Lihat">

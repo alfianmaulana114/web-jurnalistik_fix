@@ -1,3 +1,7 @@
+{{-- Dashboard Bendahara
+    - Ringkasan keuangan: saldo, pemasukan, pengeluaran
+    - Akses cepat ke manajemen kas anggota dan laporan
+--}}
 @extends('layouts.bendahara')
 
 @section('title', 'Dashboard')

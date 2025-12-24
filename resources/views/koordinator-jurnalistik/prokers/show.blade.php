@@ -12,11 +12,11 @@
             <p class="mt-1 text-sm text-gray-600">Dibuat oleh {{ $proker->creator->name }} pada {{ $proker->created_at->format('d M Y') }}</p>
         </div>
         <div class="flex items-center space-x-3">
-            <a href="{{ route('koordinator-jurnalistik.prokers.edit', $proker) }}" class="inline-flex items-center px-4 py-2 bg-yellow-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-yellow-700 focus:bg-yellow-700 active:bg-yellow-900 focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:ring-offset-2 transition ease-in-out duration-150">
+            <a href="{{ route('koordinator-jurnalistik.prokers.edit', $proker) }}" class="inline-flex items-center px-4 py-2 bg-[#1b334e] border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-[#16283e] focus:outline-none transition ease-in-out duration-150">
                 <i class="fas fa-edit mr-2"></i>
                 Edit
             </a>
-            <a href="{{ route('koordinator-jurnalistik.prokers.index') }}" class="inline-flex items-center px-4 py-2 bg-gray-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-gray-700 focus:bg-gray-700 active:bg-gray-900 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 transition ease-in-out duration-150">
+            <a href="{{ route('koordinator-jurnalistik.prokers.index') }}" class="inline-flex items-center px-4 py-2 bg-gray-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-gray-700 focus:outline-none transition ease-in-out duration-150">
                 <i class="fas fa-arrow-left mr-2"></i>
                 Kembali
             </a>

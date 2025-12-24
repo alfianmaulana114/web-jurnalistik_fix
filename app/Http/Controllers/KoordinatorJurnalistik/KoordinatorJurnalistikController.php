@@ -4,7 +4,6 @@ namespace App\Http\Controllers\KoordinatorJurnalistik;
 
 use App\Http\Controllers\Controller;
 
-use App\Models\Comment;
 use App\Models\News;
 use App\Models\NewsCategory;
 use App\Models\NewsType;
@@ -81,12 +80,24 @@ class KoordinatorJurnalistikController extends Controller
     }
 
     // News Management Methods
+    /**
+     * Menampilkan daftar semua berita untuk Koordinator Jurnalistik.
+     *
+     * @return View
+     */
     public function newsIndex(): View
     {
         $data = app(\App\Services\KoordinatorJurnalistik\NewsService::class)->index();
         return view('koordinator-jurnalistik.news.index', $data);
     }
 
+    /**
+     * Menampilkan form pembuatan berita baru.
+     *
+     * Memuat resource tambahan untuk editor teks dan cropper gambar.
+     *
+     * @return View
+     */
     public function newsCreate(): View
     {
         $data = app(\App\Services\KoordinatorJurnalistik\NewsService::class)->create();
@@ -98,17 +109,37 @@ class KoordinatorJurnalistikController extends Controller
         ]);
     }
 
+    /**
+     * Menyimpan berita baru.
+     *
+     * @param Request $request
+     * @return RedirectResponse
+     */
     public function newsStore(Request $request): RedirectResponse
     {
         return app(\App\Services\KoordinatorJurnalistik\NewsService::class)->store($request);
     }
 
+    /**
+     * Menampilkan detail berita.
+     *
+     * @param int $id
+     * @return View
+     */
     public function newsShow($id): View
     {
         $data = app(\App\Services\KoordinatorJurnalistik\NewsService::class)->show($id);
         return view('koordinator-jurnalistik.news.show', $data);
     }
 
+    /**
+     * Menampilkan form edit berita.
+     *
+     * Memuat resource editor dan cropper untuk pengeditan.
+     *
+     * @param int $id
+     * @return View
+     */
     public function newsEdit($id): View
     {
         $data = app(\App\Services\KoordinatorJurnalistik\NewsService::class)->edit($id);
@@ -120,16 +151,35 @@ class KoordinatorJurnalistikController extends Controller
         ]);
     }
 
+    /**
+     * Memperbarui data berita.
+     *
+     * @param Request $request
+     * @param int $id
+     * @return RedirectResponse
+     */
     public function newsUpdate(Request $request, $id): RedirectResponse
     {
         return app(\App\Services\KoordinatorJurnalistik\NewsService::class)->update($request, (int) $id);
     }
 
+    /**
+     * Menghapus berita.
+     *
+     * @param int $id
+     * @return RedirectResponse
+     */
     public function newsDestroy($id): RedirectResponse
     {
         return app(\App\Services\KoordinatorJurnalistik\NewsService::class)->destroy((int) $id);
     }
 
+    /**
+     * Mengunggah gambar sementara untuk konten berita.
+     *
+     * @param Request $request
+     * @return JsonResponse
+     */
     public function uploadImage(Request $request): JsonResponse
     {
         if ($request->hasFile('image')) {
@@ -139,6 +189,13 @@ class KoordinatorJurnalistikController extends Controller
         return response()->json('Upload failed', 400);
     }
 
+    /**
+     * Validasi input berita.
+     *
+     * @param Request $request
+     * @param int|null $id
+     * @return array
+     */
     private function validateNews(Request $request, $id = null): array
     {
         $rules = [

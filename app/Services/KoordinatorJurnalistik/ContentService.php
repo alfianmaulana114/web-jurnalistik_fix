@@ -9,6 +9,7 @@ use Illuminate\Http\Request;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 
 class ContentService
 {
@@ -67,37 +68,17 @@ class ContentService
     public function store(Request $request): RedirectResponse
     {
         $validated = $request->validate([
-            'judul' => 'required|string|max:255',
-            'caption' => 'required|string|max:1000',
+            'judul_id' => 'nullable|string|max:255',
+            'judul_en' => 'nullable|string|max:255',
+            'caption_id' => 'required|string|max:1000',
+            'caption_en' => 'required|string|max:1000',
             'jenis_konten' => ['required', Rule::in(array_keys(Content::getCaptionTypes()))],
-            'media_type' => ['nullable', Rule::in(array_keys(Content::getMediaTypes()))],
-            'media_file' => 'nullable|file|mimes:jpg,jpeg,png,gif,mp4,mov,avi|max:20480',
-            'media_description' => 'nullable|string|max:500',
-            'berita_referensi' => 'nullable|string',
-            'sumber' => 'nullable|string',
-            'catatan_editor' => 'nullable|string',
             'brief_id' => 'nullable|exists:briefs,id',
             'published_at' => 'nullable|date',
-            // Tambahkan relasi yang benar
+            'platform_upload' => 'nullable|string',
             'berita_id' => 'nullable|exists:news,id',
             'desain_id' => 'nullable|exists:designs,id',
         ]);
-
-        // Handle media file upload
-        if ($request->hasFile('media_file')) {
-            $file = $request->file('media_file');
-            $fileName = time() . '_' . $file->getClientOriginalName();
-            $filePath = $file->storeAs('captions/media', $fileName, 'public');
-            $validated['media_path'] = $filePath;
-        }
-
-        // Set media_type based on jenis_konten if not provided
-        if (
-            $validated['jenis_konten'] === Content::TYPE_CAPTION_MEDIA_KREATIF &&
-            empty($validated['media_type'] ?? null)
-        ) {
-            $validated['media_type'] = Content::MEDIA_TYPE_FOTO; // default
-        }
 
         // Validasi referensi berdasarkan jenis caption saat create
         if ($validated['jenis_konten'] === Content::TYPE_CAPTION_BERITA && empty($validated['berita_id'])) {
@@ -111,10 +92,35 @@ class ContentService
                 ->withErrors(['desain_id' => 'Desain referensi wajib dipilih untuk caption media kreatif']);
         }
 
-        // Assume current user is koordinator jurnalistik (ID 1 for now)
         $validated['created_by'] = 1;
 
-        Content::create($validated);
+        $content = Content::create([
+            'judul' => $validated['judul_id'] ?? null,
+            'caption' => $validated['caption_id'],
+            'jenis_konten' => $validated['jenis_konten'],
+            'desain_id' => $validated['desain_id'] ?? null,
+            'berita_id' => $validated['berita_id'] ?? null,
+            'brief_id' => $validated['brief_id'] ?? null,
+            'created_by' => $validated['created_by'],
+            'published_at' => $validated['published_at'] ?? null,
+            'platform_upload' => $validated['platform_upload'] ?? null,
+        ]);
+
+        $content->translations()->create([
+            'locale' => 'id',
+            'judul' => $validated['judul_id'] ?? null,
+            'caption' => $validated['caption_id'],
+        ]);
+
+        $content->translations()->create([
+            'locale' => 'en',
+            'judul' => $validated['judul_en'] ?? null,
+            'caption' => $validated['caption_en'],
+        ]);
+
+        if ($content->isCaptionBerita() && $content->berita_id) {
+            $this->syncNewsMetaDescriptionFromCaption($content);
+        }
 
         return redirect()->route('koordinator-jurnalistik.contents.index')
             ->with('success', 'Caption berhasil ditambahkan.');
@@ -137,8 +143,10 @@ class ContentService
     public function update(Request $request, Content $content): RedirectResponse
     {
         $validated = $request->validate([
-            'judul' => 'nullable|string|max:255',
-            'caption' => 'required|string|max:1000',
+            'judul_id' => 'nullable|string|max:255',
+            'judul_en' => 'nullable|string|max:255',
+            'caption_id' => 'required|string|max:1000',
+            'caption_en' => 'required|string|max:1000',
             'jenis_konten' => ['required', Rule::in(array_keys(Content::getCaptionTypes()))],
             'berita_id' => 'nullable|exists:news,id',
             'desain_id' => 'nullable|exists:designs,id',
@@ -158,10 +166,47 @@ class ContentService
                 ->withInput()
                 ->withErrors(['desain_id' => 'Desain referensi wajib dipilih untuk caption media kreatif']);
         }
+        $content->update([
+            'judul' => $validated['judul_id'] ?? $content->judul,
+            'caption' => $validated['caption_id'],
+            'jenis_konten' => $validated['jenis_konten'],
+            'berita_id' => $validated['berita_id'] ?? $content->berita_id,
+            'desain_id' => $validated['desain_id'] ?? $content->desain_id,
+            'brief_id' => $validated['brief_id'] ?? $content->brief_id,
+            'published_at' => $validated['published_at'] ?? $content->published_at,
+        ]);
 
+        $idTranslation = $content->translations()->where('locale', 'id')->first();
+        if ($idTranslation) {
+            $idTranslation->update([
+                'judul' => $validated['judul_id'] ?? $idTranslation->judul,
+                'caption' => $validated['caption_id'],
+            ]);
+        } else {
+            $content->translations()->create([
+                'locale' => 'id',
+                'judul' => $validated['judul_id'] ?? null,
+                'caption' => $validated['caption_id'],
+            ]);
+        }
 
+        $enTranslation = $content->translations()->where('locale', 'en')->first();
+        if ($enTranslation) {
+            $enTranslation->update([
+                'judul' => $validated['judul_en'] ?? $enTranslation->judul,
+                'caption' => $validated['caption_en'],
+            ]);
+        } else {
+            $content->translations()->create([
+                'locale' => 'en',
+                'judul' => $validated['judul_en'] ?? null,
+                'caption' => $validated['caption_en'],
+            ]);
+        }
 
-        $content->update($validated);
+        if ($content->isCaptionBerita() && $content->berita_id) {
+            $this->syncNewsMetaDescriptionFromCaption($content);
+        }
 
         return redirect()->route('koordinator-jurnalistik.contents.index')
             ->with('success', 'Caption berhasil diperbarui.');
@@ -169,18 +214,33 @@ class ContentService
 
     public function destroy(Content $content): RedirectResponse
     {
-        // Delete associated media file
-        if ($content->media_path && Storage::disk('public')->exists($content->media_path)) {
-            Storage::disk('public')->delete($content->media_path);
-        }
-
         $content->delete();
 
         return redirect()->route('koordinator-jurnalistik.contents.index')
             ->with('success', 'Caption berhasil dihapus.');
     }
-
-
+    private function syncNewsMetaDescriptionFromCaption(Content $content): void
+    {
+        $news = \App\Models\News::find($content->berita_id);
+        if (!$news) {
+            return;
+        }
+        $idCaption = $content->translations()->where('locale', 'id')->value('caption') ?? $content->caption;
+        $enCaption = $content->translations()->where('locale', 'en')->value('caption');
+        $idMeta = Str::limit(trim(strip_tags($idCaption ?? '')), 160, '');
+        $enMeta = Str::limit(trim(strip_tags($enCaption ?? '')), 160, '');
+        $news->update([
+            'meta_description' => $idMeta,
+        ]);
+        $idTrans = $news->translations()->where('locale', 'id')->first();
+        if ($idTrans) {
+            $idTrans->update(['meta_description' => $idMeta]);
+        }
+        $enTrans = $news->translations()->where('locale', 'en')->first();
+        if ($enTrans) {
+            $enTrans->update(['meta_description' => $enMeta]);
+        }
+    }
 }
 
 

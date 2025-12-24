@@ -6,17 +6,17 @@
 @section('content')
 <div class="space-y-6">
     <!-- Header with Action Button -->
-    <div class="flex items-center justify-between">
+    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
         <div>
             <h2 class="text-2xl font-bold text-gray-900">Desain Media</h2>
             <p class="mt-1 text-sm text-gray-600">Kelola desain media sederhana</p>
         </div>
         <div class="flex items-center space-x-3">
-            <a href="{{ route('koordinator-jurnalistik.designs.create') }}" class="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500">
+            <a href="{{ route('koordinator-jurnalistik.designs.create') }}" class="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-[#1b334e] hover:bg-[#16283e] focus:outline-none">
                 <i class="fas fa-plus mr-2"></i>
                 Tambah Desain
             </a>
-            <button type="button" onclick="openNewsSelectionModal()" class="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">
+            <button type="button" onclick="openNewsSelectionModal()" class="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-[#1b334e] hover:bg-[#16283e] focus:outline-none">
                 <i class="fas fa-newspaper mr-2"></i>
                 Pilih Berita untuk Desain
             </button>
@@ -26,7 +26,10 @@
     <!-- Designs Table -->
     <div class="bg-white shadow rounded-lg overflow-hidden">
         <div class="px-6 py-4 border-b border-gray-200">
-            <h3 class="text-lg font-medium text-gray-900">Daftar Desain</h3>
+            <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+                <h3 class="text-lg font-medium text-gray-900">Daftar Desain</h3>
+                <input type="text" id="designsSearchClient" class="w-full sm:w-64 px-3 py-2 border rounded" placeholder="Cari cepat..." />
+            </div>
         </div>
         
         @if($designs && $designs->count() > 0)
@@ -43,7 +46,7 @@
                             <th scope="col" class="relative px-6 py-3"><span class="sr-only">Actions</span></th>
                         </tr>
                     </thead>
-                    <tbody class="bg-white divide-y divide-gray-200">
+                    <tbody class="bg-white divide-y divide-gray-200" id="designsTableBody">
                         @foreach($designs as $design)
                             <tr class="hover:bg-gray-50">
                                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
@@ -130,7 +133,7 @@
                 <i class="fas fa-palette text-4xl text-gray-400 mb-4"></i>
                 <h3 class="text-lg font-medium text-gray-900 mb-2">Belum ada desain</h3>
                 <p class="text-gray-500 mb-4">Mulai dengan membuat entri desain pertama Anda.</p>
-                <a href="{{ route('koordinator-jurnalistik.designs.create') }}" class="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500">
+                <a href="{{ route('koordinator-jurnalistik.designs.create') }}" class="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-[#1b334e] hover:bg-[#16283e] focus:outline-none">
                     <i class="fas fa-plus mr-2"></i>
                     Tambah Desain Pertama
                 </a>
@@ -142,13 +145,13 @@
 <div id="newsSelectionModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center hidden z-50">
     <div class="bg-white rounded-lg shadow-lg w-full max-w-4xl max-h-[80vh] flex flex-col">
         <!-- Header -->
-        <div class="bg-green-600 px-6 py-4 flex-shrink-0">
+        <div class="bg-[#1b334e] px-6 py-4 flex-shrink-0">
             <h3 class="text-lg font-semibold text-white">Pilih Berita untuk Desain</h3>
         </div>
 
         <!-- Pencarian -->
         <div class="px-6 py-4 border-b flex-shrink-0">
-            <input type="text" id="newsSearch" placeholder="Cari berita..." class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-green-500" onkeyup="filterNews()">
+            <input type="text" id="newsSearch" placeholder="Cari berita..." class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#1b334e]" onkeyup="filterNews()">
         </div>
 
         <!-- Daftar Berita -->
@@ -160,7 +163,7 @@
                         <p class="text-sm text-gray-600 mt-1">{{ Str::limit(strip_tags($news->content ?? $news->isi ?? ''), 150) }}</p>
                         <div class="flex items-center justify-between mt-2">
                             <span class="text-xs text-gray-500">{{ optional($news->created_at)->format('d M Y') }}</span>
-                            <span class="text-xs bg-green-100 text-green-800 px-2 py-1 rounded">{{ $news->category->name ?? 'Uncategorized' }}</span>
+                            <span class="text-xs bg-[#1b334e]/10 text-[#1b334e] px-2 py-1 rounded">{{ $news->category->name ?? 'Uncategorized' }}</span>
                         </div>
                     </div>
                 @empty
@@ -175,7 +178,7 @@
         <!-- Footer -->
         <div class="bg-gray-50 px-6 py-4 border-t flex justify-end space-x-3 flex-shrink-0">
             <button type="button" onclick="closeNewsSelectionModal()" class="px-4 py-2 text-gray-600 border border-gray-300 rounded-lg hover:bg-gray-100 transition-colors">Batal</button>
-            <button type="button" id="createDesignBtn" onclick="createDesignForSelectedNews()" class="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors disabled:bg-gray-400 disabled:cursor-not-allowed" disabled>Buat Desain</button>
+            <button type="button" id="createDesignBtn" onclick="createDesignForSelectedNews()" class="px-4 py-2 bg-[#1b334e] text-white rounded-lg hover:bg-[#16283e] transition-colors disabled:bg-gray-400 disabled:cursor-not-allowed" disabled>Buat Desain</button>
         </div>
     </div>
 </div>
@@ -192,7 +195,7 @@ function closeNewsSelectionModal() {
     selectedNewsId = null;
     const btn = document.getElementById('createDesignBtn');
     if (btn) btn.disabled = true;
-    document.querySelectorAll('.news-item').forEach(item => item.classList.remove('border-green-500','bg-green-50'));
+    document.querySelectorAll('.news-item').forEach(item => item.classList.remove('border-[#1b334e]','bg-[#1b334e]/5'));
 }
 
 function filterNews() {
@@ -206,7 +209,7 @@ function filterNews() {
 
 function selectNews(el) {
     document.querySelectorAll('.news-item').forEach(item => item.classList.remove('border-green-500','bg-green-50'));
-    el.classList.add('border-green-500','bg-green-50');
+    el.classList.add('border-[#1b334e]','bg-[#1b334e]/5');
     selectedNewsId = el.getAttribute('data-news-id');
     const btn = document.getElementById('createDesignBtn');
     if (btn) btn.disabled = !selectedNewsId;
@@ -228,4 +231,20 @@ document.addEventListener('click', function(event) {
     }
 });
 </script>
+@push('scripts')
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const input = document.getElementById('designsSearchClient');
+    const tbody = document.getElementById('designsTableBody');
+    if (!input || !tbody) return;
+    input.addEventListener('input', function() {
+        const q = this.value.toLowerCase();
+        Array.from(tbody.querySelectorAll('tr')).forEach(function(row) {
+            const text = row.textContent.toLowerCase();
+            row.style.display = text.includes(q) ? '' : 'none';
+        });
+    });
+});
+</script>
+@endpush
 @endsection

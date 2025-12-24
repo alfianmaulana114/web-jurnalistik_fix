@@ -18,6 +18,12 @@ class TempImageController extends Controller
         $this->manager = new ImageManager(new Driver());
     }
 
+    /**
+     * Menyimpan gambar sementara (temp) dan mengonversi ke format WebP.
+     *
+     * Melakukan validasi, pemrosesan gambar, dan menyimpan metadata
+     * ke tabel `temp_images`. Mengembalikan JSON berisi `image_id` dan `path`.
+     */
     public function store(Request $request)
     {
         try {

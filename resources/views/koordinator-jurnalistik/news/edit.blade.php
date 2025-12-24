@@ -22,18 +22,29 @@
                 </div>
             </div>
 
+            <div class="mb-4">
+                <div class="inline-flex rounded-md shadow-sm" role="group">
+                    <button type="button" class="px-4 py-2 text-sm font-medium border border-gray-300 rounded-l-md bg-blue-600 text-white" data-lang-toggle="id">Indonesia</button>
+                    <button type="button" class="px-4 py-2 text-sm font-medium border border-gray-300 rounded-r-md bg-white text-gray-700" data-lang-toggle="en">English</button>
+                </div>
+            </div>
+
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <!-- Title -->
-                <div class="col-span-2">
-                    <label class="block text-sm font-medium text-gray-700 mb-2">Judul Berita</label>
+                <div class="col-span-2" data-lang-section="id">
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Judul (Indonesia)</label>
                     <input type="text" 
-                           name="title" 
-                           value="{{ old('title', $news->title) }}"
+                           name="title_id" 
+                           value="{{ old('title_id', optional($news->translations->firstWhere('locale','id'))->title ?? $news->title) }}"
                            class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-400 focus:border-transparent" 
                            required>
-                    @error('title')
-                        <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
-                    @enderror
+                </div>
+                <div class="col-span-2 hidden" data-lang-section="en">
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Title (English)</label>
+                    <input type="text" 
+                           name="title_en" 
+                           value="{{ old('title_en', optional($news->translations->firstWhere('locale','en'))->title) }}"
+                           class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-400 focus:border-transparent" 
+                           required>
                 </div>
 
                 <!-- Category & Type -->
@@ -90,56 +101,51 @@
                     @enderror
                 </div>
 
-                <!-- Meta Description -->
-                <div class="col-span-2">
-                    <label class="block text-sm font-medium text-gray-700 mb-2">Meta Description</label>
-                    <textarea name="meta_description" 
-                              rows="3"
-                              class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-400 focus:border-transparent"
-                              maxlength="160"
-                              required>{{ old('meta_description', $news->meta_description) }}</textarea>
-                    <p class="text-sm text-gray-500 mt-1">Maksimal 160 karakter</p>
-                    @error('meta_description')
-                        <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
-                    @enderror
-                </div>
+                
 
-                <!-- Tags -->
-                <div class="col-span-2">
-                    <label class="block text-sm font-medium text-gray-700 mb-2">Tags</label>
+                <div class="col-span-2" data-lang-section="id">
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Tags (Indonesia)</label>
                     <input type="text" 
-                           name="tags" 
-                           value="{{ old('tags', $news->tags) }}"
+                           name="tags_id" 
+                           value="{{ old('tags_id', optional($news->translations->firstWhere('locale','id'))->tags ?? $news->tags) }}"
                            class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-400 focus:border-transparent"
-                           placeholder="Pisahkan dengan koma"
                            required>
-                    @error('tags')
-                        <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
-                    @enderror
                 </div>
-
-                <!-- Keyword -->
-                <div class="col-span-2">
-                    <label class="block text-sm font-medium text-gray-700 mb-2">Keyword</label>
+                <div class="col-span-2 hidden" data-lang-section="en">
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Tags (English)</label>
                     <input type="text" 
-                           name="keyword" 
-                           value="{{ old('keyword', $news->keyword) }}"
+                           name="tags_en" 
+                           value="{{ old('tags_en', optional($news->translations->firstWhere('locale','en'))->tags) }}"
                            class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-400 focus:border-transparent"
-                           placeholder="Kata kunci untuk SEO">
-                    @error('keyword')
-                        <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
-                    @enderror
+                           required>
                 </div>
 
-                <!-- Content -->
-                <div class="col-span-2">
-                    <label class="block text-sm font-medium text-gray-700 mb-2">Konten Berita</label>
-                    <textarea name="content" 
+                <div class="col-span-2" data-lang-section="id">
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Keyword (Indonesia)</label>
+                    <input type="text" 
+                           name="keyword_id" 
+                           value="{{ old('keyword_id', optional($news->translations->firstWhere('locale','id'))->keyword ?? $news->keyword) }}"
+                           class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-400 focus:border-transparent">
+                </div>
+                <div class="col-span-2 hidden" data-lang-section="en">
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Keyword (English)</label>
+                    <input type="text" 
+                           name="keyword_en" 
+                           value="{{ old('keyword_en', optional($news->translations->firstWhere('locale','en'))->keyword) }}"
+                           class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-400 focus:border-transparent">
+                </div>
+
+                <div class="col-span-2" data-lang-section="id">
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Konten (Indonesia)</label>
+                    <textarea name="content_id" 
                               id="content"
-                              required>{{ old('content', $news->content) }}</textarea>
-                    @error('content')
-                        <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
-                    @enderror
+                              required>{{ old('content_id', optional($news->translations->firstWhere('locale','id'))->content ?? $news->content) }}</textarea>
+                </div>
+                <div class="col-span-2 hidden" data-lang-section="en">
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Content (English)</label>
+                    <textarea name="content_en" 
+                              id="content_en"
+                              required>{{ old('content_en', optional($news->translations->firstWhere('locale','en'))->content) }}</textarea>
                 </div>
             </div>
 
@@ -360,6 +366,43 @@ document.addEventListener('DOMContentLoaded', function() {
         submitBtn.disabled = true;
         submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Menyimpan...';
     });
+    const toggleButtons = document.querySelectorAll('[data-lang-toggle]');
+    const sections = document.querySelectorAll('[data-lang-section]');
+    toggleButtons.forEach(btn => {
+        btn.addEventListener('click', () => {
+            const lang = btn.getAttribute('data-lang-toggle');
+            toggleButtons.forEach(b => {
+                b.classList.remove('bg-blue-600','text-white');
+                b.classList.add('bg-white','text-gray-700');
+            });
+            btn.classList.add('bg-blue-600','text-white');
+            btn.classList.remove('bg-white','text-gray-700');
+            sections.forEach(sec => {
+                sec.classList.toggle('hidden', sec.getAttribute('data-lang-section') !== lang);
+            });
+        });
+    });
+
+    if (typeof $ !== 'undefined' && $('#content_en').length) {
+        $('#content_en').summernote({
+            height: 300,
+            callbacks: {
+                onImageUpload: function(files) {
+                    const form = new FormData();
+                    form.append('image', files[0]);
+                    $.ajax({
+                        url: '/admin/upload-image',
+                        method: 'POST',
+                        data: form,
+                        processData: false,
+                        contentType: false,
+                        headers: { 'X-CSRF-TOKEN': $("meta[name='csrf-token']").attr('content') },
+                        success: function(url) { $('#content_en').summernote('insertImage', url); }
+                    });
+                }
+            }
+        });
+    }
 });
 </script>
 @endpush

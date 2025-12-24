@@ -12,7 +12,7 @@
             <p class="mt-1 text-sm text-gray-600">Kelola program kerja UKM Jurnalistik</p>
         </div>
         <div class="mt-4 sm:mt-0">
-            <a href="{{ route('koordinator-jurnalistik.prokers.create') }}" class="inline-flex items-center px-4 py-2 bg-red-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-red-700 focus:bg-red-700 active:bg-red-900 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 transition ease-in-out duration-150">
+            <a href="{{ route('koordinator-jurnalistik.prokers.create') }}" class="inline-flex items-center px-4 py-2 bg-[#1b334e] border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-[#16283e] focus:outline-none transition ease-in-out duration-150">
                 <i class="fas fa-plus mr-2"></i>
                 Tambah Proker
             </a>
@@ -24,11 +24,11 @@
         <form method="GET" action="{{ route('koordinator-jurnalistik.prokers.index') }}" class="grid grid-cols-1 md:grid-cols-4 gap-4">
             <div>
                 <label for="search" class="block text-sm font-medium text-gray-700">Cari</label>
-                <input type="text" name="search" id="search" value="{{ request('search') }}" placeholder="Nama proker..." class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-red-500 focus:border-red-500 sm:text-sm">
+                <input type="text" name="search" id="search" value="{{ request('search') }}" placeholder="Nama proker..." class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-[#1b334e] focus:border-[#1b334e] sm:text-sm">
             </div>
             <div>
                 <label for="status" class="block text-sm font-medium text-gray-700">Status</label>
-                <select name="status" id="status" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-red-500 focus:border-red-500 sm:text-sm">
+                <select name="status" id="status" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-[#1b334e] focus:border-[#1b334e] sm:text-sm">
                     <option value="">Semua Status</option>
                     @foreach(\App\Models\Proker::getAllStatuses() as $key => $label)
                         <option value="{{ $key }}" {{ request('status') == $key ? 'selected' : '' }}>{{ $label }}</option>
@@ -37,7 +37,7 @@
             </div>
             <div>
                 <label for="year" class="block text-sm font-medium text-gray-700">Tahun</label>
-                <select name="year" id="year" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-red-500 focus:border-red-500 sm:text-sm">
+                <select name="year" id="year" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-[#1b334e] focus:border-[#1b334e] sm:text-sm">
                     <option value="">Semua Tahun</option>
                     @for($year = date('Y'); $year >= date('Y') - 3; $year--)
                         <option value="{{ $year }}" {{ request('year') == $year ? 'selected' : '' }}>{{ $year }}</option>
@@ -45,7 +45,7 @@
                 </select>
             </div>
             <div class="flex items-end">
-                <button type="submit" class="w-full px-4 py-2 bg-gray-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-gray-700 focus:bg-gray-700 active:bg-gray-900 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 transition ease-in-out duration-150">
+                <button type="submit" class="w-full px-4 py-2 bg-[#1b334e] border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-[#16283e] focus:outline-none transition ease-in-out duration-150">
                     <i class="fas fa-search mr-2"></i>
                     Filter
                 </button>
@@ -104,7 +104,10 @@
     <!-- Prokers Table -->
     <div class="bg-white rounded-lg shadow overflow-hidden">
         <div class="px-6 py-4 border-b border-gray-200">
-            <h3 class="text-lg font-medium text-gray-900">Daftar Program Kerja</h3>
+            <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+                <h3 class="text-lg font-medium text-gray-900">Daftar Program Kerja</h3>
+                <input type="text" id="prokerSearch" class="w-full sm:w-64 px-3 py-2 border rounded" placeholder="Cari cepat..." />
+            </div>
         </div>
         
         @if($prokers->count() > 0)
@@ -132,7 +135,7 @@
                         </th>
                     </tr>
                 </thead>
-                <tbody class="bg-white divide-y divide-gray-200">
+                <tbody class="bg-white divide-y divide-gray-200" id="prokersTableBody">
                     @foreach($prokers as $proker)
                     <tr class="hover:bg-gray-50">
                         <td class="px-6 py-4 whitespace-nowrap">
@@ -173,7 +176,7 @@
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                             <div class="flex items-center space-x-2">
-                                <a href="{{ route('koordinator-jurnalistik.prokers.show', $proker) }}" class="text-blue-600 hover:text-blue-900" title="Lihat Detail">
+                                <a href="{{ route('koordinator-jurnalistik.prokers.show', $proker) }}" class="text-[#1b334e] hover:text-[#16283e]" title="Lihat Detail">
                                     <i class="fas fa-eye"></i>
                                 </a>
                                 <a href="{{ route('koordinator-jurnalistik.prokers.edit', $proker) }}" class="text-yellow-600 hover:text-yellow-900" title="Edit">
@@ -203,12 +206,28 @@
             <i class="fas fa-tasks text-4xl text-gray-400 mb-4"></i>
             <h3 class="text-lg font-medium text-gray-900 mb-2">Belum ada program kerja</h3>
             <p class="text-gray-500 mb-6">Mulai dengan membuat program kerja pertama Anda.</p>
-            <a href="{{ route('koordinator-jurnalistik.prokers.create') }}" class="inline-flex items-center px-4 py-2 bg-red-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-red-700 focus:bg-red-700 active:bg-red-900 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 transition ease-in-out duration-150">
+            <a href="{{ route('koordinator-jurnalistik.prokers.create') }}" class="inline-flex items-center px-4 py-2 bg-[#1b334e] border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-[#16283e] focus:outline-none transition ease-in-out duration-150">
                 <i class="fas fa-plus mr-2"></i>
                 Tambah Proker
             </a>
         </div>
         @endif
     </div>
+@push('scripts')
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const input = document.getElementById('prokerSearch');
+    const tbody = document.getElementById('prokersTableBody');
+    if (!input || !tbody) return;
+    input.addEventListener('input', function() {
+        const q = this.value.toLowerCase();
+        Array.from(tbody.querySelectorAll('tr')).forEach(function(row) {
+            const text = row.textContent.toLowerCase();
+            row.style.display = text.includes(q) ? '' : 'none';
+        });
+    });
+});
+</script>
+@endpush
 </div>
 @endsection

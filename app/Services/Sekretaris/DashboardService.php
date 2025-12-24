@@ -5,7 +5,6 @@ namespace App\Services\Sekretaris;
 use App\Models\User;
 use App\Models\Proker;
 use App\Models\News;
-use App\Models\Comment;
 use App\Models\Notulensi;
 use App\Models\Absen;
 use Carbon\Carbon;
@@ -43,7 +42,6 @@ class DashboardService
         return [
             'total_users' => User::count(),
             'total_news' => News::count(),
-            'total_comments' => Comment::count(),
             'total_prokers' => Proker::count(),
             'total_notulensi' => Notulensi::count(),
             'active_prokers' => Proker::where('status', Proker::STATUS_ONGOING)->count(),
@@ -108,7 +106,7 @@ class DashboardService
     {
         $months = [];
         $news = [];
-        $comments = [];
+        
 
         for ($i = 5; $i >= 0; $i--) {
             $date = now()->subMonths($i);
@@ -118,15 +116,13 @@ class DashboardService
                 ->whereMonth('created_at', $date->month)
                 ->count();
             
-            $comments[] = Comment::whereYear('created_at', $date->year)
-                ->whereMonth('created_at', $date->month)
-                ->count();
+            
         }
 
         return [
             'labels' => $months,
             'news' => $news,
-            'comments' => $comments,
+            
         ];
     }
 

@@ -46,8 +46,6 @@ Robot yang mereka ciptakan memiliki kemampuan untuk menyelesaikan berbagai tanta
 
 Dekan Fakultas Teknik, Prof. Dr. Budi Santoso, mengapresiasi prestasi yang diraih mahasiswa. "Ini adalah bukti kualitas pendidikan teknik di universitas kita," katanya.',
                 'jenis_konten' => Content::TYPE_CAPTION_BERITA,
-                'sumber' => 'Wawancara langsung dengan tim robotika',
-                'catatan_editor' => 'Caption sudah sesuai standar jurnalistik, siap publikasi',
                 'brief_id' => $brief2 ? $brief2->id : null,
                 'berita_id' => $news1 ? $news1->id : null,
                 'created_by' => $anggotaRedaksi1->id,
@@ -67,8 +65,6 @@ Ketua BEM Universitas, Sarah Putri, menyatakan keprihatinannya. "Kenaikan ini sa
 
 Wakil Rektor Bidang Keuangan, Dr. Andi Wijaya, menjelaskan bahwa kenaikan ini diperlukan untuk meningkatkan kualitas pendidikan dan fasilitas kampus. "Kami juga menyediakan berbagai program bantuan untuk mahasiswa yang membutuhkan," tambahnya.',
                 'jenis_konten' => Content::TYPE_CAPTION_BERITA,
-                'sumber' => 'Wawancara dengan BEM dan Wakil Rektor',
-                'catatan_editor' => 'Perlu tambahan data statistik mahasiswa penerima beasiswa',
                 'brief_id' => $brief1 ? $brief1->id : null,
                 'berita_id' => $news2 ? $news2->id : null,
                 'created_by' => $anggotaRedaksi2->id,
@@ -89,8 +85,6 @@ Salah satu inovasi yang menarik perhatian adalah sistem pengolahan sampah organi
 
 Selain itu, mahasiswa fakultas pertanian juga mengembangkan sistem hidroponik pintar yang dapat dikendalikan melalui smartphone. Sistem ini menggunakan sensor untuk memantau kondisi tanaman dan memberikan nutrisi secara otomatis.',
                     'jenis_konten' => Content::TYPE_CAPTION_MEDIA_KREATIF,
-                    'sumber' => 'Wawancara dengan mahasiswa inovator',
-                    'catatan_editor' => null,
                     'desain_id' => $design1->id,
                     'created_by' => $anggotaRedaksi1->id,
                     'published_at' => null,
@@ -111,8 +105,6 @@ Fenomena hoaks dan disinformasi yang marak terjadi menunjukkan betapa pentingnya
 
 Oleh karena itu, kurikulum yang mengintegrasikan literasi digital perlu terus dikembangkan. Bukan hanya di fakultas teknologi, tetapi di semua fakultas tanpa terkecuali.',
                     'jenis_konten' => Content::TYPE_CAPTION_MEDIA_KREATIF,
-                    'sumber' => 'Analisis redaksi',
-                    'catatan_editor' => 'Editorial yang baik, sudah siap untuk publikasi',
                     'desain_id' => $design2->id,
                     'created_by' => $koordinatorRedaksi->id,
                     'published_at' => null,
@@ -135,8 +127,6 @@ Sementara untuk aspek lingkungan, mahasiswa dapat menjadi agen perubahan dalam k
 
 Universitas sebagai rumah kedua mahasiswa harus memberikan ruang dan dukungan untuk aktualisasi peran tersebut.',
                     'jenis_konten' => Content::TYPE_CAPTION_BERITA,
-                    'sumber' => 'Opini mahasiswa',
-                    'catatan_editor' => 'Opini yang menarik, perlu sedikit penyesuaian struktur',
                     'berita_id' => $news3->id,
                     'created_by' => $anggotaRedaksi2->id,
                     'published_at' => null,

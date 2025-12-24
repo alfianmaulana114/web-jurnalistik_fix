@@ -1,3 +1,7 @@
+{{-- Dashboard Koordinator Redaksi
+    - Ringkasan berita, penjadwalan, dan funfact
+    - Fokus pada review dan publikasi konten
+--}}
 @extends('layouts.koordinator-redaksi')
 
 @section('title', 'Dashboard')

@@ -18,54 +18,54 @@
     
 </head>
 <body class="bg-gray-100">
-    <div class="flex h-screen overflow-hidden">
+    <div class="flex min-h-screen overflow-x-hidden">
         <!-- Sidebar -->
         <div id="sidebar" class="bg-white text-gray-800 w-64 border-r border-gray-200 shadow-sm py-6 px-4 absolute inset-y-0 left-0 transform -translate-x-full md:relative md:translate-x-0 transition duration-200 ease-in-out z-30">
             <div class="flex items-center justify-center space-x-2 px-4 mb-8">
                 <div class="text-center">
-                    <h2 class="text-2xl font-bold text-blue-600">PARAGRAF MUDA</h2>
+                    <h2 class="text-2xl font-bold text-[#1b334e]">PARAGRAF MUDA</h2>
                     <p class="text-xs text-gray-500">Portal Koordinator</p>
                 </div>
             </div>
 
             <!-- Sidebar Navigation -->
             <nav class="space-y-2">
-                <a href="{{ route('koordinator-jurnalistik.dashboard') }}" class="flex items-center py-2.5 px-4 rounded-lg transition duration-200 hover:bg-blue-50 hover:text-blue-600 {{ request()->routeIs('koordinator-jurnalistik.dashboard') ? 'bg-blue-50 text-blue-600 font-medium' : 'text-gray-600' }}">
+                <a href="{{ route('koordinator-jurnalistik.dashboard') }}" class="flex items-center py-2.5 px-4 rounded-lg transition duration-200 hover:bg-[#1b334e]/10 hover:text-[#1b334e] {{ request()->routeIs('koordinator-jurnalistik.dashboard') ? 'bg-[#1b334e]/10 text-[#1b334e] font-medium' : 'text-gray-600' }}">
                     <i class="fas fa-home mr-3 w-5 text-center"></i>Dashboard
                 </a>
                 
                 <!-- Manajemen Program Kerja -->
-                <a href="{{ route('koordinator-jurnalistik.prokers.index') }}" class="flex items-center py-2.5 px-4 rounded-lg transition duration-200 hover:bg-blue-50 hover:text-blue-600 {{ request()->routeIs('koordinator-jurnalistik.prokers.*') ? 'bg-blue-50 text-blue-600 font-medium' : 'text-gray-600' }}">
+                <a href="{{ route('koordinator-jurnalistik.prokers.index') }}" class="flex items-center py-2.5 px-4 rounded-lg transition duration-200 hover:bg-[#1b334e]/10 hover:text-[#1b334e] {{ request()->routeIs('koordinator-jurnalistik.prokers.*') ? 'bg-[#1b334e]/10 text-[#1b334e] font-medium' : 'text-gray-600' }}">
                     <i class="fas fa-tasks mr-3 w-5 text-center"></i>Program Kerja
                 </a>
                 
                 <!-- Manajemen Brief -->
-                <a href="{{ route('koordinator-jurnalistik.briefs.index') }}" class="flex items-center py-2.5 px-4 rounded-lg transition duration-200 hover:bg-blue-50 hover:text-blue-600 {{ request()->routeIs('koordinator-jurnalistik.briefs.*') ? 'bg-blue-50 text-blue-600 font-medium' : 'text-gray-600' }}">
-                    <i class="fas fa-file-alt mr-3 w-5 text-center"></i>Brief
+                <a href="{{ route('koordinator-jurnalistik.briefs.index') }}" class="flex items-center py-2.5 px-4 rounded-lg transition duration-200 hover:bg-[#1b334e]/10 hover:text-[#1b334e] {{ request()->routeIs('koordinator-jurnalistik.briefs.*') ? 'bg-[#1b334e]/10 text-[#1b334e] font-medium' : 'text-gray-600' }}">
+                    <i class="fas fa-file-alt mr-3 w-5 text-center"></i>Brief Litbang
                 </a>
                 
                 <!-- Manajemen Berita -->
-                <a href="{{ route('koordinator-jurnalistik.news.index') }}" class="flex items-center py-2.5 px-4 rounded-lg transition duration-200 hover:bg-blue-50 hover:text-blue-600 {{ request()->routeIs('koordinator-jurnalistik.news.*') ? 'bg-blue-50 text-blue-600 font-medium' : 'text-gray-600' }}">
+                <a href="{{ route('koordinator-jurnalistik.news.index') }}" class="flex items-center py-2.5 px-4 rounded-lg transition duration-200 hover:bg-[#1b334e]/10 hover:text-[#1b334e] {{ request()->routeIs('koordinator-jurnalistik.news.*') ? 'bg-[#1b334e]/10 text-[#1b334e] font-medium' : 'text-gray-600' }}">
                     <i class="fas fa-newspaper mr-3 w-5 text-center"></i>Berita
                 </a>
                 
                 <!-- Manajemen Caption -->
-                <a href="{{ route('koordinator-jurnalistik.contents.index') }}" class="flex items-center py-2.5 px-4 rounded-lg transition duration-200 hover:bg-blue-50 hover:text-blue-600 {{ request()->routeIs('koordinator-jurnalistik.contents.*') ? 'bg-blue-50 text-blue-600 font-medium' : 'text-gray-600' }}">
+                <a href="{{ route('koordinator-jurnalistik.contents.index') }}" class="flex items-center py-2.5 px-4 rounded-lg transition duration-200 hover:bg-[#1b334e]/10 hover:text-[#1b334e] {{ request()->routeIs('koordinator-jurnalistik.contents.*') ? 'bg-[#1b334e]/10 text-[#1b334e] font-medium' : 'text-gray-600' }}">
                     <i class="fas fa-closed-captioning mr-3 w-5 text-center"></i>Caption
                 </a>
                 
                 <!-- Manajemen Desain -->
-                <a href="{{ route('koordinator-jurnalistik.designs.index') }}" class="flex items-center py-2.5 px-4 rounded-lg transition duration-200 hover:bg-blue-50 hover:text-blue-600 {{ request()->routeIs('koordinator-jurnalistik.designs.*') ? 'bg-blue-50 text-blue-600 font-medium' : 'text-gray-600' }}">
+                <a href="{{ route('koordinator-jurnalistik.designs.index') }}" class="flex items-center py-2.5 px-4 rounded-lg transition duration-200 hover:bg-[#1b334e]/10 hover:text-[#1b334e] {{ request()->routeIs('koordinator-jurnalistik.designs.*') ? 'bg-[#1b334e]/10 text-[#1b334e] font-medium' : 'text-gray-600' }}">
                     <i class="fas fa-palette mr-3 w-5 text-center"></i>Desain Media
                 </a>
                 
                 <!-- Manajemen Funfact -->
-                <a href="{{ route('koordinator-jurnalistik.funfacts.index') }}" class="flex items-center py-2.5 px-4 rounded-lg transition duration-200 hover:bg-blue-50 hover:text-blue-600 {{ request()->routeIs('koordinator-jurnalistik.funfacts.*') ? 'bg-blue-50 text-blue-600 font-medium' : 'text-gray-600' }}">
+                <a href="{{ route('koordinator-jurnalistik.funfacts.index') }}" class="flex items-center py-2.5 px-4 rounded-lg transition duration-200 hover:bg-[#1b334e]/10 hover:text-[#1b334e] {{ request()->routeIs('koordinator-jurnalistik.funfacts.*') ? 'bg-[#1b334e]/10 text-[#1b334e] font-medium' : 'text-gray-600' }}">
                     <i class="fas fa-lightbulb mr-3 w-5 text-center"></i>Funfact
                 </a>
                 
                 <!-- Manajemen User -->
-                <a href="{{ route('koordinator-jurnalistik.users.index') }}" class="flex items-center py-2.5 px-4 rounded-lg transition duration-200 hover:bg-blue-50 hover:text-blue-600 {{ request()->routeIs('koordinator-jurnalistik.users.*') ? 'bg-blue-50 text-blue-600 font-medium' : 'text-gray-600' }}">
+                <a href="{{ route('koordinator-jurnalistik.users.index') }}" class="flex items-center py-2.5 px-4 rounded-lg transition duration-200 hover:bg-[#1b334e]/10 hover:text-[#1b334e] {{ request()->routeIs('koordinator-jurnalistik.users.*') ? 'bg-[#1b334e]/10 text-[#1b334e] font-medium' : 'text-gray-600' }}">
                     <i class="fas fa-users mr-3 w-5 text-center"></i>Manajemen User
                 </a>
                 
@@ -80,6 +80,7 @@
                 </form>
             </nav>
         </div>
+        <div id="backdrop" class="fixed inset-0 bg-black/30 hidden md:hidden z-20"></div>
 
         <!-- Main Content -->
         <div class="flex-1 flex flex-col overflow-hidden">
@@ -121,7 +122,7 @@
             </header>
 
             <!-- Main content -->
-            <main class="flex-1 overflow-x-hidden overflow-y-auto bg-gray-50 p-6">
+            <main class="flex-1 overflow-x-hidden overflow-y-auto bg-gray-50 p-4 sm:p-6">
                 <div class="max-w-7xl mx-auto space-y-6">
                     @include('partials.flash')
                     @yield('content')
@@ -132,43 +133,42 @@
 
     <!-- Scripts -->
     <script>
-        // Mobile menu toggle
-        document.getElementById('mobile-menu-button').addEventListener('click', function() {
-            const sidebar = document.getElementById('sidebar');
-            sidebar.classList.toggle('-translate-x-full');
-            const expanded = !sidebar.classList.contains('-translate-x-full');
-            this.setAttribute('aria-expanded', expanded ? 'true' : 'false');
+        const mobileMenuButton = document.getElementById('mobile-menu-button');
+        const sidebar = document.getElementById('sidebar');
+        const backdrop = document.getElementById('backdrop');
+        function openSidebar() {
+            sidebar.classList.remove('-translate-x-full');
+            if (backdrop) backdrop.classList.remove('hidden');
+            if (mobileMenuButton) mobileMenuButton.setAttribute('aria-expanded', 'true');
+        }
+        function closeSidebar() {
+            sidebar.classList.add('-translate-x-full');
+            if (backdrop) backdrop.classList.add('hidden');
+            if (mobileMenuButton) mobileMenuButton.setAttribute('aria-expanded', 'false');
+        }
+        if (mobileMenuButton) mobileMenuButton.addEventListener('click', function() {
+            const isOpen = !sidebar.classList.contains('-translate-x-full');
+            if (isOpen) closeSidebar(); else openSidebar();
         });
-
-        // User menu toggle
-        document.getElementById('user-menu-button').addEventListener('click', function() {
-            document.getElementById('user-menu').classList.toggle('hidden');
+        if (backdrop) backdrop.addEventListener('click', closeSidebar);
+        document.getElementById('user-menu-button')?.addEventListener('click', function() {
+            document.getElementById('user-menu')?.classList.toggle('hidden');
         });
-
-        // Close user menu when clicking outside
         document.addEventListener('click', function(event) {
             const userMenu = document.getElementById('user-menu');
             const userMenuButton = document.getElementById('user-menu-button');
-            
+            if (!userMenuButton || !userMenu) return;
             if (!userMenuButton.contains(event.target) && !userMenu.contains(event.target)) {
                 userMenu.classList.add('hidden');
             }
         });
-
-        // Global double-click protection HANYA untuk navigasi
-        // TIDAK proteksi untuk form submit (create/edit/update/delete)
         (function() {
-            const clickDelay = 500; // 500ms delay antara klik
+            const clickDelay = 500;
             const clickTimes = new WeakMap();
-
-            // Proteksi hanya untuk link navigasi
             document.addEventListener('click', function(e) {
                 const target = e.target;
                 const clickable = target.closest('a[href], button[type="button"]:not([onclick])');
-                
                 if (clickable) {
-                    // Skip untuk elemen tertentu yang perlu multiple click
-                    // Skip untuk semua button di dalam modal
                     if (clickable.id === 'mobile-menu-button' || 
                         clickable.id === 'user-menu-button' ||
                         clickable.closest('#user-menu') ||
@@ -180,26 +180,19 @@
                         clickable.hasAttribute('onclick')) {
                         return;
                     }
-
-                    // Hanya proteksi untuk link navigasi (bukan form submit)
                     if (clickable.tagName === 'A' && clickable.href) {
                         const currentTime = Date.now();
                         const lastClickTime = clickTimes.get(clickable) || 0;
-                        
                         if (currentTime - lastClickTime < clickDelay) {
                             e.preventDefault();
                             e.stopPropagation();
                             return false;
                         }
-                        
                         clickTimes.set(clickable, currentTime);
-                        
-                        // Untuk link, tambahkan class untuk mencegah multiple click
                         if (clickable.classList.contains('processing')) {
                             e.preventDefault();
                             return false;
                         }
-                        
                         clickable.classList.add('processing');
                         setTimeout(function() {
                             clickable.classList.remove('processing');
