@@ -125,21 +125,9 @@ class DashboardService
     private function getBriefStats(): array
     {
         $totalBriefs = $this->safeCount(Brief::class);
-        $urgentBriefs = $this->safeQuery(function () {
-            return Brief::where('status', 'urgent')->count();
-        }, 0);
-        $pendingBriefs = $this->safeQuery(function () {
-            return Brief::where('status', 'pending')->count();
-        }, 0);
-        $completedBriefs = $this->safeQuery(function () {
-            return Brief::where('status', 'completed')->count();
-        }, 0);
 
         return [
             'brief_total' => $totalBriefs,
-            'brief_urgent' => $urgentBriefs,
-            'brief_pending' => $pendingBriefs,
-            'brief_completed' => $completedBriefs,
         ];
     }
 
@@ -151,21 +139,9 @@ class DashboardService
     private function getCaptionStats(): array
     {
         $totalCaptions = $this->safeCount(Content::class);
-        $captionBerita = $this->safeQuery(function () {
-            return Content::where('jenis_konten', 'caption_berita')->count();
-        }, 0);
-        $captionDesain = $this->safeQuery(function () {
-            return Content::where('jenis_konten', 'caption_desain')->count();
-        }, 0);
-        $captionMediaKreatif = $this->safeQuery(function () {
-            return Content::where('jenis_konten', 'caption_media_kreatif')->count();
-        }, 0);
 
         return [
             'caption_total' => $totalCaptions,
-            'caption_berita' => $captionBerita,
-            'caption_desain' => $captionDesain,
-            'caption_media_kreatif' => $captionMediaKreatif,
         ];
     }
 
@@ -177,17 +153,9 @@ class DashboardService
     private function getDesignStats(): array
     {
         $totalDesigns = $this->safeCount(Design::class);
-        $designPublished = $this->safeQuery(function () {
-            return Design::where('status', 'published')->count();
-        }, 0);
-        $designDraft = $this->safeQuery(function () {
-            return Design::where('status', 'draft')->count();
-        }, 0);
 
         return [
             'design_total' => $totalDesigns,
-            'design_published' => $designPublished,
-            'design_draft' => $designDraft,
         ];
     }
 
@@ -199,20 +167,41 @@ class DashboardService
     private function getNewsStats(): array
     {
         $totalNews = $this->safeCount(News::class);
-        $newsPublished = $this->safeQuery(function () {
-            return News::where('status', 'published')->count();
+        
+        $currentMonth = Carbon::now()->month;
+        $currentYear = Carbon::now()->year;
+        
+        // News sudah terbit bulan ini = news yang sudah approved DAN punya caption (tampil di home) yang dibuat di bulan ini
+        $newsSudahTerbit = $this->safeQuery(function () use ($currentMonth, $currentYear) {
+            return News::has('approval')
+                ->whereHas('caption')
+                ->whereMonth('created_at', $currentMonth)
+                ->whereYear('created_at', $currentYear)
+                ->count();
         }, 0);
-        $newsDraft = $this->safeQuery(function () {
-            return News::where('status', 'draft')->count();
+        
+        // News belum terbit bulan ini = news yang belum approved ATAU belum punya caption yang dibuat di bulan ini
+        $newsBelumTerbit = $this->safeQuery(function () use ($currentMonth, $currentYear) {
+            return News::where(function($query) {
+                $query->doesntHave('approval')
+                      ->orDoesntHave('caption');
+            })
+            ->whereMonth('created_at', $currentMonth)
+            ->whereYear('created_at', $currentYear)
+            ->count();
         }, 0);
-        $totalViews = $this->safeQuery(function () {
-            return News::sum('views');
+        
+        // Total views bulan ini = total views dari berita yang dibuat di bulan ini
+        $totalViews = $this->safeQuery(function () use ($currentMonth, $currentYear) {
+            return News::whereMonth('created_at', $currentMonth)
+                ->whereYear('created_at', $currentYear)
+                ->sum('views') ?? 0;
         }, 0);
 
         return [
             'news_total' => $totalNews,
-            'news_published' => $newsPublished,
-            'news_draft' => $newsDraft,
+            'news_sudah_terbit' => $newsSudahTerbit,
+            'news_belum_terbit' => $newsBelumTerbit,
             'news_total_views' => $totalViews,
         ];
     }
@@ -225,19 +214,19 @@ class DashboardService
     private function getRecentData(): array
     {
         $recentBriefs = $this->safeQuery(function () {
-            return Brief::with('creator')->latest()->take(5)->get();
+            return Brief::with('contents')->latest()->take(5)->get();
         }, collect());
 
         $recentCaptions = $this->safeQuery(function () {
-            return Content::with('berita', 'desain')->latest()->take(5)->get();
+            return Content::with('berita', 'desain', 'creator')->latest()->take(5)->get();
         }, collect());
 
         $recentDesigns = $this->safeQuery(function () {
-            return Design::with('berita')->latest()->take(5)->get();
+            return Design::with('berita', 'creator')->latest()->take(5)->get();
         }, collect());
 
         $recentNews = $this->safeQuery(function () {
-            return News::with('user')->latest()->take(5)->get();
+            return News::with('user', 'approval', 'caption')->latest()->take(5)->get();
         }, collect());
 
         return [
@@ -251,66 +240,30 @@ class DashboardService
     /**
      * Mengambil data untuk chart visualisasi
      * 
-     * @return array Data chart (monthly news, monthly briefs, dll)
+     * @return array Data chart (monthly views)
      */
     private function getChartData(): array
     {
         $currentYear = Carbon::now()->year;
 
-        // Data bulanan untuk berita
-        $monthlyNews = $this->safeQuery(function () use ($currentYear) {
-            return News::select(DB::raw('MONTH(created_at) as month'), DB::raw('COUNT(*) as count'))
+        // Data bulanan untuk views (total views dari berita yang dibuat per bulan)
+        $monthlyViews = $this->safeQuery(function () use ($currentYear) {
+            return News::select(DB::raw('MONTH(created_at) as month'), DB::raw('SUM(views) as total_views'))
                 ->whereYear('created_at', $currentYear)
                 ->groupBy('month')
                 ->orderBy('month')
-                ->pluck('count', 'month')
-                ->toArray();
-        }, []);
-
-        // Data bulanan untuk brief
-        $monthlyBriefs = $this->safeQuery(function () use ($currentYear) {
-            return Brief::select(DB::raw('MONTH(created_at) as month'), DB::raw('COUNT(*) as count'))
-                ->whereYear('created_at', $currentYear)
-                ->groupBy('month')
-                ->orderBy('month')
-                ->pluck('count', 'month')
-                ->toArray();
-        }, []);
-
-        // Data bulanan untuk caption
-        $monthlyCaptions = $this->safeQuery(function () use ($currentYear) {
-            return Content::select(DB::raw('MONTH(created_at) as month'), DB::raw('COUNT(*) as count'))
-                ->whereYear('created_at', $currentYear)
-                ->groupBy('month')
-                ->orderBy('month')
-                ->pluck('count', 'month')
-                ->toArray();
-        }, []);
-
-        // Data bulanan untuk design
-        $monthlyDesigns = $this->safeQuery(function () use ($currentYear) {
-            return Design::select(DB::raw('MONTH(created_at) as month'), DB::raw('COUNT(*) as count'))
-                ->whereYear('created_at', $currentYear)
-                ->groupBy('month')
-                ->orderBy('month')
-                ->pluck('count', 'month')
+                ->pluck('total_views', 'month')
                 ->toArray();
         }, []);
 
         $months = range(1, 12);
         $monthlyLabels = ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des'];
         
-        $newsData = array_map(fn($m) => $monthlyNews[$m] ?? 0, $months);
-        $briefData = array_map(fn($m) => $monthlyBriefs[$m] ?? 0, $months);
-        $captionData = array_map(fn($m) => $monthlyCaptions[$m] ?? 0, $months);
-        $designData = array_map(fn($m) => $monthlyDesigns[$m] ?? 0, $months);
+        $viewsData = array_map(fn($m) => (int)($monthlyViews[$m] ?? 0), $months);
 
         return [
             'monthly_labels' => $monthlyLabels,
-            'monthly_news_data' => $newsData,
-            'monthly_brief_data' => $briefData,
-            'monthly_caption_data' => $captionData,
-            'monthly_design_data' => $designData,
+            'monthly_views_data' => $viewsData,
         ];
     }
 }

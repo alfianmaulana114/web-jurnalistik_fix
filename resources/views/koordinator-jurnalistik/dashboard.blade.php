@@ -112,17 +112,15 @@
     </div>
 
     <!-- Financial Overview: Total Saldo -->
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
-        <div class="group relative overflow-hidden rounded-xl border border-[#D8C4B6]/40 bg-white p-5 shadow-sm transition-all hover:shadow-md">
-            <div class="flex items-center justify-between">
-                <div class="flex-1">
-                    <p class="text-sm font-medium text-gray-600">Total Saldo</p>
-                    <p class="mt-2 text-2xl font-bold tracking-tight text-[#1b334e]">Rp {{ number_format($totalSaldo, 0, ',', '.') }}</p>
-                    <p class="text-xs text-gray-500 mt-1">Kas + Pemasukan - Pengeluaran</p>
-                </div>
-                <div class="flex h-12 w-12 items-center justify-center rounded-lg bg-[#f9b61a]/10 text-[#f9b61a] transition-colors group-hover:bg-[#f9b61a] group-hover:text-white">
-                    <i class="fas fa-wallet text-xl"></i>
-                </div>
+    <div class="group relative overflow-hidden rounded-xl border border-[#D8C4B6]/40 bg-white p-5 shadow-sm transition-all hover:shadow-md">
+        <div class="flex items-center justify-between">
+            <div class="flex-1">
+                <p class="text-sm font-medium text-gray-600">Total Saldo</p>
+                <p class="mt-2 text-2xl font-bold tracking-tight text-[#1b334e]">Rp {{ number_format($totalSaldo, 0, ',', '.') }}</p>
+                <p class="text-xs text-gray-500 mt-1">Kas + Pemasukan - Pengeluaran</p>
+            </div>
+            <div class="flex h-12 w-12 items-center justify-center rounded-lg bg-[#f9b61a]/10 text-[#f9b61a] transition-colors group-hover:bg-[#f9b61a] group-hover:text-white">
+                <i class="fas fa-wallet text-xl"></i>
             </div>
         </div>
     </div>
@@ -144,58 +142,53 @@
 
     
 
-    {{-- Proker & Briefs --}}
-    <div class="grid gap-4 lg:grid-cols-2">
-        {{-- Proker --}}
-        <div class="rounded-xl border border-[#D8C4B6]/40 bg-white shadow-sm">
-            <div class="border-b border-gray-100 p-5">
-                <h3 class="text-base font-semibold text-[#1b334e]">Status Program Kerja</h3>
-            </div>
-            <div class="p-5">
-                <div class="mb-4 grid grid-cols-3 gap-3">
-                    <div class="rounded-lg border border-gray-100 bg-gray-50 p-3 text-center">
-                        <p class="text-xl font-bold text-gray-900">{{ $prokerStats['total'] }}</p>
-                        <p class="mt-0.5 text-xs text-gray-600">Total</p>
-                    </div>
-                    <div class="rounded-lg border border-gray-100 bg-gray-50 p-3 text-center">
-                        <p class="text-xl font-bold text-blue-600">{{ $prokerStats['active'] }}</p>
-                        <p class="mt-0.5 text-xs text-gray-600">Aktif</p>
-                    </div>
-                    <div class="rounded-lg border border-gray-100 bg-gray-50 p-3 text-center">
-                        <p class="text-xl font-bold text-green-600">{{ $prokerStats['completed'] }}</p>
-                        <p class="mt-0.5 text-xs text-gray-600">Selesai</p>
-                    </div>
+    {{-- Proker --}}
+    <div class="rounded-xl border border-[#D8C4B6]/40 bg-white shadow-sm">
+        <div class="border-b border-gray-100 p-5">
+            <h3 class="text-base font-semibold text-[#1b334e]">Status Program Kerja</h3>
+        </div>
+        <div class="p-5">
+            <div class="mb-4 grid grid-cols-3 gap-3">
+                <div class="rounded-lg border border-gray-100 bg-gray-50 p-3 text-center">
+                    <p class="text-xl font-bold text-gray-900">{{ $prokerStats['total'] }}</p>
+                    <p class="mt-0.5 text-xs text-gray-600">Total</p>
                 </div>
-                
-                <div>
-                    <h4 class="mb-2.5 text-xs font-semibold text-gray-900">Proker Terbaru</h4>
-                    <div class="space-y-2">
-                        @forelse($recentProkers as $proker)
-                        <a href="{{ route('koordinator-jurnalistik.prokers.show', $proker) }}" class="block rounded-lg border border-[#D8C4B6]/40 bg-white p-3 shadow-sm transition-all hover:shadow-md hover:bg-[#f9b61a]/10">
-                            <div class="flex items-center justify-between">
-                                <div class="flex-1 min-w-0">
-                                    <p class="truncate text-sm font-medium text-gray-900">{{ $proker->nama_proker }}</p>
-                                    <p class="text-xs text-gray-500">{{ $proker->tanggal_mulai->format('d M Y') }}</p>
-                                </div>
-                                <span class="ml-3 inline-flex items-center rounded-full bg-blue-100 px-2.5 py-0.5 text-xs font-medium text-blue-700">
-                                    {{ ucfirst($proker->status) }}
-                                </span>
+                <div class="rounded-lg border border-gray-100 bg-gray-50 p-3 text-center">
+                    <p class="text-xl font-bold text-blue-600">{{ $prokerStats['active'] }}</p>
+                    <p class="mt-0.5 text-xs text-gray-600">Aktif</p>
+                </div>
+                <div class="rounded-lg border border-gray-100 bg-gray-50 p-3 text-center">
+                    <p class="text-xl font-bold text-green-600">{{ $prokerStats['completed'] }}</p>
+                    <p class="mt-0.5 text-xs text-gray-600">Selesai</p>
+                </div>
+            </div>
+            
+            <div>
+                <h4 class="mb-2.5 text-xs font-semibold text-gray-900">Proker Terbaru</h4>
+                <div class="space-y-2">
+                    @forelse($recentProkers as $proker)
+                    <a href="{{ route('koordinator-jurnalistik.prokers.show', $proker) }}" class="block rounded-lg border border-[#D8C4B6]/40 bg-white p-3 shadow-sm transition-all hover:shadow-md hover:bg-[#f9b61a]/10">
+                        <div class="flex items-center justify-between">
+                            <div class="flex-1 min-w-0">
+                                <p class="truncate text-sm font-medium text-gray-900">{{ $proker->nama_proker }}</p>
+                                <p class="text-xs text-gray-500">{{ $proker->tanggal_mulai->format('d M Y') }}</p>
                             </div>
-                        </a>
-                        @empty
-                        <div class="rounded-lg border border-dashed border-gray-200 p-8 text-center">
-                            <svg class="mx-auto h-8 w-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4"></path>
-                            </svg>
-                            <p class="mt-2 text-sm text-gray-500">Belum ada proker</p>
+                            <span class="ml-3 inline-flex items-center rounded-full bg-blue-100 px-2.5 py-0.5 text-xs font-medium text-blue-700">
+                                {{ ucfirst($proker->status) }}
+                            </span>
                         </div>
-                        @endforelse
+                    </a>
+                    @empty
+                    <div class="rounded-lg border border-dashed border-gray-200 p-8 text-center">
+                        <svg class="mx-auto h-8 w-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4"></path>
+                        </svg>
+                        <p class="mt-2 text-sm text-gray-500">Belum ada proker</p>
                     </div>
+                    @endforelse
                 </div>
             </div>
         </div>
-
-        
     </div>
 
     {{-- Recent News --}}

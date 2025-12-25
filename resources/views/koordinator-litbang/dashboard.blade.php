@@ -1,3 +1,7 @@
+{{-- Dashboard Koordinator Litbang
+    - Ringkasan berita, brief, caption, dan design
+    - Fokus pada aktivitas divisi litbang
+--}}
 @extends('layouts.koordinator-litbang')
 
 @section('title', 'Dashboard')
@@ -5,7 +9,7 @@
 
 @section('content')
 <div class="space-y-6">
-    {{-- Welcome Banner --}}
+    <!-- Welcome Banner -->
     <div class="relative overflow-hidden rounded-xl border border-[#D8C4B6]/40 bg-white p-6 shadow-sm transition-all hover:shadow-md">
         <div class="flex items-center justify-between">
             <div class="flex-1">
@@ -30,15 +34,15 @@
         </div>
     </div>
 
-    {{-- Stats Cards --}}
-    <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        {{-- Total Anggota Litbang --}}
+    <!-- Statistics Cards -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+        <!-- Divisi Litbang -->
         <div class="group relative overflow-hidden rounded-xl border border-[#D8C4B6]/40 bg-white p-5 shadow-sm transition-all hover:shadow-md">
             <div class="flex items-center justify-between">
                 <div class="flex-1">
                     <p class="text-sm font-medium text-gray-600">Total Anggota Litbang</p>
                     <p class="mt-2 text-2xl font-bold tracking-tight text-[#1b334e]">{{ $litbang_total }}</p>
-                    <p class="mt-1.5 text-xs text-gray-500">{{ $litbang_coordinators }} Koordinator, {{ $litbang_members }} Anggota</p>
+                    <p class="text-xs text-gray-500 mt-1">{{ $litbang_coordinators }} Koordinator, {{ $litbang_members }} Anggota</p>
                 </div>
                 <div class="flex h-12 w-12 items-center justify-center rounded-lg bg-[#f9b61a]/10 text-[#f9b61a] transition-colors group-hover:bg-[#f9b61a] group-hover:text-white">
                     <i class="fas fa-users text-xl"></i>
@@ -46,13 +50,12 @@
             </div>
         </div>
 
-        {{-- Total Brief --}}
+        <!-- Brief dari Litbang -->
         <div class="group relative overflow-hidden rounded-xl border border-[#D8C4B6]/40 bg-white p-5 shadow-sm transition-all hover:shadow-md">
             <div class="flex items-center justify-between">
                 <div class="flex-1">
                     <p class="text-sm font-medium text-gray-600">Total Brief</p>
                     <p class="mt-2 text-2xl font-bold tracking-tight text-[#1b334e]">{{ $brief_total }}</p>
-                    <p class="mt-1.5 text-xs text-gray-500">{{ $brief_with_ref }} dengan referensi</p>
                 </div>
                 <div class="flex h-12 w-12 items-center justify-center rounded-lg bg-[#f9b61a]/10 text-[#f9b61a] transition-colors group-hover:bg-[#f9b61a] group-hover:text-white">
                     <i class="fas fa-file-alt text-xl"></i>
@@ -60,133 +63,303 @@
             </div>
         </div>
 
-        {{-- Brief Bulan Ini --}}
+        <!-- Caption -->
         <div class="group relative overflow-hidden rounded-xl border border-[#D8C4B6]/40 bg-white p-5 shadow-sm transition-all hover:shadow-md">
             <div class="flex items-center justify-between">
                 <div class="flex-1">
-                    <p class="text-sm font-medium text-gray-600">Brief Bulan Ini</p>
-                    <p class="mt-2 text-2xl font-bold tracking-tight text-[#1b334e]">{{ $brief_this_month }}</p>
-                    <p class="mt-1.5 text-xs text-gray-500">{{ \Carbon\Carbon::now()->isoFormat('MMMM Y') }}</p>
+                    <p class="text-sm font-medium text-gray-600">Total Caption</p>
+                    <p class="mt-2 text-2xl font-bold tracking-tight text-[#1b334e]">{{ $caption_total }}</p>
                 </div>
                 <div class="flex h-12 w-12 items-center justify-center rounded-lg bg-[#f9b61a]/10 text-[#f9b61a] transition-colors group-hover:bg-[#f9b61a] group-hover:text-white">
-                    <i class="fas fa-calendar-alt text-xl"></i>
+                    <i class="fas fa-closed-captioning text-xl"></i>
                 </div>
             </div>
         </div>
 
-        {{-- Kas Lunas --}}
+        <!-- Design -->
         <div class="group relative overflow-hidden rounded-xl border border-[#D8C4B6]/40 bg-white p-5 shadow-sm transition-all hover:shadow-md">
             <div class="flex items-center justify-between">
                 <div class="flex-1">
-                    <p class="text-sm font-medium text-gray-600">Kas Lunas</p>
-                    <p class="mt-2 text-2xl font-bold tracking-tight text-[#1b334e]">{{ $kas_lunas }}</p>
-                    <p class="mt-1.5 text-xs text-gray-500">Dari {{ $kas_total_records }} catatan</p>
+                    <p class="text-sm font-medium text-gray-600">Total Design</p>
+                    <p class="mt-2 text-2xl font-bold tracking-tight text-[#1b334e]">{{ $design_total }}</p>
                 </div>
                 <div class="flex h-12 w-12 items-center justify-center rounded-lg bg-[#f9b61a]/10 text-[#f9b61a] transition-colors group-hover:bg-[#f9b61a] group-hover:text-white">
-                    <i class="fas fa-wallet text-xl"></i>
+                    <i class="fas fa-palette text-xl"></i>
                 </div>
             </div>
         </div>
     </div>
 
-    {{-- Main Content Grid --}}
+    <!-- News Statistics -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div class="group relative overflow-hidden rounded-xl border border-[#D8C4B6]/40 bg-white p-5 shadow-sm transition-all hover:shadow-md">
+            <div class="flex items-center justify-between">
+                <div class="flex-1">
+                    <p class="text-sm font-medium text-gray-600">Total Berita</p>
+                    <p class="mt-2 text-2xl font-bold tracking-tight text-[#1b334e]">{{ $news_total }}</p>
+                </div>
+                <div class="flex h-12 w-12 items-center justify-center rounded-lg bg-[#f9b61a]/10 text-[#f9b61a] transition-colors group-hover:bg-[#f9b61a] group-hover:text-white">
+                    <i class="fas fa-newspaper text-xl"></i>
+                </div>
+            </div>
+        </div>
+
+        <div class="group relative overflow-hidden rounded-xl border border-[#D8C4B6]/40 bg-white p-5 shadow-sm transition-all hover:shadow-md">
+            <div class="flex items-center justify-between">
+                <div class="flex-1">
+                    <p class="text-sm font-medium text-gray-600">Total Views</p>
+                    <p class="mt-2 text-2xl font-bold tracking-tight text-[#1b334e]">{{ number_format($news_total_views) }}</p>
+                </div>
+                <div class="flex h-12 w-12 items-center justify-center rounded-lg bg-[#f9b61a]/10 text-[#f9b61a] transition-colors group-hover:bg-[#f9b61a] group-hover:text-white">
+                    <i class="fas fa-eye text-xl"></i>
+                </div>
+            </div>
+        </div>
+
+        <div class="group relative overflow-hidden rounded-xl border border-[#D8C4B6]/40 bg-white p-5 shadow-sm transition-all hover:shadow-md">
+            <div class="flex items-center justify-between">
+                <div class="flex-1">
+                    <p class="text-sm font-medium text-gray-600">Berita Sudah Terbit</p>
+                    <p class="mt-2 text-2xl font-bold tracking-tight text-green-600">{{ $news_sudah_terbit }}</p>
+                    <p class="text-xs text-gray-500 mt-1">{{ $news_belum_terbit }} Belum Terbit</p>
+                </div>
+                <div class="flex h-12 w-12 items-center justify-center rounded-lg bg-green-100 text-green-600 transition-colors group-hover:bg-green-600 group-hover:text-white">
+                    <i class="fas fa-check-circle text-xl"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content Grid -->
     <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
-        {{-- Brief Terbaru --}}
+        <!-- Brief dari Litbang -->
         <div class="rounded-xl border border-[#D8C4B6]/40 bg-white shadow-sm">
             <div class="border-b border-[#D8C4B6]/40 p-5">
                 <div class="flex items-center justify-between">
                     <div>
-                        <h3 class="text-base font-semibold text-[#1b334e]">Brief Terbaru</h3>
-                        <p class="mt-0.5 text-xs text-gray-600">Brief yang baru dibuat</p>
+                        <h3 class="text-base font-semibold text-[#1b334e]">Brief dari Litbang</h3>
+                        <p class="mt-0.5 text-xs text-gray-600">Brief terbaru dari divisi litbang</p>
                     </div>
-                    <span class="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium bg-[#1b334e] text-white">
+                    <span class="inline-flex items-center rounded-full bg-[#f9b61a]/10 px-2.5 py-0.5 text-xs font-medium text-[#1b334e]">
                         {{ $brief_total }} Total
                     </span>
                 </div>
             </div>
             <div class="p-5">
-                <div class="space-y-3">
+                <div class="space-y-2">
                     @forelse($recent_briefs as $brief)
-                    <div class="rounded-lg border border-[#D8C4B6]/40 bg-white p-3 shadow-sm">
+                    <div class="flex items-start justify-between rounded-lg border border-[#D8C4B6]/40 bg-white p-3 shadow-sm transition-all hover:shadow-md">
                         <div class="flex-1">
-                            <h4 class="text-sm font-medium text-[#1b334e]">{{ $brief->judul ?? 'Tanpa Judul' }}</h4>
+                            <p class="text-sm font-medium text-[#1b334e]">{{ $brief->judul }}</p>
                             <p class="text-xs text-gray-600 mt-1">{{ Str::limit($brief->isi_brief ?? '', 60) }}</p>
-                            <div class="flex items-center mt-2 text-xs text-gray-500">
-                                <i class="fas fa-link mr-1"></i>
-                                <span class="truncate max-w-xs">{{ $brief->link_referensi ? Str::limit($brief->link_referensi, 40) : 'Tidak ada referensi' }}</span>
+                            <div class="flex items-center mt-1.5 text-xs text-gray-500">
+                                <i class="fas fa-calendar mr-1"></i>
+                                {{ $brief->tanggal ? $brief->tanggal->format('d M Y') : 'Tanpa tanggal' }}
                                 <i class="fas fa-clock ml-3 mr-1"></i>
-                                {{ optional($brief->tanggal)->format('d M Y') ?? '-' }}
+                                {{ $brief->created_at->diffForHumans() }}
                             </div>
                         </div>
                     </div>
                     @empty
                     <div class="text-center py-8">
-                        <i class="fas fa-file-alt text-6xl text-gray-400 mb-3"></i>
-                        <p class="text-sm text-gray-500">Belum ada brief</p>
+                        <i class="fas fa-file-alt text-4xl text-gray-400 mb-3"></i>
+                        <p class="text-sm text-gray-500">Belum ada brief dari litbang</p>
                     </div>
                     @endforelse
                 </div>
             </div>
         </div>
 
-        {{-- Statistik Brief & Kas --}}
-        <div class="space-y-4">
-            {{-- Statistik Brief --}}
-            <div class="rounded-xl border border-[#D8C4B6]/40 bg-white shadow-sm">
-                <div class="border-b border-[#D8C4B6]/40 p-5">
+        <!-- Caption Terbaru -->
+        <div class="rounded-xl border border-[#D8C4B6]/40 bg-white shadow-sm">
+            <div class="border-b border-[#D8C4B6]/40 p-5">
+                <div class="flex items-center justify-between">
                     <div>
-                        <h3 class="text-base font-semibold text-[#1b334e]">Statistik Brief</h3>
-                        <p class="mt-0.5 text-xs text-gray-600">Ringkasan brief divisi litbang</p>
+                        <h3 class="text-base font-semibold text-[#1b334e]">Caption Terbaru</h3>
+                        <p class="mt-0.5 text-xs text-gray-600">Caption yang baru dibuat</p>
                     </div>
-                </div>
-                <div class="p-5">
-                    <div class="grid grid-cols-2 gap-3">
-                        <div class="rounded-lg border border-[#D8C4B6]/40 bg-white p-4 text-center shadow-sm">
-                            <p class="text-2xl font-bold text-[#1b334e]">{{ $brief_with_ref }}</p>
-                            <p class="text-xs text-gray-600 mt-1">Dengan Referensi</p>
-                        </div>
-                        <div class="rounded-lg border border-[#D8C4B6]/40 bg-white p-4 text-center shadow-sm">
-                            <p class="text-2xl font-bold text-[#1b334e]">{{ $brief_without_ref }}</p>
-                            <p class="text-xs text-gray-600 mt-1">Tanpa Referensi</p>
-                        </div>
-                        <div class="rounded-lg border border-[#D8C4B6]/40 bg-white p-4 text-center shadow-sm">
-                            <p class="text-2xl font-bold text-[#1b334e]">{{ $brief_this_month }}</p>
-                            <p class="text-xs text-gray-600 mt-1">Bulan Ini</p>
-                        </div>
-                        <div class="rounded-lg border border-[#D8C4B6]/40 bg-white p-4 text-center shadow-sm">
-                            <p class="text-2xl font-bold text-[#1b334e]">{{ $brief_total }}</p>
-                            <p class="text-xs text-gray-600 mt-1">Total Brief</p>
-                        </div>
-                    </div>
+                    <span class="inline-flex items-center rounded-full bg-[#f9b61a]/10 px-2.5 py-0.5 text-xs font-medium text-[#1b334e]">
+                        {{ $caption_total }} Total
+                    </span>
                 </div>
             </div>
-
-            {{-- Ringkasan Kas --}}
-            <div class="rounded-xl border border-[#D8C4B6]/40 bg-white shadow-sm">
-                <div class="border-b border-[#D8C4B6]/40 p-5">
-                    <div>
-                        <h3 class="text-base font-semibold text-[#1b334e]">Ringkasan Kas</h3>
-                        <p class="mt-0.5 text-xs text-gray-600">Status pembayaran kas anggota litbang</p>
-                    </div>
-                </div>
-                <div class="p-5">
-                    <div class="grid grid-cols-2 gap-3">
-                        <div class="rounded-lg border border-[#D8C4B6]/40 bg-white p-4 shadow-sm">
-                            <p class="text-xs text-gray-600">Total Catatan Kas</p>
-                            <p class="text-2xl font-bold text-[#1b334e] mt-1">{{ $kas_total_records }}</p>
-                        </div>
-                        <div class="rounded-lg border border-[#D8C4B6]/40 bg-white p-4 shadow-sm">
-                            <p class="text-xs text-gray-600">Belum Lunas</p>
-                            <p class="text-2xl font-bold text-[#1b334e] mt-1">{{ $kas_belum_lunas }}</p>
-                        </div>
-                        <div class="rounded-lg border border-[#D8C4B6]/40 bg-white p-4 shadow-sm col-span-2">
-                            <p class="text-xs text-gray-600">Total Terkumpul</p>
-                            <p class="text-2xl font-bold text-[#1b334e] mt-1">Rp {{ number_format($kas_total_terkumpul, 0, ',', '.') }}</p>
+            <div class="p-5">
+                <div class="space-y-2">
+                    @forelse($recent_captions as $caption)
+                    <div class="rounded-lg border border-[#D8C4B6]/40 bg-white p-3 shadow-sm transition-all hover:shadow-md">
+                        <p class="text-sm font-medium text-[#1b334e]">{{ $caption->judul ?? 'Tanpa Judul' }}</p>
+                        <p class="text-xs text-gray-600 mt-1">{{ Str::limit(strip_tags($caption->caption ?? ''), 60) }}</p>
+                        <div class="flex items-center mt-2 text-xs text-gray-500">
+                            <span class="inline-flex items-center rounded-full bg-[#1b334e] px-2 py-0.5 text-xs font-medium text-white">
+                                {{ ucfirst(str_replace('_', ' ', $caption->jenis_konten ?? 'caption')) }}
+                            </span>
+                            <i class="fas fa-clock ml-3 mr-1"></i>
+                            {{ $caption->created_at->diffForHumans() }}
                         </div>
                     </div>
+                    @empty
+                    <div class="text-center py-8">
+                        <i class="fas fa-closed-captioning text-4xl text-gray-400 mb-3"></i>
+                        <p class="text-sm text-gray-500">Belum ada caption</p>
+                    </div>
+                    @endforelse
                 </div>
             </div>
         </div>
     </div>
+
+    <!-- Design dan Berita Terbaru -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+        <!-- Design Terbaru -->
+        <div class="rounded-xl border border-[#D8C4B6]/40 bg-white shadow-sm">
+            <div class="border-b border-[#D8C4B6]/40 p-5">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <h3 class="text-base font-semibold text-[#1b334e]">Design Terbaru</h3>
+                        <p class="mt-0.5 text-xs text-gray-600">Design yang baru dibuat</p>
+                    </div>
+                    <span class="inline-flex items-center rounded-full bg-[#f9b61a]/10 px-2.5 py-0.5 text-xs font-medium text-[#1b334e]">
+                        {{ $design_total }} Total
+                    </span>
+                </div>
+            </div>
+            <div class="p-5">
+                <div class="space-y-2">
+                    @forelse($recent_designs as $design)
+                    <div class="flex items-start space-x-3 rounded-lg border border-[#D8C4B6]/40 bg-white p-3 shadow-sm transition-all hover:shadow-md">
+                        @if($design->media_url)
+                        <img src="{{ asset('storage/' . $design->media_url) }}" alt="{{ $design->judul }}" class="w-16 h-16 object-cover rounded-lg">
+                        @else
+                        <div class="w-16 h-16 bg-gray-200 rounded-lg flex items-center justify-center">
+                            <i class="fas fa-image text-gray-400"></i>
+                        </div>
+                        @endif
+                        <div class="flex-1">
+                            <p class="text-sm font-medium text-[#1b334e]">{{ $design->judul ?? 'Tanpa Judul' }}</p>
+                            <p class="text-xs text-gray-600 mt-1">{{ Str::limit($design->catatan ?? '', 50) }}</p>
+                            <div class="flex items-center mt-2 text-xs text-gray-500">
+                                <span class="inline-flex items-center rounded-full bg-blue-50 text-blue-700 px-2 py-0.5 text-xs font-medium">
+                                    {{ ucfirst($design->jenis ?? 'desain') }}
+                                </span>
+                                <i class="fas fa-clock ml-3 mr-1"></i>
+                                {{ $design->created_at->diffForHumans() }}
+                            </div>
+                        </div>
+                    </div>
+                    @empty
+                    <div class="text-center py-8">
+                        <i class="fas fa-palette text-4xl text-gray-400 mb-3"></i>
+                        <p class="text-sm text-gray-500">Belum ada design</p>
+                    </div>
+                    @endforelse
+                </div>
+            </div>
+        </div>
+
+        <!-- Berita Terbaru -->
+        <div class="rounded-xl border border-[#D8C4B6]/40 bg-white shadow-sm">
+            <div class="border-b border-[#D8C4B6]/40 p-5">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <h3 class="text-base font-semibold text-[#1b334e]">Berita Terbaru</h3>
+                        <p class="mt-0.5 text-xs text-gray-600">Berita yang baru dipublikasikan</p>
+                    </div>
+                </div>
+            </div>
+            <div class="p-5">
+                <div class="space-y-3">
+                    @forelse($recent_news as $news)
+                    @php
+                        $sudahTerbit = $news->approval !== null && $news->caption !== null;
+                    @endphp
+                    <div class="flex items-start space-x-3">
+                        @if($news->image)
+                        <img src="{{ asset($news->image) }}" alt="{{ $news->title }}" class="w-16 h-16 object-cover rounded-lg">
+                        @else
+                        <div class="w-16 h-16 bg-gray-200 rounded-lg flex items-center justify-center">
+                            <i class="fas fa-image text-gray-400"></i>
+                        </div>
+                        @endif
+                        <div class="flex-1">
+                            <h4 class="text-sm font-medium text-[#1b334e] line-clamp-2">{{ $news->title }}</h4>
+                            <p class="text-xs text-gray-600 mt-1">{{ $news->created_at->diffForHumans() }}</p>
+                            <div class="flex items-center mt-2 text-xs text-gray-500">
+                                <i class="fas fa-eye mr-1"></i>
+                                {{ number_format($news->views ?? 0) }} views
+                                @if($sudahTerbit)
+                                <span class="inline-flex items-center rounded-full bg-green-50 text-green-700 px-2 py-0.5 text-xs font-medium ml-2">
+                                    Sudah Terbit
+                                </span>
+                                @else
+                                <span class="inline-flex items-center rounded-full bg-gray-50 text-gray-700 px-2 py-0.5 text-xs font-medium ml-2">
+                                    Belum Terbit
+                                </span>
+                                @endif
+                                <i class="fas fa-user ml-3 mr-1"></i>
+                                {{ $news->user->name ?? 'Tidak ada' }}
+                            </div>
+                        </div>
+                    </div>
+                    @empty
+                    <div class="text-center py-8">
+                        <i class="fas fa-newspaper text-4xl text-gray-400 mb-3"></i>
+                        <p class="text-sm text-gray-500">Belum ada berita</p>
+                    </div>
+                    @endforelse
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Chart Section -->
+    <div class="rounded-xl border border-[#D8C4B6]/40 bg-white shadow-sm">
+        <div class="border-b border-[#D8C4B6]/40 p-5">
+            <div>
+                <h3 class="text-base font-semibold text-[#1b334e]">Tren Bulanan</h3>
+                <p class="mt-0.5 text-xs text-gray-600">Grafik aktivitas bulanan divisi litbang</p>
+            </div>
+        </div>
+        <div class="p-5">
+            <canvas id="monthlyChart" width="400" height="200"></canvas>
+        </div>
+    </div>
 </div>
 @endsection
+
+@push('scripts')
+<script>
+    // Monthly Chart untuk visualisasi tren
+    const ctx = document.getElementById('monthlyChart').getContext('2d');
+    const monthlyChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: {!! json_encode($monthly_labels) !!},
+            datasets: [{
+                label: 'View',
+                data: {!! json_encode($monthly_views_data) !!},
+                borderColor: 'rgb(59, 130, 246)',
+                backgroundColor: 'rgba(59, 130, 246, 0.1)',
+                tension: 0.4
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    title: {
+                        display: true,
+                        text: 'Jumlah View'
+                    }
+                }
+            },
+            plugins: {
+                legend: {
+                    position: 'top',
+                }
+            }
+        }
+    });
+</script>
+@endpush

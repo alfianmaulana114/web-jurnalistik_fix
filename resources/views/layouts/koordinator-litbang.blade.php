@@ -31,6 +31,72 @@
                         <i class="fas fa-calendar-alt mr-3 w-5 text-center"></i>Penjadwalan
                     </a>
                 @endif
+
+                <!-- Konten -->
+                <div class="px-4 py-2 mt-4">
+                    <p class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">Konten</p>
+                </div>
+                
+                <a href="{{ route('koordinator-litbang.view.news.index') }}" class="flex items-center py-2.5 px-4 rounded-lg transition duration-200 hover:bg-[#1b334e]/10 hover:text-[#1b334e] {{ request()->routeIs('koordinator-litbang.view.news.*') ? 'bg-[#1b334e]/10 text-[#1b334e] font-medium' : 'text-gray-600' }}">
+                    <i class="fas fa-newspaper mr-3 w-5 text-center"></i>Berita
+                </a>
+                
+                <a href="{{ route('koordinator-litbang.view.contents.index') }}" class="flex items-center py-2.5 px-4 rounded-lg transition duration-200 hover:bg-[#1b334e]/10 hover:text-[#1b334e] {{ request()->routeIs('koordinator-litbang.view.contents.*') ? 'bg-[#1b334e]/10 text-[#1b334e] font-medium' : 'text-gray-600' }}">
+                    <i class="fas fa-closed-captioning mr-3 w-5 text-center"></i>Caption
+                </a>
+                
+                <a href="{{ route('koordinator-litbang.view.designs.index') }}" class="flex items-center py-2.5 px-4 rounded-lg transition duration-200 hover:bg-[#1b334e]/10 hover:text-[#1b334e] {{ request()->routeIs('koordinator-litbang.view.designs.*') ? 'bg-[#1b334e]/10 text-[#1b334e] font-medium' : 'text-gray-600' }}">
+                    <i class="fas fa-palette mr-3 w-5 text-center"></i>Desain Media
+                </a>
+                
+                <a href="{{ route('koordinator-litbang.view.funfacts.index') }}" class="flex items-center py-2.5 px-4 rounded-lg transition duration-200 hover:bg-[#1b334e]/10 hover:text-[#1b334e] {{ request()->routeIs('koordinator-litbang.view.funfacts.*') ? 'bg-[#1b334e]/10 text-[#1b334e] font-medium' : 'text-gray-600' }}">
+                    <i class="fas fa-lightbulb mr-3 w-5 text-center"></i>Funfact
+                </a>
+
+                <!-- Brief -->
+                <div class="px-4 py-2 mt-4">
+                    <p class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">Brief</p>
+                </div>
+                
+                <a href="{{ route('koordinator-litbang.view.brief-humas.index') }}" class="flex items-center py-2.5 px-4 rounded-lg transition duration-200 hover:bg-[#1b334e]/10 hover:text-[#1b334e] {{ request()->routeIs('koordinator-litbang.view.brief-humas.*') ? 'bg-[#1b334e]/10 text-[#1b334e] font-medium' : 'text-gray-600' }}">
+                    <i class="fas fa-users-cog mr-3 w-5 text-center"></i>Brief Humas
+                </a>
+
+                <!-- Manajemen -->
+                <div class="px-4 py-2 mt-4">
+                    <p class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">Manajemen</p>
+                </div>
+                
+                <a href="{{ route('koordinator-litbang.view.prokers.index') }}" class="flex items-center py-2.5 px-4 rounded-lg transition duration-200 hover:bg-[#1b334e]/10 hover:text-[#1b334e] {{ request()->routeIs('koordinator-litbang.view.prokers.*') ? 'bg-[#1b334e]/10 text-[#1b334e] font-medium' : 'text-gray-600' }}">
+                    <i class="fas fa-tasks mr-3 w-5 text-center"></i>Program Kerja
+                </a>
+                
+                <a href="{{ route('koordinator-litbang.view.users.index') }}" class="flex items-center py-2.5 px-4 rounded-lg transition duration-200 hover:bg-[#1b334e]/10 hover:text-[#1b334e] {{ request()->routeIs('koordinator-litbang.view.users.*') ? 'bg-[#1b334e]/10 text-[#1b334e] font-medium' : 'text-gray-600' }}">
+                    <i class="fas fa-users mr-3 w-5 text-center"></i>Manajemen User
+                </a>
+
+                <!-- Keuangan -->
+                <div class="px-4 py-2 mt-4">
+                    <p class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">Keuangan</p>
+                </div>
+                
+                <a href="{{ route('koordinator-litbang.view.laporan.index') }}" class="flex items-center py-2.5 px-4 rounded-lg transition duration-200 hover:bg-[#1b334e]/10 hover:text-[#1b334e] {{ request()->routeIs('koordinator-litbang.view.laporan.*') ? 'bg-[#1b334e]/10 text-[#1b334e] font-medium' : 'text-gray-600' }}">
+                    <i class="fas fa-file-invoice-dollar mr-3 w-5 text-center"></i>Laporan Keuangan
+                </a>
+
+                <!-- Sekretaris -->
+                <div class="px-4 py-2 mt-4">
+                    <p class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">Sekretaris</p>
+                </div>
+                
+                <a href="{{ route('koordinator-litbang.view.sekretaris.notulensi.index') }}" class="flex items-center py-2.5 px-4 rounded-lg transition duration-200 hover:bg-[#1b334e]/10 hover:text-[#1b334e] {{ request()->routeIs('koordinator-litbang.view.sekretaris.notulensi.*') ? 'bg-[#1b334e]/10 text-[#1b334e] font-medium' : 'text-gray-600' }}">
+                    <i class="fas fa-file-alt mr-3 w-5 text-center"></i>Notulensi Rapat
+                </a>
+                
+                <a href="{{ route('koordinator-litbang.view.sekretaris.absen.index') }}" class="flex items-center py-2.5 px-4 rounded-lg transition duration-200 hover:bg-[#1b334e]/10 hover:text-[#1b334e] {{ request()->routeIs('koordinator-litbang.view.sekretaris.absen.*') ? 'bg-[#1b334e]/10 text-[#1b334e] font-medium' : 'text-gray-600' }}">
+                    <i class="fas fa-user-check mr-3 w-5 text-center"></i>Absen Anggota
+                </a>
+
                 <hr class="my-4 border-gray-200">
                 <form method="POST" action="{{ route('logout') }}" data-logout-form>
                     @csrf

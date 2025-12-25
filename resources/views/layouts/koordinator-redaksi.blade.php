@@ -47,21 +47,10 @@
                     <i class="fas fa-lightbulb mr-3 w-5 text-center"></i>Funfact
                 </a>
                 
-                <div class="px-4 py-2">
-                    <p class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">Lihat Data</p>
+                <!-- Content Management (Read-Only) -->
+                <div class="px-4 py-2 mt-4">
+                    <p class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">Konten</p>
                 </div>
-                
-                <a href="{{ route('koordinator-redaksi.view.prokers.index') }}" class="flex items-center py-2.5 px-4 rounded-lg transition duration-200 hover:bg-[#1b334e]/10 hover:text-[#1b334e] {{ request()->routeIs('koordinator-redaksi.view.prokers.*') ? 'bg-[#1b334e]/10 text-[#1b334e] font-medium' : 'text-gray-600' }}">
-                    <i class="fas fa-tasks mr-3 w-5 text-center"></i>Program Kerja
-                </a>
-                
-                <a href="{{ route('koordinator-redaksi.view.briefs.index') }}" class="flex items-center py-2.5 px-4 rounded-lg transition duration-200 hover:bg-[#1b334e]/10 hover:text-[#1b334e] {{ request()->routeIs('koordinator-redaksi.view.briefs.*') ? 'bg-[#1b334e]/10 text-[#1b334e] font-medium' : 'text-gray-600' }}">
-                    <i class="fas fa-file-alt mr-3 w-5 text-center"></i>Brief Litbang
-                </a>
-                
-                <a href="{{ route('koordinator-redaksi.view.news.index') }}" class="flex items-center py-2.5 px-4 rounded-lg transition duration-200 hover:bg-[#1b334e]/10 hover:text-[#1b334e] {{ request()->routeIs('koordinator-redaksi.view.news.*') ? 'bg-[#1b334e]/10 text-[#1b334e] font-medium' : 'text-gray-600' }}">
-                    <i class="fas fa-newspaper mr-3 w-5 text-center"></i>Berita
-                </a>
                 
                 <a href="{{ route('koordinator-redaksi.view.contents.index') }}" class="flex items-center py-2.5 px-4 rounded-lg transition duration-200 hover:bg-[#1b334e]/10 hover:text-[#1b334e] {{ request()->routeIs('koordinator-redaksi.view.contents.*') ? 'bg-[#1b334e]/10 text-[#1b334e] font-medium' : 'text-gray-600' }}">
                     <i class="fas fa-quote-right mr-3 w-5 text-center"></i>Caption
@@ -70,31 +59,53 @@
                 <a href="{{ route('koordinator-redaksi.view.designs.index') }}" class="flex items-center py-2.5 px-4 rounded-lg transition duration-200 hover:bg-[#1b334e]/10 hover:text-[#1b334e] {{ request()->routeIs('koordinator-redaksi.view.designs.*') ? 'bg-[#1b334e]/10 text-[#1b334e] font-medium' : 'text-gray-600' }}">
                     <i class="fas fa-image mr-3 w-5 text-center"></i>Design
                 </a>
+
+                <!-- Briefs -->
+                <div class="px-4 py-2 mt-4">
+                    <p class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">Brief</p>
+                </div>
                 
-                <a href="{{ route('koordinator-redaksi.view.funfacts.index') }}" class="flex items-center py-2.5 px-4 rounded-lg transition duration-200 hover:bg-[#1b334e]/10 hover:text-[#1b334e] {{ request()->routeIs('koordinator-redaksi.view.funfacts.*') ? 'bg-[#1b334e]/10 text-[#1b334e] font-medium' : 'text-gray-600' }}">
-                    <i class="fas fa-lightbulb mr-3 w-5 text-center"></i>Funfact (Read-Only)
-                </a>
-                
-                <a href="{{ route('koordinator-redaksi.view.users.index') }}" class="flex items-center py-2.5 px-4 rounded-lg transition duration-200 hover:bg-[#1b334e]/10 hover:text-[#1b334e] {{ request()->routeIs('koordinator-redaksi.view.users.*') ? 'bg-[#1b334e]/10 text-[#1b334e] font-medium' : 'text-gray-600' }}">
-                    <i class="fas fa-users mr-3 w-5 text-center"></i>User
+                <a href="{{ route('koordinator-redaksi.view.briefs.index') }}" class="flex items-center py-2.5 px-4 rounded-lg transition duration-200 hover:bg-[#1b334e]/10 hover:text-[#1b334e] {{ request()->routeIs('koordinator-redaksi.view.briefs.*') ? 'bg-[#1b334e]/10 text-[#1b334e] font-medium' : 'text-gray-600' }}">
+                    <i class="fas fa-file-alt mr-3 w-5 text-center"></i>Brief Litbang
                 </a>
                 
                 <a href="{{ route('koordinator-redaksi.view.brief-humas.index') }}" class="flex items-center py-2.5 px-4 rounded-lg transition duration-200 hover:bg-[#1b334e]/10 hover:text-[#1b334e] {{ request()->routeIs('koordinator-redaksi.view.brief-humas.*') ? 'bg-[#1b334e]/10 text-[#1b334e] font-medium' : 'text-gray-600' }}">
                     <i class="fas fa-bullhorn mr-3 w-5 text-center"></i>Brief Humas
                 </a>
 
-                <div class="px-4 py-2">
+                <!-- Manajemen -->
+                <div class="px-4 py-2 mt-4">
+                    <p class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">Manajemen</p>
+                </div>
+                
+                <a href="{{ route('koordinator-redaksi.view.prokers.index') }}" class="flex items-center py-2.5 px-4 rounded-lg transition duration-200 hover:bg-[#1b334e]/10 hover:text-[#1b334e] {{ request()->routeIs('koordinator-redaksi.view.prokers.*') ? 'bg-[#1b334e]/10 text-[#1b334e] font-medium' : 'text-gray-600' }}">
+                    <i class="fas fa-tasks mr-3 w-5 text-center"></i>Program Kerja
+                </a>
+                
+                <a href="{{ route('koordinator-redaksi.view.users.index') }}" class="flex items-center py-2.5 px-4 rounded-lg transition duration-200 hover:bg-[#1b334e]/10 hover:text-[#1b334e] {{ request()->routeIs('koordinator-redaksi.view.users.*') ? 'bg-[#1b334e]/10 text-[#1b334e] font-medium' : 'text-gray-600' }}">
+                    <i class="fas fa-users mr-3 w-5 text-center"></i>User
+                </a>
+
+                <!-- Keuangan -->
+                <div class="px-4 py-2 mt-4">
                     <p class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">Keuangan</p>
                 </div>
+                
                 <a href="{{ route('koordinator-redaksi.view.laporan.index') }}" class="flex items-center py-2.5 px-4 rounded-lg transition duration-200 hover:bg-[#1b334e]/10 hover:text-[#1b334e] {{ request()->routeIs('koordinator-redaksi.view.laporan.index') ? 'bg-[#1b334e]/10 text-[#1b334e] font-medium' : 'text-gray-600' }}">
                     <i class="fas fa-file-invoice-dollar mr-3 w-5 text-center"></i>Laporan Keuangan
                 </a>
 
-                <div class="px-4 py-2">
-                    <p class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">Sekretaris (Read-Only)</p>
+                <!-- Sekretaris (Read-Only) -->
+                <div class="px-4 py-2 mt-4">
+                    <p class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">Sekretaris</p>
                 </div>
+                
                 <a href="{{ route('koordinator-redaksi.view.sekretaris.notulensi.index') }}" class="flex items-center py-2.5 px-4 rounded-lg transition duration-200 hover:bg-[#1b334e]/10 hover:text-[#1b334e] {{ request()->routeIs('koordinator-redaksi.view.sekretaris.notulensi.*') ? 'bg-[#1b334e]/10 text-[#1b334e] font-medium' : 'text-gray-600' }}">
                     <i class="fas fa-file-alt mr-3 w-5 text-center"></i>Notulensi Rapat
+                </a>
+                
+                <a href="{{ route('koordinator-redaksi.view.sekretaris.absen.index') }}" class="flex items-center py-2.5 px-4 rounded-lg transition duration-200 hover:bg-[#1b334e]/10 hover:text-[#1b334e] {{ request()->routeIs('koordinator-redaksi.view.sekretaris.absen.*') ? 'bg-[#1b334e]/10 text-[#1b334e] font-medium' : 'text-gray-600' }}">
+                    <i class="fas fa-user-check mr-3 w-5 text-center"></i>Absen Anggota
                 </a>
                 
                 <hr class="my-4 border-gray-200">

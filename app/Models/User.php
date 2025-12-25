@@ -91,7 +91,12 @@ class User extends Authenticatable
             self::ROLE_SEKRETARIS => route('sekretaris.dashboard'),
             self::ROLE_KOORDINATOR_REDAKSI => route('koordinator-redaksi.dashboard'),
             self::ROLE_KOORDINATOR_LITBANG => route('koordinator-litbang.dashboard'),
+            self::ROLE_KOORDINATOR_HUMAS => route('koordinator-humas.dashboard'),
+            self::ROLE_KOORDINATOR_MEDIA_KREATIF => route('koordinator-media-kreatif.dashboard'),
+            self::ROLE_ANGGOTA_REDAKSI => route('koordinator-redaksi.dashboard'), // Anggota redaksi menggunakan dashboard koordinator
             self::ROLE_ANGGOTA_LITBANG => route('anggota-litbang.dashboard'),
+            self::ROLE_ANGGOTA_HUMAS => route('koordinator-humas.dashboard'), // Anggota humas menggunakan dashboard koordinator
+            self::ROLE_ANGGOTA_MEDIA_KREATIF => route('koordinator-media-kreatif.dashboard'), // Anggota media kreatif menggunakan dashboard koordinator
             default => route('home'),
         };
     }

@@ -56,7 +56,6 @@
                 <div class="flex-1">
                     <p class="text-sm font-medium text-gray-600">Total Brief</p>
                     <p class="mt-2 text-2xl font-bold tracking-tight text-[#1b334e]">{{ $brief_total }}</p>
-                    <p class="text-xs text-gray-500 mt-1">{{ $brief_urgent }} Mendesak, {{ $brief_pending }} Pending</p>
                 </div>
                 <div class="flex h-12 w-12 items-center justify-center rounded-lg bg-[#f9b61a]/10 text-[#f9b61a] transition-colors group-hover:bg-[#f9b61a] group-hover:text-white">
                     <i class="fas fa-file-alt text-xl"></i>
@@ -70,7 +69,6 @@
                 <div class="flex-1">
                     <p class="text-sm font-medium text-gray-600">Total Caption</p>
                     <p class="mt-2 text-2xl font-bold tracking-tight text-[#1b334e]">{{ $caption_total }}</p>
-                    <p class="text-xs text-gray-500 mt-1">{{ $caption_berita }} Berita, {{ $caption_desain }} Desain</p>
                 </div>
                 <div class="flex h-12 w-12 items-center justify-center rounded-lg bg-[#f9b61a]/10 text-[#f9b61a] transition-colors group-hover:bg-[#f9b61a] group-hover:text-white">
                     <i class="fas fa-closed-captioning text-xl"></i>
@@ -84,7 +82,6 @@
                 <div class="flex-1">
                     <p class="text-sm font-medium text-gray-600">Total Design</p>
                     <p class="mt-2 text-2xl font-bold tracking-tight text-[#1b334e]">{{ $design_total }}</p>
-                    <p class="text-xs text-gray-500 mt-1">{{ $design_published }} Published, {{ $design_draft }} Draft</p>
                 </div>
                 <div class="flex h-12 w-12 items-center justify-center rounded-lg bg-[#f9b61a]/10 text-[#f9b61a] transition-colors group-hover:bg-[#f9b61a] group-hover:text-white">
                     <i class="fas fa-palette text-xl"></i>
@@ -112,6 +109,7 @@
                 <div class="flex-1">
                     <p class="text-sm font-medium text-gray-600">Total Views</p>
                     <p class="mt-2 text-2xl font-bold tracking-tight text-[#1b334e]">{{ number_format($news_total_views) }}</p>
+                    <p class="text-xs text-gray-500 mt-1">Bulan Ini</p>
                 </div>
                 <div class="flex h-12 w-12 items-center justify-center rounded-lg bg-[#f9b61a]/10 text-[#f9b61a] transition-colors group-hover:bg-[#f9b61a] group-hover:text-white">
                     <i class="fas fa-eye text-xl"></i>
@@ -122,10 +120,11 @@
         <div class="group relative overflow-hidden rounded-xl border border-[#D8C4B6]/40 bg-white p-5 shadow-sm transition-all hover:shadow-md">
             <div class="flex items-center justify-between">
                 <div class="flex-1">
-                    <p class="text-sm font-medium text-gray-600">Berita Published</p>
-                    <p class="mt-2 text-2xl font-bold tracking-tight text-[#1b334e]">{{ $news_published }}</p>
+                    <p class="text-sm font-medium text-gray-600">Berita Sudah Terbit</p>
+                    <p class="mt-2 text-2xl font-bold tracking-tight text-green-600">{{ $news_sudah_terbit }}</p>
+                    <p class="text-xs text-gray-500 mt-1">{{ $news_belum_terbit }} Belum Terbit (Bulan Ini)</p>
                 </div>
-                <div class="flex h-12 w-12 items-center justify-center rounded-lg bg-[#f9b61a]/10 text-[#f9b61a] transition-colors group-hover:bg-[#f9b61a] group-hover:text-white">
+                <div class="flex h-12 w-12 items-center justify-center rounded-lg bg-green-100 text-green-600 transition-colors group-hover:bg-green-600 group-hover:text-white">
                     <i class="fas fa-check-circle text-xl"></i>
                 </div>
             </div>
@@ -150,23 +149,17 @@
             <div class="p-5">
                 <div class="space-y-2">
                     @forelse($recent_briefs as $brief)
-                    <div class="flex items-start justify-between rounded-lg border border-[#D8C4B6]/40 bg-white p-3 shadow-sm transition-all hover:shadow-md {{ $brief->status === 'urgent' ? 'border-red-200 bg-red-50' : '' }}">
+                    <div class="flex items-start justify-between rounded-lg border border-[#D8C4B6]/40 bg-white p-3 shadow-sm transition-all hover:shadow-md">
                         <div class="flex-1">
                             <p class="text-sm font-medium text-[#1b334e]">{{ $brief->judul }}</p>
-                            <p class="text-xs text-gray-600 mt-1">{{ Str::limit($brief->deskripsi ?? '', 60) }}</p>
+                            <p class="text-xs text-gray-600 mt-1">{{ Str::limit($brief->isi_brief ?? '', 60) }}</p>
                             <div class="flex items-center mt-1.5 text-xs text-gray-500">
-                                <i class="fas fa-user mr-1"></i>
-                                {{ $brief->creator->name ?? 'Tidak ada' }}
+                                <i class="fas fa-calendar mr-1"></i>
+                                {{ $brief->tanggal ? $brief->tanggal->format('d M Y') : 'Tanpa tanggal' }}
                                 <i class="fas fa-clock ml-3 mr-1"></i>
                                 {{ $brief->created_at->diffForHumans() }}
                             </div>
                         </div>
-                        <span class="inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium ml-3
-                            @if($brief->status === 'urgent') bg-red-50 text-red-700
-                            @elseif($brief->status === 'completed') bg-green-50 text-green-700
-                            @else bg-[#f9b61a]/10 text-[#1b334e] @endif">
-                            {{ ucfirst($brief->status ?? 'pending') }}
-                        </span>
                     </div>
                     @empty
                     <div class="text-center py-8">
@@ -196,7 +189,7 @@
                     @forelse($recent_captions as $caption)
                     <div class="rounded-lg border border-[#D8C4B6]/40 bg-white p-3 shadow-sm transition-all hover:shadow-md">
                         <p class="text-sm font-medium text-[#1b334e]">{{ $caption->judul ?? 'Tanpa Judul' }}</p>
-                        <p class="text-xs text-gray-600 mt-1">{{ Str::limit($caption->konten ?? '', 60) }}</p>
+                        <p class="text-xs text-gray-600 mt-1">{{ Str::limit(strip_tags($caption->caption ?? ''), 60) }}</p>
                         <div class="flex items-center mt-2 text-xs text-gray-500">
                             <span class="inline-flex items-center rounded-full bg-[#1b334e] px-2 py-0.5 text-xs font-medium text-white">
                                 {{ ucfirst(str_replace('_', ' ', $caption->jenis_konten ?? 'caption')) }}
@@ -235,8 +228,8 @@
                 <div class="space-y-2">
                     @forelse($recent_designs as $design)
                     <div class="flex items-start space-x-3 rounded-lg border border-[#D8C4B6]/40 bg-white p-3 shadow-sm transition-all hover:shadow-md">
-                        @if($design->gambar)
-                        <img src="{{ asset($design->gambar) }}" alt="{{ $design->judul }}" class="w-16 h-16 object-cover rounded-lg">
+                        @if($design->media_url)
+                        <img src="{{ asset('storage/' . $design->media_url) }}" alt="{{ $design->judul }}" class="w-16 h-16 object-cover rounded-lg">
                         @else
                         <div class="w-16 h-16 bg-gray-200 rounded-lg flex items-center justify-center">
                             <i class="fas fa-image text-gray-400"></i>
@@ -244,10 +237,10 @@
                         @endif
                         <div class="flex-1">
                             <p class="text-sm font-medium text-[#1b334e]">{{ $design->judul ?? 'Tanpa Judul' }}</p>
-                            <p class="text-xs text-gray-600 mt-1">{{ Str::limit($design->deskripsi ?? '', 50) }}</p>
+                            <p class="text-xs text-gray-600 mt-1">{{ Str::limit($design->catatan ?? '', 50) }}</p>
                             <div class="flex items-center mt-2 text-xs text-gray-500">
-                                <span class="inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium {{ $design->status === 'published' ? 'bg-green-50 text-green-700' : 'bg-gray-50 text-gray-700' }}">
-                                    {{ ucfirst($design->status ?? 'draft') }}
+                                <span class="inline-flex items-center rounded-full bg-blue-50 text-blue-700 px-2 py-0.5 text-xs font-medium">
+                                    {{ ucfirst($design->jenis ?? 'desain') }}
                                 </span>
                                 <i class="fas fa-clock ml-3 mr-1"></i>
                                 {{ $design->created_at->diffForHumans() }}
@@ -280,6 +273,9 @@
             <div class="p-5">
                 <div class="space-y-3">
                     @forelse($recent_news as $news)
+                    @php
+                        $sudahTerbit = $news->approval !== null && $news->caption !== null;
+                    @endphp
                     <div class="flex items-start space-x-3">
                         @if($news->image)
                         <img src="{{ asset($news->image) }}" alt="{{ $news->title }}" class="w-16 h-16 object-cover rounded-lg">
@@ -293,7 +289,16 @@
                             <p class="text-xs text-gray-600 mt-1">{{ $news->created_at->diffForHumans() }}</p>
                             <div class="flex items-center mt-2 text-xs text-gray-500">
                                 <i class="fas fa-eye mr-1"></i>
-                                {{ $news->views ?? 0 }} views
+                                {{ number_format($news->views ?? 0) }} views
+                                @if($sudahTerbit)
+                                <span class="inline-flex items-center rounded-full bg-green-50 text-green-700 px-2 py-0.5 text-xs font-medium ml-2">
+                                    Sudah Terbit
+                                </span>
+                                @else
+                                <span class="inline-flex items-center rounded-full bg-gray-50 text-gray-700 px-2 py-0.5 text-xs font-medium ml-2">
+                                    Belum Terbit
+                                </span>
+                                @endif
                                 <i class="fas fa-user ml-3 mr-1"></i>
                                 {{ $news->user->name ?? 'Tidak ada' }}
                             </div>
@@ -334,28 +339,10 @@
         data: {
             labels: {!! json_encode($monthly_labels) !!},
             datasets: [{
-                label: 'Berita',
-                data: {!! json_encode($monthly_news_data) !!},
-                borderColor: 'rgb(239, 68, 68)',
-                backgroundColor: 'rgba(239, 68, 68, 0.1)',
-                tension: 0.4
-            }, {
-                label: 'Brief',
-                data: {!! json_encode($monthly_brief_data) !!},
+                label: 'View',
+                data: {!! json_encode($monthly_views_data) !!},
                 borderColor: 'rgb(59, 130, 246)',
                 backgroundColor: 'rgba(59, 130, 246, 0.1)',
-                tension: 0.4
-            }, {
-                label: 'Caption',
-                data: {!! json_encode($monthly_caption_data) !!},
-                borderColor: 'rgb(34, 197, 94)',
-                backgroundColor: 'rgba(34, 197, 94, 0.1)',
-                tension: 0.4
-            }, {
-                label: 'Design',
-                data: {!! json_encode($monthly_design_data) !!},
-                borderColor: 'rgb(236, 72, 153)',
-                backgroundColor: 'rgba(236, 72, 153, 0.1)',
                 tension: 0.4
             }]
         },
@@ -364,7 +351,11 @@
             maintainAspectRatio: false,
             scales: {
                 y: {
-                    beginAtZero: true
+                    beginAtZero: true,
+                    title: {
+                        display: true,
+                        text: 'Jumlah View'
+                    }
                 }
             },
             plugins: {

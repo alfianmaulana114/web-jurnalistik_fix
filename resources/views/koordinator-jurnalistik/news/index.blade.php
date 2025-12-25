@@ -266,4 +266,3 @@
 </div>
 @endsection
 
-// Filter sekarang menggunakan form GET, tidak perlu JavaScript untuk client-side filtering

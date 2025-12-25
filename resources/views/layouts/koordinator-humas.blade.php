@@ -37,11 +37,77 @@
                     <i class="fas fa-closed-captioning mr-3 w-5 text-center"></i>Content
                 </a>
                 
+                <!-- Brief Humas -->
+                <a href="{{ route('koordinator-humas.brief-humas.index') }}" class="flex items-center py-2.5 px-4 rounded-lg transition duration-200 hover:bg-[#1b334e]/10 hover:text-[#1b334e] {{ request()->routeIs('koordinator-humas.brief-humas.*') ? 'bg-[#1b334e]/10 text-[#1b334e] font-medium' : 'text-gray-600' }}">
+                    <i class="fas fa-users-cog mr-3 w-5 text-center"></i>Brief Humas
+                </a>
+                
                 <!-- Penjadwalan -->
                 <a href="{{ route('koordinator-humas.penjadwalan.index') }}" class="flex items-center py-2.5 px-4 rounded-lg transition duration-200 hover:bg-[#1b334e]/10 hover:text-[#1b334e] {{ request()->routeIs('koordinator-humas.penjadwalan.*') ? 'bg-[#1b334e]/10 text-[#1b334e] font-medium' : 'text-gray-600' }}">
                     <i class="fas fa-calendar-alt mr-3 w-5 text-center"></i>Penjadwalan
                 </a>
+
+                <!-- Konten -->
+                <div class="px-4 py-2 mt-4">
+                    <p class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">Konten</p>
+                </div>
                 
+                <a href="{{ route('koordinator-humas.view.news.index') }}" class="flex items-center py-2.5 px-4 rounded-lg transition duration-200 hover:bg-[#1b334e]/10 hover:text-[#1b334e] {{ request()->routeIs('koordinator-humas.view.news.*') ? 'bg-[#1b334e]/10 text-[#1b334e] font-medium' : 'text-gray-600' }}">
+                    <i class="fas fa-newspaper mr-3 w-5 text-center"></i>Berita
+                </a>
+                
+                <a href="{{ route('koordinator-humas.view.designs.index') }}" class="flex items-center py-2.5 px-4 rounded-lg transition duration-200 hover:bg-[#1b334e]/10 hover:text-[#1b334e] {{ request()->routeIs('koordinator-humas.view.designs.*') ? 'bg-[#1b334e]/10 text-[#1b334e] font-medium' : 'text-gray-600' }}">
+                    <i class="fas fa-palette mr-3 w-5 text-center"></i>Desain Media
+                </a>
+                
+                <a href="{{ route('koordinator-humas.view.funfacts.index') }}" class="flex items-center py-2.5 px-4 rounded-lg transition duration-200 hover:bg-[#1b334e]/10 hover:text-[#1b334e] {{ request()->routeIs('koordinator-humas.view.funfacts.*') ? 'bg-[#1b334e]/10 text-[#1b334e] font-medium' : 'text-gray-600' }}">
+                    <i class="fas fa-lightbulb mr-3 w-5 text-center"></i>Funfact
+                </a>
+
+                <!-- Brief -->
+                <div class="px-4 py-2 mt-4">
+                    <p class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">Brief</p>
+                </div>
+                
+                <a href="{{ route('koordinator-humas.view.briefs.index') }}" class="flex items-center py-2.5 px-4 rounded-lg transition duration-200 hover:bg-[#1b334e]/10 hover:text-[#1b334e] {{ request()->routeIs('koordinator-humas.view.briefs.*') ? 'bg-[#1b334e]/10 text-[#1b334e] font-medium' : 'text-gray-600' }}">
+                    <i class="fas fa-file-alt mr-3 w-5 text-center"></i>Brief Litbang
+                </a>
+
+                <!-- Manajemen -->
+                <div class="px-4 py-2 mt-4">
+                    <p class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">Manajemen</p>
+                </div>
+                
+                <a href="{{ route('koordinator-humas.view.prokers.index') }}" class="flex items-center py-2.5 px-4 rounded-lg transition duration-200 hover:bg-[#1b334e]/10 hover:text-[#1b334e] {{ request()->routeIs('koordinator-humas.view.prokers.*') ? 'bg-[#1b334e]/10 text-[#1b334e] font-medium' : 'text-gray-600' }}">
+                    <i class="fas fa-tasks mr-3 w-5 text-center"></i>Program Kerja
+                </a>
+                
+                <a href="{{ route('koordinator-humas.view.users.index') }}" class="flex items-center py-2.5 px-4 rounded-lg transition duration-200 hover:bg-[#1b334e]/10 hover:text-[#1b334e] {{ request()->routeIs('koordinator-humas.view.users.*') ? 'bg-[#1b334e]/10 text-[#1b334e] font-medium' : 'text-gray-600' }}">
+                    <i class="fas fa-users mr-3 w-5 text-center"></i>Manajemen User
+                </a>
+
+                <!-- Keuangan -->
+                <div class="px-4 py-2 mt-4">
+                    <p class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">Keuangan</p>
+                </div>
+                
+                <a href="{{ route('koordinator-humas.view.laporan.index') }}" class="flex items-center py-2.5 px-4 rounded-lg transition duration-200 hover:bg-[#1b334e]/10 hover:text-[#1b334e] {{ request()->routeIs('koordinator-humas.view.laporan.*') ? 'bg-[#1b334e]/10 text-[#1b334e] font-medium' : 'text-gray-600' }}">
+                    <i class="fas fa-file-invoice-dollar mr-3 w-5 text-center"></i>Laporan Keuangan
+                </a>
+
+                <!-- Sekretaris -->
+                <div class="px-4 py-2 mt-4">
+                    <p class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">Sekretaris</p>
+                </div>
+                
+                <a href="{{ route('koordinator-humas.view.sekretaris.notulensi.index') }}" class="flex items-center py-2.5 px-4 rounded-lg transition duration-200 hover:bg-[#1b334e]/10 hover:text-[#1b334e] {{ request()->routeIs('koordinator-humas.view.sekretaris.notulensi.*') ? 'bg-[#1b334e]/10 text-[#1b334e] font-medium' : 'text-gray-600' }}">
+                    <i class="fas fa-file-alt mr-3 w-5 text-center"></i>Notulensi Rapat
+                </a>
+                
+                <a href="{{ route('koordinator-humas.view.sekretaris.absen.index') }}" class="flex items-center py-2.5 px-4 rounded-lg transition duration-200 hover:bg-[#1b334e]/10 hover:text-[#1b334e] {{ request()->routeIs('koordinator-humas.view.sekretaris.absen.*') ? 'bg-[#1b334e]/10 text-[#1b334e] font-medium' : 'text-gray-600' }}">
+                    <i class="fas fa-user-check mr-3 w-5 text-center"></i>Absen Anggota
+                </a>
+
                 <hr class="my-4 border-gray-200">
 
                 <!-- Logout -->

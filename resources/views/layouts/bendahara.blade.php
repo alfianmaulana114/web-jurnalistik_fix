@@ -58,65 +58,66 @@
                 <a href="{{ route('bendahara.laporan.index') }}" class="flex items-center py-2.5 px-4 rounded-lg transition duration-200 hover:bg-[#1b334e]/10 hover:text-[#1b334e] {{ request()->routeIs('bendahara.laporan.*') ? 'bg-[#1b334e]/10 text-[#1b334e] font-medium' : 'text-gray-600' }}">
                     <i class="fas fa-chart-line mr-3 w-5 text-center"></i>Laporan Keuangan
                 </a>
-                
-                <hr class="my-4 border-gray-200">
-                
-                <!-- Read-Only Access to Koordinator Jurnalistik Features -->
-                <div class="px-4 py-2">
-                    <p class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">Lihat Data</p>
+
+                <!-- Konten -->
+                <div class="px-4 py-2 mt-4">
+                    <p class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">Konten</p>
                 </div>
                 
-                <!-- Manajemen Program Kerja (Read-Only) -->
-                <a href="{{ route('bendahara.view.prokers.index') }}" class="flex items-center py-2.5 px-4 rounded-lg transition duration-200 hover:bg-[#1b334e]/10 hover:text-[#1b334e] {{ request()->routeIs('bendahara.view.prokers.*') ? 'bg-[#1b334e]/10 text-[#1b334e] font-medium' : 'text-gray-600' }}">
-                    <i class="fas fa-tasks mr-3 w-5 text-center"></i>Program Kerja
-                </a>
-                
-                <!-- Manajemen Brief (Read-Only) -->
-                <a href="{{ route('bendahara.view.briefs.index') }}" class="flex items-center py-2.5 px-4 rounded-lg transition duration-200 hover:bg-[#1b334e]/10 hover:text-[#1b334e] {{ request()->routeIs('bendahara.view.briefs.*') ? 'bg-[#1b334e]/10 text-[#1b334e] font-medium' : 'text-gray-600' }}">
-                    <i class="fas fa-file-alt mr-3 w-5 text-center"></i>Brief Litbang
-                </a>
-                
-                <!-- Manajemen Berita (Read-Only) -->
                 <a href="{{ route('bendahara.view.news.index') }}" class="flex items-center py-2.5 px-4 rounded-lg transition duration-200 hover:bg-[#1b334e]/10 hover:text-[#1b334e] {{ request()->routeIs('bendahara.view.news.*') ? 'bg-[#1b334e]/10 text-[#1b334e] font-medium' : 'text-gray-600' }}">
                     <i class="fas fa-newspaper mr-3 w-5 text-center"></i>Berita
                 </a>
                 
-                <!-- Manajemen Caption (Read-Only) -->
                 <a href="{{ route('bendahara.view.contents.index') }}" class="flex items-center py-2.5 px-4 rounded-lg transition duration-200 hover:bg-[#1b334e]/10 hover:text-[#1b334e] {{ request()->routeIs('bendahara.view.contents.*') ? 'bg-[#1b334e]/10 text-[#1b334e] font-medium' : 'text-gray-600' }}">
                     <i class="fas fa-closed-captioning mr-3 w-5 text-center"></i>Caption
                 </a>
                 
-                <!-- Manajemen Desain (Read-Only) -->
                 <a href="{{ route('bendahara.view.designs.index') }}" class="flex items-center py-2.5 px-4 rounded-lg transition duration-200 hover:bg-[#1b334e]/10 hover:text-[#1b334e] {{ request()->routeIs('bendahara.view.designs.*') ? 'bg-[#1b334e]/10 text-[#1b334e] font-medium' : 'text-gray-600' }}">
                     <i class="fas fa-palette mr-3 w-5 text-center"></i>Desain Media
                 </a>
                 
-                <!-- Manajemen Funfact (Read-Only) -->
                 <a href="{{ route('bendahara.view.funfacts.index') }}" class="flex items-center py-2.5 px-4 rounded-lg transition duration-200 hover:bg-[#1b334e]/10 hover:text-[#1b334e] {{ request()->routeIs('bendahara.view.funfacts.*') ? 'bg-[#1b334e]/10 text-[#1b334e] font-medium' : 'text-gray-600' }}">
                     <i class="fas fa-lightbulb mr-3 w-5 text-center"></i>Funfact
                 </a>
-                
-                <!-- Manajemen User (Read-Only) -->
-                <a href="{{ route('bendahara.view.users.index') }}" class="flex items-center py-2.5 px-4 rounded-lg transition duration-200 hover:bg-[#1b334e]/10 hover:text-[#1b334e] {{ request()->routeIs('bendahara.view.users.*') ? 'bg-[#1b334e]/10 text-[#1b334e] font-medium' : 'text-gray-600' }}">
-                    <i class="fas fa-users mr-3 w-5 text-center"></i>Manajemen User
-                </a>
 
-                <!-- Brief Humas (Read-Only) -->
+                <!-- Brief -->
+                <div class="px-4 py-2 mt-4">
+                    <p class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">Brief</p>
+                </div>
+                
+                <a href="{{ route('bendahara.view.briefs.index') }}" class="flex items-center py-2.5 px-4 rounded-lg transition duration-200 hover:bg-[#1b334e]/10 hover:text-[#1b334e] {{ request()->routeIs('bendahara.view.briefs.*') ? 'bg-[#1b334e]/10 text-[#1b334e] font-medium' : 'text-gray-600' }}">
+                    <i class="fas fa-file-alt mr-3 w-5 text-center"></i>Brief Litbang
+                </a>
+                
                 <a href="{{ route('bendahara.view.brief-humas.index') }}" class="flex items-center py-2.5 px-4 rounded-lg transition duration-200 hover:bg-[#1b334e]/10 hover:text-[#1b334e] {{ request()->routeIs('bendahara.view.brief-humas.*') ? 'bg-[#1b334e]/10 text-[#1b334e] font-medium' : 'text-gray-600' }}">
                     <i class="fas fa-users-cog mr-3 w-5 text-center"></i>Brief Humas
                 </a>
 
-                <!-- Notulensi Sekretaris (Read-Only) -->
+                <!-- Manajemen -->
+                <div class="px-4 py-2 mt-4">
+                    <p class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">Manajemen</p>
+                </div>
+                
+                <a href="{{ route('bendahara.view.prokers.index') }}" class="flex items-center py-2.5 px-4 rounded-lg transition duration-200 hover:bg-[#1b334e]/10 hover:text-[#1b334e] {{ request()->routeIs('bendahara.view.prokers.*') ? 'bg-[#1b334e]/10 text-[#1b334e] font-medium' : 'text-gray-600' }}">
+                    <i class="fas fa-tasks mr-3 w-5 text-center"></i>Program Kerja
+                </a>
+                
+                <a href="{{ route('bendahara.view.users.index') }}" class="flex items-center py-2.5 px-4 rounded-lg transition duration-200 hover:bg-[#1b334e]/10 hover:text-[#1b334e] {{ request()->routeIs('bendahara.view.users.*') ? 'bg-[#1b334e]/10 text-[#1b334e] font-medium' : 'text-gray-600' }}">
+                    <i class="fas fa-users mr-3 w-5 text-center"></i>Manajemen User
+                </a>
+
+                <!-- Sekretaris -->
+                <div class="px-4 py-2 mt-4">
+                    <p class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">Sekretaris</p>
+                </div>
+                
                 <a href="{{ route('bendahara.view.sekretaris.notulensi.index') }}" class="flex items-center py-2.5 px-4 rounded-lg transition duration-200 hover:bg-[#1b334e]/10 hover:text-[#1b334e] {{ request()->routeIs('bendahara.view.sekretaris.notulensi.*') ? 'bg-[#1b334e]/10 text-[#1b334e] font-medium' : 'text-gray-600' }}">
                     <i class="fas fa-file-alt mr-3 w-5 text-center"></i>Notulensi Rapat
                 </a>
-
-                <!-- Absen Sekretaris (Read-Only) -->
+                
                 <a href="{{ route('bendahara.view.sekretaris.absen.index') }}" class="flex items-center py-2.5 px-4 rounded-lg transition duration-200 hover:bg-[#1b334e]/10 hover:text-[#1b334e] {{ request()->routeIs('bendahara.view.sekretaris.absen.*') ? 'bg-[#1b334e]/10 text-[#1b334e] font-medium' : 'text-gray-600' }}">
                     <i class="fas fa-user-check mr-3 w-5 text-center"></i>Absen Anggota
                 </a>
-                
-                <hr class="my-4 border-gray-200">
 
                 <!-- Logout -->
                 <form method="POST" action="{{ route('logout') }}" data-logout-form>

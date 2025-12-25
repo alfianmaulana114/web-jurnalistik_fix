@@ -3,13 +3,11 @@
 namespace App\Http\Controllers\KoordinatorRedaksi;
 
 use App\Http\Controllers\Controller;
-use App\Models\News;
 use App\Models\Proker;
 use App\Models\Brief;
 use App\Models\Content;
 use App\Models\Design;
 use App\Models\User;
-use App\Models\Funfact;
 use App\Models\BriefHumas;
 use App\Models\Notulensi;
 use Illuminate\Http\Request;
@@ -17,24 +15,6 @@ use Illuminate\View\View;
 
 class ReadOnlyController extends Controller
 {
-    public function newsIndex(Request $request): View
-    {
-        $data = app(\App\Services\KoordinatorJurnalistik\NewsService::class)->index($request);
-        $data['layout'] = 'layouts.koordinator-redaksi';
-        $data['routePrefix'] = 'koordinator-redaksi.view';
-        return view('sekretaris.read-only.news.index', $data);
-    }
-
-    public function newsShow($id): View
-    {
-        $news = News::findOrFail($id);
-        return view('sekretaris.read-only.news.show', [
-            'news' => $news,
-            'layout' => 'layouts.koordinator-redaksi',
-            'routePrefix' => 'koordinator-redaksi.view',
-        ]);
-    }
-
     public function prokersIndex(Request $request): View
     {
         $data = app(\App\Services\KoordinatorJurnalistik\ProkerService::class)->index($request);
@@ -101,23 +81,6 @@ class ReadOnlyController extends Controller
     {
         return view('sekretaris.read-only.designs.show', [
             'design' => $design,
-            'layout' => 'layouts.koordinator-redaksi',
-            'routePrefix' => 'koordinator-redaksi.view',
-        ]);
-    }
-
-    public function funfactsIndex(Request $request): View
-    {
-        $data = app(\App\Services\KoordinatorJurnalistik\FunfactService::class)->index($request);
-        $data['layout'] = 'layouts.koordinator-redaksi';
-        $data['routePrefix'] = 'koordinator-redaksi.view';
-        return view('sekretaris.read-only.funfacts.index', $data);
-    }
-
-    public function funfactsShow(Funfact $funfact): View
-    {
-        return view('sekretaris.read-only.funfacts.show', [
-            'funfact' => $funfact,
             'layout' => 'layouts.koordinator-redaksi',
             'routePrefix' => 'koordinator-redaksi.view',
         ]);
@@ -234,5 +197,11 @@ class ReadOnlyController extends Controller
         $filename = 'Notulensi-' . \Illuminate\Support\Str::slug($notulensi->judul) . '.pdf';
         $fullPath = storage_path('app/public/' . $notulensi->pdf_path);
         return response()->download($fullPath, $filename);
+    }
+
+    public function sekretarisAbsenIndex(Request $request): View
+    {
+        $data = app(\App\Services\Sekretaris\AbsenService::class)->index($request->all());
+        return view('koordinator-redaksi.read-only.sekretaris.absen.index', $data);
     }
 }

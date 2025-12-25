@@ -34,47 +34,57 @@
                     <i class="fas fa-home mr-3 w-5 text-center"></i>Dashboard
                 </a>
                 
-                <!-- Manajemen Program Kerja -->
-                <a href="{{ route('koordinator-jurnalistik.prokers.index') }}" class="flex items-center py-2.5 px-4 rounded-lg transition duration-200 hover:bg-[#1b334e]/10 hover:text-[#1b334e] {{ request()->routeIs('koordinator-jurnalistik.prokers.*') ? 'bg-[#1b334e]/10 text-[#1b334e] font-medium' : 'text-gray-600' }}">
-                    <i class="fas fa-tasks mr-3 w-5 text-center"></i>Program Kerja
-                </a>
-                
-                <!-- Manajemen Brief -->
-                <a href="{{ route('koordinator-jurnalistik.briefs.index') }}" class="flex items-center py-2.5 px-4 rounded-lg transition duration-200 hover:bg-[#1b334e]/10 hover:text-[#1b334e] {{ request()->routeIs('koordinator-jurnalistik.briefs.*') ? 'bg-[#1b334e]/10 text-[#1b334e] font-medium' : 'text-gray-600' }}">
-                    <i class="fas fa-file-alt mr-3 w-5 text-center"></i>Brief Litbang
-                </a>
-
-                <!-- Manajemen Brief Humas -->
-                <a href="{{ route('koordinator-jurnalistik.brief-humas.index') }}" class="flex items-center py-2.5 px-4 rounded-lg transition duration-200 hover:bg-[#1b334e]/10 hover:text-[#1b334e] {{ request()->routeIs('koordinator-jurnalistik.brief-humas.*') ? 'bg-[#1b334e]/10 text-[#1b334e] font-medium' : 'text-gray-600' }}">
-                    <i class="fas fa-bullhorn mr-3 w-5 text-center"></i>Brief Humas
-                </a>
-                
                 <!-- Manajemen Berita -->
                 <a href="{{ route('koordinator-jurnalistik.news.index') }}" class="flex items-center py-2.5 px-4 rounded-lg transition duration-200 hover:bg-[#1b334e]/10 hover:text-[#1b334e] {{ request()->routeIs('koordinator-jurnalistik.news.*') ? 'bg-[#1b334e]/10 text-[#1b334e] font-medium' : 'text-gray-600' }}">
                     <i class="fas fa-newspaper mr-3 w-5 text-center"></i>Berita
-                </a>
-                
-                <!-- Manajemen Caption -->
-                <a href="{{ route('koordinator-jurnalistik.contents.index') }}" class="flex items-center py-2.5 px-4 rounded-lg transition duration-200 hover:bg-[#1b334e]/10 hover:text-[#1b334e] {{ request()->routeIs('koordinator-jurnalistik.contents.*') ? 'bg-[#1b334e]/10 text-[#1b334e] font-medium' : 'text-gray-600' }}">
-                    <i class="fas fa-closed-captioning mr-3 w-5 text-center"></i>Caption
-                </a>
-                
-                <!-- Manajemen Desain -->
-                <a href="{{ route('koordinator-jurnalistik.designs.index') }}" class="flex items-center py-2.5 px-4 rounded-lg transition duration-200 hover:bg-[#1b334e]/10 hover:text-[#1b334e] {{ request()->routeIs('koordinator-jurnalistik.designs.*') ? 'bg-[#1b334e]/10 text-[#1b334e] font-medium' : 'text-gray-600' }}">
-                    <i class="fas fa-palette mr-3 w-5 text-center"></i>Desain Media
                 </a>
                 
                 <!-- Manajemen Funfact -->
                 <a href="{{ route('koordinator-jurnalistik.funfacts.index') }}" class="flex items-center py-2.5 px-4 rounded-lg transition duration-200 hover:bg-[#1b334e]/10 hover:text-[#1b334e] {{ request()->routeIs('koordinator-jurnalistik.funfacts.*') ? 'bg-[#1b334e]/10 text-[#1b334e] font-medium' : 'text-gray-600' }}">
                     <i class="fas fa-lightbulb mr-3 w-5 text-center"></i>Funfact
                 </a>
+
+                <!-- Konten -->
+                <div class="px-4 py-2 mt-4">
+                    <p class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">Konten</p>
+                </div>
                 
-                <!-- Manajemen User -->
+                <a href="{{ route('koordinator-jurnalistik.contents.index') }}" class="flex items-center py-2.5 px-4 rounded-lg transition duration-200 hover:bg-[#1b334e]/10 hover:text-[#1b334e] {{ request()->routeIs('koordinator-jurnalistik.contents.*') ? 'bg-[#1b334e]/10 text-[#1b334e] font-medium' : 'text-gray-600' }}">
+                    <i class="fas fa-closed-captioning mr-3 w-5 text-center"></i>Caption
+                </a>
+                
+                <a href="{{ route('koordinator-jurnalistik.designs.index') }}" class="flex items-center py-2.5 px-4 rounded-lg transition duration-200 hover:bg-[#1b334e]/10 hover:text-[#1b334e] {{ request()->routeIs('koordinator-jurnalistik.designs.*') ? 'bg-[#1b334e]/10 text-[#1b334e] font-medium' : 'text-gray-600' }}">
+                    <i class="fas fa-palette mr-3 w-5 text-center"></i>Desain Media
+                </a>
+
+                <!-- Brief -->
+                <div class="px-4 py-2 mt-4">
+                    <p class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">Brief</p>
+                </div>
+                
+                <a href="{{ route('koordinator-jurnalistik.briefs.index') }}" class="flex items-center py-2.5 px-4 rounded-lg transition duration-200 hover:bg-[#1b334e]/10 hover:text-[#1b334e] {{ request()->routeIs('koordinator-jurnalistik.briefs.*') ? 'bg-[#1b334e]/10 text-[#1b334e] font-medium' : 'text-gray-600' }}">
+                    <i class="fas fa-file-alt mr-3 w-5 text-center"></i>Brief Litbang
+                </a>
+                
+                <a href="{{ route('koordinator-jurnalistik.brief-humas.index') }}" class="flex items-center py-2.5 px-4 rounded-lg transition duration-200 hover:bg-[#1b334e]/10 hover:text-[#1b334e] {{ request()->routeIs('koordinator-jurnalistik.brief-humas.*') ? 'bg-[#1b334e]/10 text-[#1b334e] font-medium' : 'text-gray-600' }}">
+                    <i class="fas fa-bullhorn mr-3 w-5 text-center"></i>Brief Humas
+                </a>
+
+                <!-- Manajemen -->
+                <div class="px-4 py-2 mt-4">
+                    <p class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">Manajemen</p>
+                </div>
+                
+                <a href="{{ route('koordinator-jurnalistik.prokers.index') }}" class="flex items-center py-2.5 px-4 rounded-lg transition duration-200 hover:bg-[#1b334e]/10 hover:text-[#1b334e] {{ request()->routeIs('koordinator-jurnalistik.prokers.*') ? 'bg-[#1b334e]/10 text-[#1b334e] font-medium' : 'text-gray-600' }}">
+                    <i class="fas fa-tasks mr-3 w-5 text-center"></i>Program Kerja
+                </a>
+                
                 <a href="{{ route('koordinator-jurnalistik.users.index') }}" class="flex items-center py-2.5 px-4 rounded-lg transition duration-200 hover:bg-[#1b334e]/10 hover:text-[#1b334e] {{ request()->routeIs('koordinator-jurnalistik.users.*') ? 'bg-[#1b334e]/10 text-[#1b334e] font-medium' : 'text-gray-600' }}">
                     <i class="fas fa-users mr-3 w-5 text-center"></i>Manajemen User
                 </a>
                 
-                <div class="px-4 py-2">
+                <!-- Keuangan -->
+                <div class="px-4 py-2 mt-4">
                     <p class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">Keuangan</p>
                 </div>
                 <!-- Riwayat Kas Anggota -->
@@ -86,14 +96,15 @@
                     <i class="fas fa-file-invoice-dollar mr-3 w-5 text-center"></i>Laporan Keuangan
                 </a>
 
-                <div class="px-4 py-2 mt-2">
-                    <p class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">Sekretaris (Read-Only)</p>
+                <!-- Sekretaris -->
+                <div class="px-4 py-2 mt-4">
+                    <p class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">Sekretaris</p>
                 </div>
-                <!-- Notulensi Sekretaris (Read-Only) -->
+                
                 <a href="{{ route('koordinator-jurnalistik.sekretaris.notulensi.index') }}" class="flex items-center py-2.5 px-4 rounded-lg transition duration-200 hover:bg-[#1b334e]/10 hover:text-[#1b334e] {{ request()->routeIs('koordinator-jurnalistik.sekretaris.notulensi.*') ? 'bg-[#1b334e]/10 text-[#1b334e] font-medium' : 'text-gray-600' }}">
                     <i class="fas fa-file-alt mr-3 w-5 text-center"></i>Notulensi Rapat
                 </a>
-                <!-- Absen Sekretaris (Read-Only) -->
+                
                 <a href="{{ route('koordinator-jurnalistik.sekretaris.absen.index') }}" class="flex items-center py-2.5 px-4 rounded-lg transition duration-200 hover:bg-[#1b334e]/10 hover:text-[#1b334e] {{ request()->routeIs('koordinator-jurnalistik.sekretaris.absen.*') ? 'bg-[#1b334e]/10 text-[#1b334e] font-medium' : 'text-gray-600' }}">
                     <i class="fas fa-user-check mr-3 w-5 text-center"></i>Absen Anggota
                 </a>
