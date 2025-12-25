@@ -16,15 +16,26 @@ class DesignService
     {
         $query = Design::with(['berita']);
 
-        // Filter by search (judul)
+        // Filter by search (judul atau catatan)
+        // Laravel's query builder automatically escapes LIKE parameters, but we validate input
         if ($request->has('search') && $request->search) {
-            $search = $request->search;
-            $query->where('judul', 'like', '%' . $search . '%');
+            $search = trim($request->search);
+            // Limit search length to prevent DoS
+            if (strlen($search) > 255) {
+                $search = substr($search, 0, 255);
+            }
+            $query->where(function($q) use ($search) {
+                $q->where('judul', 'like', '%' . $search . '%')
+                  ->orWhere('catatan', 'like', '%' . $search . '%');
+            });
         }
 
-        // Filter by jenis
+        // Filter by jenis - validate against allowed types
         if ($request->has('jenis') && $request->jenis) {
-            $query->where('jenis', $request->jenis);
+            $allowedJenis = ['image', 'video', 'infographic', 'other'];
+            if (in_array($request->jenis, $allowedJenis)) {
+                $query->where('jenis', $request->jenis);
+            }
         }
 
         $designs = $query->latest()->paginate(10)->withQueryString();

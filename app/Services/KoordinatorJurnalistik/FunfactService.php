@@ -25,8 +25,13 @@ class FunfactService
         $query = Funfact::with(['creator']);
 
         // Filter by search (judul atau isi)
+        // Laravel's query builder automatically escapes LIKE parameters, but we validate input
         if ($request->has('search') && $request->search) {
-            $search = $request->search;
+            $search = trim($request->search);
+            // Limit search length to prevent DoS
+            if (strlen($search) > 255) {
+                $search = substr($search, 0, 255);
+            }
             $query->where(function($q) use ($search) {
                 $q->where('judul', 'like', '%' . $search . '%')
                   ->orWhere('isi', 'like', '%' . $search . '%');

@@ -43,6 +43,11 @@
                 <a href="{{ route('koordinator-jurnalistik.briefs.index') }}" class="flex items-center py-2.5 px-4 rounded-lg transition duration-200 hover:bg-[#1b334e]/10 hover:text-[#1b334e] {{ request()->routeIs('koordinator-jurnalistik.briefs.*') ? 'bg-[#1b334e]/10 text-[#1b334e] font-medium' : 'text-gray-600' }}">
                     <i class="fas fa-file-alt mr-3 w-5 text-center"></i>Brief Litbang
                 </a>
+
+                <!-- Manajemen Brief Humas -->
+                <a href="{{ route('koordinator-jurnalistik.brief-humas.index') }}" class="flex items-center py-2.5 px-4 rounded-lg transition duration-200 hover:bg-[#1b334e]/10 hover:text-[#1b334e] {{ request()->routeIs('koordinator-jurnalistik.brief-humas.*') ? 'bg-[#1b334e]/10 text-[#1b334e] font-medium' : 'text-gray-600' }}">
+                    <i class="fas fa-bullhorn mr-3 w-5 text-center"></i>Brief Humas
+                </a>
                 
                 <!-- Manajemen Berita -->
                 <a href="{{ route('koordinator-jurnalistik.news.index') }}" class="flex items-center py-2.5 px-4 rounded-lg transition duration-200 hover:bg-[#1b334e]/10 hover:text-[#1b334e] {{ request()->routeIs('koordinator-jurnalistik.news.*') ? 'bg-[#1b334e]/10 text-[#1b334e] font-medium' : 'text-gray-600' }}">
@@ -69,6 +74,30 @@
                     <i class="fas fa-users mr-3 w-5 text-center"></i>Manajemen User
                 </a>
                 
+                <div class="px-4 py-2">
+                    <p class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">Keuangan</p>
+                </div>
+                <!-- Riwayat Kas Anggota -->
+                <a href="{{ route('koordinator-jurnalistik.kas-anggota.riwayat') }}" class="flex items-center py-2.5 px-4 rounded-lg transition duration-200 hover:bg-[#1b334e]/10 hover:text-[#1b334e] {{ request()->routeIs('koordinator-jurnalistik.kas-anggota.riwayat') ? 'bg-[#1b334e]/10 text-[#1b334e] font-medium' : 'text-gray-600' }}">
+                    <i class="fas fa-wallet mr-3 w-5 text-center"></i>Riwayat Kas Anggota
+                </a>
+                <!-- Laporan Keuangan -->
+                <a href="{{ route('koordinator-jurnalistik.laporan.index') }}" class="flex items-center py-2.5 px-4 rounded-lg transition duration-200 hover:bg-[#1b334e]/10 hover:text-[#1b334e] {{ request()->routeIs('koordinator-jurnalistik.laporan.index') ? 'bg-[#1b334e]/10 text-[#1b334e] font-medium' : 'text-gray-600' }}">
+                    <i class="fas fa-file-invoice-dollar mr-3 w-5 text-center"></i>Laporan Keuangan
+                </a>
+
+                <div class="px-4 py-2 mt-2">
+                    <p class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">Sekretaris (Read-Only)</p>
+                </div>
+                <!-- Notulensi Sekretaris (Read-Only) -->
+                <a href="{{ route('koordinator-jurnalistik.sekretaris.notulensi.index') }}" class="flex items-center py-2.5 px-4 rounded-lg transition duration-200 hover:bg-[#1b334e]/10 hover:text-[#1b334e] {{ request()->routeIs('koordinator-jurnalistik.sekretaris.notulensi.*') ? 'bg-[#1b334e]/10 text-[#1b334e] font-medium' : 'text-gray-600' }}">
+                    <i class="fas fa-file-alt mr-3 w-5 text-center"></i>Notulensi Rapat
+                </a>
+                <!-- Absen Sekretaris (Read-Only) -->
+                <a href="{{ route('koordinator-jurnalistik.sekretaris.absen.index') }}" class="flex items-center py-2.5 px-4 rounded-lg transition duration-200 hover:bg-[#1b334e]/10 hover:text-[#1b334e] {{ request()->routeIs('koordinator-jurnalistik.sekretaris.absen.*') ? 'bg-[#1b334e]/10 text-[#1b334e] font-medium' : 'text-gray-600' }}">
+                    <i class="fas fa-user-check mr-3 w-5 text-center"></i>Absen Anggota
+                </a>
+
                 <hr class="my-4 border-gray-200">
 
                 <!-- Logout -->

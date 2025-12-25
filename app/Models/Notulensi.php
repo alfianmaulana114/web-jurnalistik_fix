@@ -19,6 +19,7 @@ class Notulensi extends Model
         'waktu_mulai',
         'waktu_selesai',
         'isi_notulensi',
+        'pdf_path',
         'tempat',
         'peserta',
         'kesimpulan',

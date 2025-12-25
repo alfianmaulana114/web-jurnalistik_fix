@@ -1,4 +1,4 @@
-@extends('layouts.bendahara')
+@extends($layout ?? 'layouts.bendahara')
 
 @section('title', 'Detail Caption')
 @section('header', 'Detail Caption (Read-Only)')
@@ -22,7 +22,7 @@
                 <div class="card-header bg-white border-b border-[#D8C4B6]/40">
                     <h3 class="card-title text-[#1b334e]">Detail Caption</h3>
                     <div class="card-tools">
-                        <a href="{{ route('bendahara.view.contents.index') }}" class="btn btn-secondary btn-sm">
+                        <a href="{{ route(($routePrefix ?? 'bendahara.view').'.contents.index') }}" class="btn btn-secondary btn-sm">
                             <i class="fas fa-arrow-left"></i> Kembali
                         </a>
                     </div>
@@ -53,9 +53,9 @@
                                             </div>
                                             <div class="card-body">
                                                 <h6>{{ $content->berita->title ?? $content->berita->judul }}</h6>
-                                                <a href="{{ route('bendahara.view.news.show', $content->berita->id) }}" 
+                                                <a href="{{ route(($routePrefix ?? 'bendahara.view').'.news.show', $content->berita->id) }}" 
                                                    target="_blank" 
-                                                   class="btn btn-sm btn-outline-primary mt-2">
+                                                    class="btn btn-sm btn-outline-primary mt-2">
                                                     <i class="fas fa-eye"></i> Lihat Berita Lengkap
                                                 </a>
                                             </div>
@@ -72,9 +72,9 @@
                                             </div>
                                             <div class="card-body">
                                                 <h6>{{ $content->desain->judul }}</h6>
-                                                <a href="{{ route('bendahara.view.designs.show', $content->desain) }}" 
+                                                <a href="{{ route(($routePrefix ?? 'bendahara.view').'.designs.show', $content->desain) }}" 
                                                    target="_blank" 
-                                                   class="btn btn-sm btn-outline-primary mt-2">
+                                                    class="btn btn-sm btn-outline-primary mt-2">
                                                     <i class="fas fa-eye"></i> Lihat Desain Lengkap
                                                 </a>
                                             </div>

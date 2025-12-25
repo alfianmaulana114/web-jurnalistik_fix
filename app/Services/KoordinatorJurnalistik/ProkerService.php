@@ -15,22 +15,35 @@ class ProkerService
         $query = Proker::query();
 
         // Filter by search (nama_proker atau deskripsi)
+        // Laravel's query builder automatically escapes LIKE parameters, but we validate input
         if ($request->has('search') && $request->search) {
-            $search = $request->search;
+            $search = trim($request->search);
+            // Limit search length to prevent DoS
+            if (strlen($search) > 255) {
+                $search = substr($search, 0, 255);
+            }
             $query->where(function($q) use ($search) {
                 $q->where('nama_proker', 'like', '%' . $search . '%')
                   ->orWhere('deskripsi', 'like', '%' . $search . '%');
             });
         }
 
-        // Filter by status
+        // Filter by status - validate against allowed statuses
         if ($request->has('status') && $request->status) {
-            $query->where('status', $request->status);
+            $allowedStatuses = array_keys(Proker::getAllStatuses());
+            if (in_array($request->status, $allowedStatuses)) {
+                $query->where('status', $request->status);
+            }
         }
 
-        // Filter by year
+        // Filter by year - validate it's a valid year
         if ($request->has('year') && $request->year) {
-            $query->whereYear('tanggal_mulai', $request->year);
+            $year = filter_var($request->year, FILTER_VALIDATE_INT, [
+                'options' => ['min_range' => 2000, 'max_range' => 2100]
+            ]);
+            if ($year !== false) {
+                $query->whereYear('tanggal_mulai', $year);
+            }
         }
 
         $prokers = $query->latest()->paginate(10)->withQueryString();

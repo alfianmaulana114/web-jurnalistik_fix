@@ -20,8 +20,13 @@ class UserController extends Controller
         $query = User::query();
 
         // Filter by search (name, email, atau NIM)
+        // Laravel's query builder automatically escapes LIKE parameters, but we validate input
         if ($request->has('search') && $request->search) {
-            $search = $request->search;
+            $search = trim($request->search);
+            // Limit search length to prevent DoS
+            if (strlen($search) > 255) {
+                $search = substr($search, 0, 255);
+            }
             $query->where(function($q) use ($search) {
                 $q->where('name', 'like', '%' . $search . '%')
                   ->orWhere('email', 'like', '%' . $search . '%')
@@ -29,9 +34,12 @@ class UserController extends Controller
             });
         }
 
-        // Filter by role
+        // Filter by role - validate against allowed roles
         if ($request->has('role') && $request->role) {
-            $query->where('role', $request->role);
+            $allowedRoles = array_keys(User::getAllRoles());
+            if (in_array($request->role, $allowedRoles)) {
+                $query->where('role', $request->role);
+            }
         }
 
         // Filter by divisi (berdasarkan role)

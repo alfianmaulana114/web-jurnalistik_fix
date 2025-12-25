@@ -1,4 +1,4 @@
-@extends('layouts.bendahara')
+@extends($layout ?? 'layouts.bendahara')
 
 @section('title', 'Desain Media')
 @section('header', 'Desain Media (Read-Only)')
@@ -26,7 +26,7 @@
 
     <!-- Filters -->
     <div class="bg-white rounded-lg border border-[#D8C4B6]/40 shadow-sm hover:shadow-md transition-all p-6">
-        <form method="GET" action="{{ route('bendahara.view.designs.index') }}" class="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <form method="GET" action="{{ route(($routePrefix ?? 'bendahara.view').'.designs.index') }}" class="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div>
                 <label for="search" class="block text-sm font-medium text-gray-700">Cari</label>
                 <input type="text" name="search" id="search" value="{{ request('search') }}" placeholder="Judul desain..." class="mt-1 block w-full border-[#D8C4B6]/40 rounded-lg shadow-sm focus:ring-[#f9b61a] focus:border-[#f9b61a] sm:text-sm">
@@ -45,7 +45,7 @@
                     <i class="fas fa-search mr-2"></i>
                     Terapkan Filter
                 </button>
-                <a href="{{ route('bendahara.view.designs.index') }}" class="px-4 py-2 bg-white text-[#1b334e] border border-[#D8C4B6]/40 rounded-lg font-semibold text-xs uppercase tracking-widest hover:bg-[#f9b61a]/10 focus:outline-none transition-all duration-150">
+                <a href="{{ route(($routePrefix ?? 'bendahara.view').'.designs.index') }}" class="px-4 py-2 bg-white text-[#1b334e] border border-[#D8C4B6]/40 rounded-lg font-semibold text-xs uppercase tracking-widest hover:bg-[#f9b61a]/10 focus:outline-none transition-all duration-150">
                     <i class="fas fa-times mr-2"></i>
                     Reset
                 </a>
@@ -77,7 +77,7 @@
                         @foreach($designs as $design)
                             <tr class="hover:bg-[#f9b61a]/5 transition-colors">
                                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                                    <a href="{{ route('bendahara.view.designs.show', $design) }}" class="font-medium hover:text-[#f9b61a]">
+                                    <a href="{{ route(($routePrefix ?? 'bendahara.view').'.designs.show', $design) }}" class="font-medium hover:text-[#f9b61a]">
                                         {{ Str::limit($design->judul, 60) }}
                                     </a>
                                 </td>
@@ -99,7 +99,7 @@
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                                     @if($design->berita)
-                                        <a href="{{ route('bendahara.view.news.show', $design->berita->id) }}" class="text-[#1b334e] hover:text-[#f9b61a]">
+                                        <a href="{{ route(($routePrefix ?? 'bendahara.view').'.news.show', $design->berita->id) }}" class="text-[#1b334e] hover:text-[#f9b61a]">
                                             {{ Str::limit($design->berita->title ?? $design->berita->judul ?? 'Berita', 40) }}
                                         </a>
                                     @else
@@ -123,7 +123,7 @@
                                     <div class="text-xs">{{ $design->created_at->format('H:i') }}</div>
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                                    <a href="{{ route('bendahara.view.designs.show', $design) }}" class="text-[#1b334e] hover:bg-[#f9b61a]/10 p-2 rounded-lg transition-all" title="Lihat Detail">
+                                    <a href="{{ route(($routePrefix ?? 'bendahara.view').'.designs.show', $design) }}" class="text-[#1b334e] hover:bg-[#f9b61a]/10 p-2 rounded-lg transition-all" title="Lihat Detail">
                                         <i class="fas fa-eye"></i>
                                     </a>
                                 </td>

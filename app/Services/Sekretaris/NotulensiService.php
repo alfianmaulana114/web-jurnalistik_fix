@@ -9,6 +9,7 @@ use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 
 class NotulensiService
 {
@@ -41,6 +42,7 @@ class NotulensiService
             'peserta_user_ids.*' => 'exists:users,id',
             'peserta_kehadiran' => 'nullable|array',
             'peserta_kehadiran.*' => 'in:hadir,izin,sakit,tidak_hadir',
+            'pdf' => 'nullable|file|mimes:pdf|max:2048',
         ]);
 
         $validated['created_by'] = auth()->id();
@@ -50,6 +52,11 @@ class NotulensiService
         if (!empty($userIds)) {
             $names = User::whereIn('id', $userIds)->pluck('name')->toArray();
             $validated['peserta'] = implode("\n", $names);
+        }
+
+        if ($request->hasFile('pdf')) {
+            $path = $request->file('pdf')->store('notulensi-pdfs', 'public');
+            $validated['pdf_path'] = $path;
         }
 
         $notulensi = Notulensi::create($validated);
@@ -88,6 +95,7 @@ class NotulensiService
             'peserta_user_ids.*' => 'exists:users,id',
             'peserta_kehadiran' => 'nullable|array',
             'peserta_kehadiran.*' => 'in:hadir,izin,sakit,tidak_hadir',
+            'pdf' => 'nullable|file|mimes:pdf|max:2048',
         ]);
 
         $validated['updated_by'] = auth()->id();
@@ -97,6 +105,14 @@ class NotulensiService
         if (!empty($userIds)) {
             $names = User::whereIn('id', $userIds)->pluck('name')->toArray();
             $validated['peserta'] = implode("\n", $names);
+        }
+
+        if ($request->hasFile('pdf')) {
+            if (!empty($notulensi->pdf_path)) {
+                Storage::disk('public')->delete($notulensi->pdf_path);
+            }
+            $path = $request->file('pdf')->store('notulensi-pdfs', 'public');
+            $validated['pdf_path'] = $path;
         }
 
         $notulensi->update($validated);
@@ -111,6 +127,9 @@ class NotulensiService
 
     public function destroy(Notulensi $notulensi): RedirectResponse
     {
+        if (!empty($notulensi->pdf_path)) {
+            Storage::disk('public')->delete($notulensi->pdf_path);
+        }
         $notulensi->delete();
 
         return redirect()->route('sekretaris.notulensi.index')
@@ -125,11 +144,7 @@ class NotulensiService
      */
     private function syncAttendanceFromNotulensi(Notulensi $notulensi, array $attendanceMap, array $userIds): void
     {
-        if (empty($userIds)) {
-            return;
-        }
-
-        // Pastikan setiap peserta memiliki status (default: hadir)
+        // Siapkan default status untuk peserta yang diinput (hadir jika tidak diset)
         foreach ($userIds as $userId) {
             if (!isset($attendanceMap[$userId]) || empty($attendanceMap[$userId])) {
                 $attendanceMap[$userId] = Absen::STATUS_HADIR;
@@ -141,7 +156,12 @@ class NotulensiService
         $tahun = (int) $tanggal->year;
         $createdBy = auth()->id();
 
-        DB::transaction(function () use ($attendanceMap, $userIds, $notulensi, $bulan, $tahun, $createdBy) {
+        // Ambil seluruh anggota untuk penandaan "tidak hadir" jika tidak diinput
+        $allUserIds = User::pluck('id')->toArray();
+        $absentUserIds = array_values(array_diff($allUserIds, $userIds));
+
+        DB::transaction(function () use ($attendanceMap, $userIds, $absentUserIds, $notulensi, $bulan, $tahun, $createdBy) {
+            // Tandai peserta yang diinput sesuai status (default hadir)
             foreach ($userIds as $userId) {
                 $status = $attendanceMap[$userId] ?? Absen::STATUS_HADIR;
 
@@ -150,26 +170,46 @@ class NotulensiService
                     ->first();
 
                 if ($existing) {
-                    // Jika record ini terkait dengan notulensi yang sama, izinkan update status dari Notulensi
                     if ($existing->notulensi_id === $notulensi->id) {
                         $existing->status = $status;
                         $existing->keterangan = ucfirst($status) . ' (update dari Notulensi)';
                         $existing->save();
                     } else {
-                        // Jika belum terkait ke notulensi ini, tautkan tanpa menimpa status yang sudah ada
                         if (empty($existing->notulensi_id)) {
                             $existing->notulensi_id = $notulensi->id;
                             $existing->save();
                         }
                     }
+                } else {
+                    Absen::create([
+                        'user_id' => $userId,
+                        'tanggal' => $notulensi->tanggal,
+                        'status' => $status,
+                        'keterangan' => ucfirst($status) . ' (otomatis dari Notulensi)',
+                        'notulensi_id' => $notulensi->id,
+                        'bulan' => $bulan,
+                        'tahun' => $tahun,
+                        'created_by' => $createdBy,
+                    ]);
+                }
+            }
+
+            // Tandai anggota lain sebagai "tidak hadir" jika belum ada record pada tanggal rapat
+            foreach ($absentUserIds as $userId) {
+                $existing = Absen::where('user_id', $userId)
+                    ->whereDate('tanggal', $notulensi->tanggal)
+                    ->first();
+
+                if ($existing) {
+                    // Jangan menimpa status manual yang sudah ada
                     continue;
                 }
 
                 Absen::create([
                     'user_id' => $userId,
                     'tanggal' => $notulensi->tanggal,
-                    'status' => $status,
-                    'keterangan' => ucfirst($status) . ' (otomatis dari Notulensi)',
+                    'status' => Absen::STATUS_TIDAK_HADIR,
+                    'keterangan' => 'Tidak hadir (otomatis dari Notulensi)',
                     'notulensi_id' => $notulensi->id,
                     'bulan' => $bulan,
                     'tahun' => $tahun,

@@ -24,17 +24,25 @@ class NewsService
         $query = News::with(['user', 'category', 'type', 'genres', 'approval.user']);
 
         // Filter by search (title atau content)
+        // Laravel's query builder automatically escapes LIKE parameters, but we validate input
         if ($request->has('search') && $request->search) {
-            $search = $request->search;
+            $search = trim($request->search);
+            // Limit search length to prevent DoS
+            if (strlen($search) > 255) {
+                $search = substr($search, 0, 255);
+            }
             $query->where(function($q) use ($search) {
                 $q->where('title', 'like', '%' . $search . '%')
                   ->orWhere('content', 'like', '%' . $search . '%');
             });
         }
 
-        // Filter by category
+        // Filter by category - validate it's a valid integer
         if ($request->has('category') && $request->category) {
-            $query->where('category_id', $request->category);
+            $categoryId = filter_var($request->category, FILTER_VALIDATE_INT);
+            if ($categoryId !== false && $categoryId > 0) {
+                $query->where('category_id', $categoryId);
+            }
         }
 
         // Filter by approval status
@@ -78,7 +86,13 @@ class NewsService
 
         $imagePath = null;
         if ($request->has('temp_image_id')) {
-            $tempImage = TempImage::find($request->temp_image_id);
+            // Validate temp_image_id is positive integer
+            $tempImageId = filter_var($request->temp_image_id, FILTER_VALIDATE_INT);
+            if ($tempImageId === false || $tempImageId <= 0) {
+                return redirect()->back()->withErrors(['temp_image_id' => 'Invalid image ID']);
+            }
+            
+            $tempImage = TempImage::find($tempImageId);
             if ($tempImage) {
                 $newPath = 'images/news/' . $tempImage->filename;
                 if (rename(public_path($tempImage->path), public_path($newPath))) {
@@ -135,6 +149,11 @@ class NewsService
      */
     public function show(int $id): array
     {
+        // Validate ID is positive integer
+        if ($id <= 0 || !is_numeric($id)) {
+            abort(404, 'Resource not found');
+        }
+        
         $news = News::with(['user', 'category', 'type', 'genres'])->findOrFail($id);
         return compact('news');
     }
@@ -147,6 +166,11 @@ class NewsService
      */
     public function edit(int $id): array
     {
+        // Validate ID is positive integer
+        if ($id <= 0 || !is_numeric($id)) {
+            abort(404, 'Resource not found');
+        }
+        
         $news = News::with(['genres', 'translations'])->findOrFail($id);
         return [
             'news' => $news,
@@ -165,6 +189,11 @@ class NewsService
      */
     public function update(Request $request, int $id): RedirectResponse
     {
+        // Validate ID is positive integer
+        if ($id <= 0 || !is_numeric($id)) {
+            abort(404, 'Resource not found');
+        }
+        
         $validated = $this->validateNews($request, $id);
         $news = News::findOrFail($id);
 
@@ -220,7 +249,13 @@ class NewsService
         }
 
         if ($request->has('temp_image_id')) {
-            $tempImage = TempImage::find($request->temp_image_id);
+            // Validate temp_image_id is positive integer
+            $tempImageId = filter_var($request->temp_image_id, FILTER_VALIDATE_INT);
+            if ($tempImageId === false || $tempImageId <= 0) {
+                return redirect()->back()->withErrors(['temp_image_id' => 'Invalid image ID']);
+            }
+            
+            $tempImage = TempImage::find($tempImageId);
             if ($tempImage) {
                 if ($news->image && file_exists(public_path($news->image))) {
                     unlink(public_path($news->image));
@@ -249,6 +284,11 @@ class NewsService
      */
     public function destroy(int $id): RedirectResponse
     {
+        // Validate ID is positive integer
+        if ($id <= 0 || !is_numeric($id)) {
+            abort(404, 'Resource not found');
+        }
+        
         $news = News::findOrFail($id);
         if ($news->image && file_exists(public_path($news->image))) {
             unlink(public_path($news->image));

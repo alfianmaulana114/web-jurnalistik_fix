@@ -1,4 +1,4 @@
-@extends('layouts.bendahara')
+@extends($layout ?? 'layouts.bendahara')
 
 @section('title', 'Detail Berita')
 @section('header', 'Detail Berita (Read-Only)')
@@ -29,7 +29,7 @@
                     </div>
                 </div>
                 <div class="flex space-x-2">
-                    <a href="{{ route('bendahara.view.news.index') }}" 
+                    <a href="{{ route(($routePrefix ?? 'bendahara.view').'.news.index') }}" 
                        class="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition-colors">
                         <i class="fas fa-arrow-left mr-2"></i>Kembali
                     </a>

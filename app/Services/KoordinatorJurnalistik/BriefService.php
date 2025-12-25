@@ -14,17 +14,27 @@ class BriefService
         $query = Brief::with(['contents']);
 
         // Filter by search (judul atau isi_brief)
+        // Laravel's query builder automatically escapes LIKE parameters, but we validate input
         if ($request->has('search') && $request->search) {
-            $search = $request->search;
+            $search = trim($request->search);
+            // Limit search length to prevent DoS
+            if (strlen($search) > 255) {
+                $search = substr($search, 0, 255);
+            }
             $query->where(function($q) use ($search) {
                 $q->where('judul', 'like', '%' . $search . '%')
                   ->orWhere('isi_brief', 'like', '%' . $search . '%');
             });
         }
 
-        // Filter by tanggal
+        // Filter by tanggal - validate date format
         if ($request->has('tanggal') && $request->tanggal) {
-            $query->whereDate('tanggal', $request->tanggal);
+            try {
+                $tanggal = \Carbon\Carbon::createFromFormat('Y-m-d', $request->tanggal);
+                $query->whereDate('tanggal', $tanggal->format('Y-m-d'));
+            } catch (\Exception $e) {
+                // Invalid date format, ignore filter
+            }
         }
 
         $briefs = $query->latest()->paginate(10)->withQueryString();

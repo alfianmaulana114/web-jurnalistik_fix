@@ -16,6 +16,8 @@ class AbsenService
     {
         $search = $filters['search'] ?? '';
         $notulensi_id = $filters['notulensi_id'] ?? null;
+        $meeting_search = $filters['meeting_search'] ?? '';
+        $bulan = $filters['bulan'] ?? null;
 
         $query = User::query();
 
@@ -38,8 +40,18 @@ class AbsenService
         } else {
             $absenData = collect();
         }
-        $meetings = Notulensi::orderBy('tanggal', 'desc')->get();
-        return compact('users', 'absenData', 'search', 'meetings', 'notulensi_id');
+        $meetingsQuery = Notulensi::orderBy('tanggal', 'desc');
+        if (!empty($meeting_search)) {
+            $meetingsQuery->where(function ($q) use ($meeting_search) {
+                $q->where('judul', 'like', '%' . $meeting_search . '%')
+                  ->orWhere('tempat', 'like', '%' . $meeting_search . '%');
+            });
+        }
+        if (!empty($bulan)) {
+            $meetingsQuery->whereMonth('tanggal', (int) $bulan);
+        }
+        $meetings = $meetingsQuery->get();
+        return compact('users', 'absenData', 'search', 'meetings', 'notulensi_id', 'meeting_search', 'bulan');
     }
 
     public function store(Request $request): RedirectResponse

@@ -17,14 +17,38 @@ class ContentService
     {
         $query = Content::with(['brief', 'creator', 'berita', 'desain']);
 
-        // Filter by jenis_konten
-        if ($request->has('jenis_konten') && $request->jenis_konten) {
-            $query->where('jenis_konten', $request->jenis_konten);
+        // Filter by search (judul atau caption)
+        // Laravel's query builder automatically escapes LIKE parameters, but we validate input
+        if ($request->has('search') && $request->search) {
+            $search = trim($request->search);
+            // Limit search length to prevent DoS
+            if (strlen($search) > 255) {
+                $search = substr($search, 0, 255);
+            }
+            $query->where(function($q) use ($search) {
+                $q->where('judul', 'like', '%' . $search . '%')
+                  ->orWhere('caption', 'like', '%' . $search . '%');
+            });
         }
 
-        // Filter by media_type (berdasarkan berita atau desain)
+        // Filter by jenis_konten - validate against allowed types
+        if ($request->has('jenis_konten') && $request->jenis_konten) {
+            $allowedJenis = [
+                Content::TYPE_CAPTION_BERITA,
+                Content::TYPE_CAPTION_MEDIA_KREATIF,
+                Content::TYPE_CAPTION_DESAIN
+            ];
+            if (in_array($request->jenis_konten, $allowedJenis)) {
+                $query->where('jenis_konten', $request->jenis_konten);
+            }
+        }
+
+        // Filter by media_type (berdasarkan berita atau desain) - validate input
         if ($request->has('media_type') && $request->media_type) {
-            if ($request->media_type === 'image') {
+            $allowedMediaTypes = ['image', 'video'];
+            if (!in_array($request->media_type, $allowedMediaTypes)) {
+                // Invalid media type, ignore filter
+            } elseif ($request->media_type === 'image') {
                 $query->where(function($q) {
                     $q->whereHas('berita', function($subQ) {
                         $subQ->whereNotNull('image');

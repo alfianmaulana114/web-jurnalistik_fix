@@ -10,8 +10,12 @@ use App\Models\Content;
 use App\Models\Design;
 use App\Models\User;
 use App\Models\Funfact;
+use App\Models\BriefHumas;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
+use App\Models\Notulensi;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 
 /**
  * Controller untuk Bendahara - Read Only Access
@@ -145,8 +149,13 @@ class ReadOnlyController extends Controller
         $query = User::query();
 
         // Filter by search (name, email, atau NIM)
+        // Laravel's query builder automatically escapes LIKE parameters, but we validate input
         if ($request->has('search') && $request->search) {
-            $search = $request->search;
+            $search = trim($request->search);
+            // Limit search length to prevent DoS
+            if (strlen($search) > 255) {
+                $search = substr($search, 0, 255);
+            }
             $query->where(function($q) use ($search) {
                 $q->where('name', 'like', '%' . $search . '%')
                   ->orWhere('email', 'like', '%' . $search . '%')
@@ -154,9 +163,12 @@ class ReadOnlyController extends Controller
             });
         }
 
-        // Filter by role
+        // Filter by role - validate against allowed roles
         if ($request->has('role') && $request->role) {
-            $query->where('role', $request->role);
+            $allowedRoles = array_keys(User::getAllRoles());
+            if (in_array($request->role, $allowedRoles)) {
+                $query->where('role', $request->role);
+            }
         }
 
         // Filter by divisi (berdasarkan role)
@@ -187,6 +199,50 @@ class ReadOnlyController extends Controller
     public function usersShow(User $user): View
     {
         return view('bendahara.read-only.users.show', compact('user'));
+    }
+
+    public function briefHumasIndex(Request $request): View
+    {
+        $data = app(\App\Services\KoordinatorJurnalistik\BriefHumasService::class)->index($request);
+        return view('bendahara.read-only.brief-humas.index', $data);
+    }
+
+    public function briefHumasShow(BriefHumas $briefHumas): View
+    {
+        $data = app(\App\Services\KoordinatorJurnalistik\BriefHumasService::class)->show($briefHumas);
+        return view('bendahara.read-only.brief-humas.show', $data);
+    }
+
+    // Sekretaris (Read-Only)
+    public function sekretarisNotulensiIndex(): View
+    {
+        $data = app(\App\Services\Sekretaris\NotulensiService::class)->index();
+        return view('bendahara.read-only.sekretaris.notulensi.index', $data);
+    }
+
+    public function sekretarisNotulensiShow(Notulensi $notulensi): View
+    {
+        $data = app(\App\Services\Sekretaris\NotulensiService::class)->show($notulensi);
+        return view('bendahara.read-only.sekretaris.notulensi.show', $data);
+    }
+
+    public function sekretarisAbsenIndex(Request $request): View
+    {
+        $data = app(\App\Services\Sekretaris\AbsenService::class)->index($request->all());
+        return view('bendahara.read-only.sekretaris.absen.index', $data);
+    }
+
+    public function sekretarisNotulensiDownload(Notulensi $notulensi)
+    {
+        if (empty($notulensi->pdf_path)) {
+            return back()->with('error', 'PDF tidak tersedia untuk notulensi ini.');
+        }
+        if (!Storage::disk('public')->exists($notulensi->pdf_path)) {
+            return back()->with('error', 'File PDF tidak ditemukan.');
+        }
+        $filename = 'Notulensi-' . Str::slug($notulensi->judul) . '.pdf';
+        $fullPath = storage_path('app/public/' . $notulensi->pdf_path);
+        return response()->download($fullPath, $filename);
     }
 }
 

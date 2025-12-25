@@ -48,7 +48,14 @@ class BendaharaController extends Controller
 
             // Filter berdasarkan status
             if ($request->filled('status')) {
-                $query->where('status_pembayaran', $request->status);
+                $status = $request->status;
+                if ($status === 'belum_lunas') {
+                    $query->belumLunas();
+                } elseif ($status === 'nunggak') {
+                    $query->where('status_pembayaran', KasAnggota::STATUS_TERLAMBAT);
+                } else {
+                    $query->where('status_pembayaran', $status);
+                }
             }
 
             // Search berdasarkan nama anggota
@@ -63,10 +70,10 @@ class BendaharaController extends Controller
 
             // Hitung statistik
             $stats = [
-                'lunas' => KasAnggota::where('status_pembayaran', 'lunas')->count(),
-                'belum_lunas' => KasAnggota::where('status_pembayaran', 'belum_lunas')->count(),
-                'nunggak' => KasAnggota::where('status_pembayaran', 'nunggak')->count(),
-                'total_terkumpul' => KasAnggota::where('status_pembayaran', 'lunas')->sum('jumlah_terbayar')
+                'lunas' => KasAnggota::where('status_pembayaran', KasAnggota::STATUS_LUNAS)->count(),
+                'belum_lunas' => KasAnggota::belumLunas()->count(),
+                'nunggak' => KasAnggota::where('status_pembayaran', KasAnggota::STATUS_TERLAMBAT)->count(),
+                'total_terkumpul' => KasAnggota::where('status_pembayaran', KasAnggota::STATUS_LUNAS)->sum('jumlah_terbayar')
             ];
 
             // Data untuk filter
@@ -547,10 +554,15 @@ class BendaharaController extends Controller
     public function laporanKeuangan(Request $request)
     {
         try {
-            $bulan = (int) $request->get('bulan', now()->month);
-            $tahun = (int) $request->get('tahun', now()->year);
-            $data = app(\App\Services\Bendahara\LaporanService::class)->getLaporanKeuanganData($bulan, $tahun);
-            return view('bendahara.laporan.index', array_merge($data, compact('bulan', 'tahun')));
+            $filters = [
+                'periode' => $request->get('periode', 'bulan_ini'),
+                'bulan' => (int) $request->get('bulan', now()->month),
+                'tahun' => (int) $request->get('tahun', now()->year),
+                'tanggal_mulai' => $request->get('tanggal_mulai'),
+                'tanggal_selesai' => $request->get('tanggal_selesai'),
+            ];
+            $data = app(\App\Services\Bendahara\LaporanService::class)->getLaporanKeuanganData($filters);
+            return view('bendahara.laporan.index', $data);
         } catch (\Exception $e) {
             return back()->with('error', 'Terjadi kesalahan saat memuat laporan keuangan: ' . $e->getMessage());
         }
@@ -607,10 +619,13 @@ class BendaharaController extends Controller
     public function exportExcel(Request $request): StreamedResponse
     {
         $type = $request->get('type');
+        $periode = $request->get('periode');
         $bulan = (int) $request->get('bulan', now()->month);
         $tahun = (int) $request->get('tahun', now()->year);
+        $tanggalMulai = $request->get('tanggal_mulai');
+        $tanggalSelesai = $request->get('tanggal_selesai');
 
-        if (!in_array($type, ['kas-anggota', 'pemasukan', 'pengeluaran'], true)) {
+        if (!in_array($type, ['kas-anggota', 'pemasukan', 'pengeluaran', 'total-saldo'], true)) {
             abort(400, 'Tipe export tidak valid.');
         }
 
@@ -621,97 +636,408 @@ class BendaharaController extends Controller
                 7 => 'juli', 8 => 'agustus', 9 => 'september', 10 => 'oktober', 11 => 'november', 12 => 'desember'
             ];
             $periode = $bulanMap[$bulan] ?? strtolower(now()->format('F'));
-            $rows = KasAnggota::with('user')
+            $standardAmount = \App\Models\KasSetting::getJumlahKasAnggota();
+            $rows = KasAnggota::with(['user', 'creator', 'updater'])
                 ->where('tahun', $tahun)
                 ->where('periode', $periode)
                 ->orderBy('user_id')
                 ->get()
-                ->map(function ($item) {
+                ->map(function ($item) use ($standardAmount) {
+                    $user = optional($item->user);
+                    $divisi = method_exists($user, 'getDivision') ? ucfirst(str_replace('_',' ', $user->getDivision())) : '';
+                    $kekurangan = max(0, (float) $standardAmount - (float) $item->jumlah_terbayar);
                     return [
-                        'Nama' => optional($item->user)->name,
-                        'NIM' => optional($item->user)->nim,
-                        'Periode' => ucfirst($item->periode) . ' ' . $item->tahun,
+                        'Nama' => $user->name,
+                        'NIM' => $user->nim,
+                        'Divisi' => $divisi,
+                        'Tahun' => (int) $item->tahun,
+                        'Periode' => ucfirst($item->periode),
+                        'Status Pembayaran' => $item->status_pembayaran,
                         'Jumlah Terbayar' => (float) $item->jumlah_terbayar,
-                        'Status' => $item->status_pembayaran,
+                        'Jumlah Seharusnya' => (float) $standardAmount,
+                        'Kekurangan' => (float) $kekurangan,
+                        'Tanggal Pembayaran' => optional($item->tanggal_pembayaran)->format('Y-m-d'),
+                        'Dibuat Oleh' => optional($item->creator)->name,
+                        'Terakhir Diperbarui Oleh' => optional($item->updater)->name,
                         'Keterangan' => $item->keterangan,
                     ];
                 })->values();
         } elseif ($type === 'pemasukan') {
-            $rows = Pemasukan::verified()
-                ->whereMonth('tanggal_pemasukan', $bulan)
-                ->whereYear('tanggal_pemasukan', $tahun)
-                ->orderBy('tanggal_pemasukan')
+            $query = Pemasukan::verified()->with(['creator', 'verifier', 'user']);
+            if ($periode === 'custom' && $tanggalMulai && $tanggalSelesai) {
+                $query->whereBetween('tanggal_pemasukan', [$tanggalMulai, $tanggalSelesai]);
+            } else {
+                $query->whereMonth('tanggal_pemasukan', $bulan)->whereYear('tanggal_pemasukan', $tahun);
+            }
+            $rows = $query->orderBy('tanggal_pemasukan')
                 ->get()
                 ->map(function ($item) {
+                    $user = optional($item->user);
+                    $divisi = method_exists($user, 'getDivision') ? ucfirst(str_replace('_',' ', $user->getDivision())) : '';
                     return [
+                        'Kode Transaksi' => $item->kode_transaksi,
                         'Tanggal' => optional($item->tanggal_pemasukan)->format('Y-m-d'),
                         'Sumber' => $item->sumber_pemasukan,
                         'Kategori' => $item->getKategoriLabel(),
                         'Jumlah' => (float) $item->jumlah,
                         'Metode' => $item->getMetodePembayaranOptions()[$item->metode_pembayaran] ?? $item->metode_pembayaran,
+                        'Nomor Referensi' => $item->nomor_referensi,
+                        'Status' => $item->getStatusLabel(),
+                        'Dibuat Oleh' => optional($item->creator)->name,
+                        'Dibuat Pada' => optional($item->created_at)->format('Y-m-d H:i'),
+                        'Diverifikasi Oleh' => optional($item->verifier)->name,
+                        'Diverifikasi Pada' => optional($item->verified_at)->format('Y-m-d H:i'),
+                        'Pembayar' => $user->name,
+                        'NIM' => $user->nim,
+                        'Divisi' => $divisi,
                         'Deskripsi' => $item->deskripsi,
+                        'Keterangan' => $item->keterangan,
                     ];
                 })->values();
-        } else { // pengeluaran
-            $rows = Pengeluaran::paid()
-                ->whereMonth('tanggal_pengeluaran', $bulan)
-                ->whereYear('tanggal_pengeluaran', $tahun)
-                ->orderBy('tanggal_pengeluaran')
+        } elseif ($type === 'pengeluaran') {
+            $query = Pengeluaran::whereIn('status', [Pengeluaran::STATUS_APPROVED, Pengeluaran::STATUS_PAID])
+                ->with(['creator', 'approver', 'payer']);
+            if ($periode === 'custom' && $tanggalMulai && $tanggalSelesai) {
+                $query->whereBetween('tanggal_pengeluaran', [$tanggalMulai, $tanggalSelesai]);
+            } else {
+                $query->whereMonth('tanggal_pengeluaran', $bulan)->whereYear('tanggal_pengeluaran', $tahun);
+            }
+            $rows = $query->orderBy('tanggal_pengeluaran')
                 ->get()
                 ->map(function ($item) {
                     return [
+                        'Kode Transaksi' => $item->kode_transaksi,
                         'Tanggal' => optional($item->tanggal_pengeluaran)->format('Y-m-d'),
                         'Keperluan' => $item->keperluan,
-                        'Kategori' => $item->kategori,
+                        'Kategori' => $item->getKategoriLabel(),
                         'Jumlah' => (float) $item->jumlah,
-                        'Metode' => $item->metode_pembayaran,
+                        'Metode' => $item->getMetodePembayaranLabel(),
+                        'Nomor Referensi' => $item->nomor_referensi,
+                        'Penerima' => $item->penerima,
+                        'Status' => $item->getStatusLabel(),
+                        'Dibuat Oleh' => optional($item->creator)->name,
+                        'Disetujui Oleh' => optional($item->approver)->name,
+                        'Disetujui Pada' => optional($item->approved_at)->format('Y-m-d H:i'),
+                        'Dibayar Oleh' => optional($item->payer)->name,
+                        'Dibayar Pada' => optional($item->paid_at)->format('Y-m-d H:i'),
                         'Deskripsi' => $item->deskripsi,
+                        'Keterangan' => $item->keterangan,
                     ];
                 })->values();
+        } else {
+            $filters = [
+                'periode' => $periode ?? 'bulan_ini',
+                'bulan' => $bulan,
+                'tahun' => $tahun,
+                'tanggal_mulai' => $tanggalMulai,
+                'tanggal_selesai' => $tanggalSelesai,
+            ];
+            $data = app(\App\Services\Bendahara\LaporanService::class)->getLaporanKeuanganData($filters);
+            $rows = collect();
+            $rows->push(['Komponen' => 'Total Kas', 'Nilai' => (float) $data['totalKasAnggota']]);
+            $rows->push(['Komponen' => 'Total Pemasukan', 'Nilai' => (float) $data['totalPemasukan']]);
+            $rows->push(['Komponen' => 'Total Pengeluaran', 'Nilai' => (float) $data['totalPengeluaran']]);
+            $rows->push(['Komponen' => 'Total Saldo', 'Nilai' => (float) $data['totalSaldo']]);
         }
 
-        // Pastikan library tersedia
-        if (!class_exists(\PhpOffice\PhpSpreadsheet\Spreadsheet::class)) {
-            abort(500, 'Library PhpSpreadsheet belum terpasang. Silakan pasang: composer require phpoffice/phpspreadsheet');
-        }
+        $usePhpSpreadsheet = class_exists(\PhpOffice\PhpSpreadsheet\Spreadsheet::class);
+        $zipAvailable = extension_loaded('zip');
 
-        // Bangun spreadsheet
-        $spreadsheet = new \PhpOffice\PhpSpreadsheet\Spreadsheet();
-        $sheet = $spreadsheet->getActiveSheet();
+        $filenameBase = 'laporan-' . $type . '-' . $tahun . '-' . str_pad((string) $bulan, 2, '0', STR_PAD_LEFT);
 
-        // Header
-        $headers = array_keys($rows->first() ?? []);
-        foreach ($headers as $colIndex => $header) {
-            $sheet->setCellValueByColumnAndRow($colIndex + 1, 1, $header);
-        }
+        if ($usePhpSpreadsheet) {
+            $spreadsheet = new \PhpOffice\PhpSpreadsheet\Spreadsheet();
 
-        // Rows
-        $rowIndex = 2;
-        foreach ($rows as $row) {
-            $colIndex = 1;
-            foreach ($headers as $header) {
-                $sheet->setCellValueByColumnAndRow($colIndex, $rowIndex, $row[$header] ?? '');
-                $colIndex++;
+            $makeSheet = function($spreadsheet, string $title, \Illuminate\Support\Collection $rows) {
+                $sheet = $spreadsheet->getActiveSheet();
+                $sheet->setTitle($title);
+                $headers = array_keys($rows->first() ?? []);
+                $titleText = 'Laporan ' . $title;
+                $lastCol = $headers ? \PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex(count($headers)) : 'A';
+                $sheet->setCellValue('A1', $titleText);
+                $sheet->mergeCells('A1:' . $lastCol . '1');
+                $sheet->getStyle('A1')->getFont()->setBold(true)->setSize(14);
+                $sheet->getStyle('A1')->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
+
+                foreach ($headers as $colIndex => $header) {
+                    $sheet->setCellValueByColumnAndRow($colIndex + 1, 2, $header);
+                }
+
+                $rowIndex = 3;
+                foreach ($rows as $row) {
+                    $colIndex = 1;
+                    foreach ($headers as $header) {
+                        $sheet->setCellValueByColumnAndRow($colIndex, $rowIndex, $row[$header] ?? '');
+                        $colIndex++;
+                    }
+                    $rowIndex++;
+                }
+
+                $headerRange = 'A2:' . $lastCol . '2';
+                $dataRange = 'A2:' . $lastCol . ($rowIndex - 1);
+                $sheet->getStyle($headerRange)->getFont()->setBold(true);
+                $sheet->getStyle($headerRange)->getFill()->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID)->getStartColor()->setARGB('FFF3F4F6');
+                $sheet->getStyle($dataRange)->getBorders()->getAllBorders()->setBorderStyle(\PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN);
+                $sheet->freezePane('A3');
+                $sheet->setAutoFilter($headerRange);
+
+                for ($i = 1; $i <= count($headers); $i++) {
+                    $sheet->getColumnDimension(\PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex($i))->setAutoSize(true);
+                }
+
+                foreach ($headers as $idx => $header) {
+                    $needle = ['Jumlah', 'Nilai', 'Total', 'Kekurangan'];
+                    foreach ($needle as $n) {
+                        if (stripos($header, $n) !== false) {
+                            $colLetter = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex($idx + 1);
+                            $sheet->getStyle($colLetter . '3:' . $colLetter . ($rowIndex - 1))->getNumberFormat()->setFormatCode(\PhpOffice\PhpSpreadsheet\Style\NumberFormat::FORMAT_NUMBER_COMMA_SEPARATED1);
+                            break;
+                        }
+                    }
+                }
+
+                if ($rows->count() > 0) {
+                    $sumColIndex = null;
+                    foreach ($headers as $idx => $h) {
+                        if (stripos($h, 'Jumlah') !== false || stripos($h, 'Nilai') !== false) {
+                            $sumColIndex = $idx + 1;
+                            break;
+                        }
+                    }
+                    if ($sumColIndex) {
+                        $sumColLetter = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex($sumColIndex);
+                        $sheet->setCellValue('A' . $rowIndex, 'Total');
+                        $sheet->setCellValue($sumColLetter . $rowIndex, '=SUM(' . $sumColLetter . '3:' . $sumColLetter . ($rowIndex - 1) . ')');
+                        $sheet->getStyle('A' . $rowIndex . ':' . $lastCol . $rowIndex)->getFont()->setBold(true);
+                    }
+                }
+
+                return $sheet;
+            };
+
+            if ($type === 'total-saldo') {
+                $summaryRows = $rows; // from computed earlier
+
+                $spreadsheet->setActiveSheetIndex(0);
+                $makeSheet($spreadsheet, 'Total Saldo', $summaryRows);
+
+                $queryPemasukan = Pemasukan::verified()->with(['creator', 'verifier', 'user']);
+                if ($periode === 'custom' && $tanggalMulai && $tanggalSelesai) {
+                    $queryPemasukan->whereBetween('tanggal_pemasukan', [$tanggalMulai, $tanggalSelesai]);
+                } else {
+                    $queryPemasukan->whereMonth('tanggal_pemasukan', $bulan)->whereYear('tanggal_pemasukan', $tahun);
+                }
+                $pemasukanRows = $queryPemasukan->orderBy('tanggal_pemasukan')
+                    ->get()
+                    ->map(function ($item) {
+                        $user = optional($item->user);
+                        $divisi = method_exists($user, 'getDivision') ? ucfirst(str_replace('_',' ', $user->getDivision())) : '';
+                        return [
+                            'Kode Transaksi' => $item->kode_transaksi,
+                            'Tanggal' => optional($item->tanggal_pemasukan)->format('Y-m-d'),
+                            'Sumber' => $item->sumber_pemasukan,
+                            'Kategori' => $item->getKategoriLabel(),
+                            'Jumlah' => (float) $item->jumlah,
+                            'Metode' => $item->getMetodePembayaranOptions()[$item->metode_pembayaran] ?? $item->metode_pembayaran,
+                            'Nomor Referensi' => $item->nomor_referensi,
+                            'Status' => $item->getStatusLabel(),
+                            'Dibuat Oleh' => optional($item->creator)->name,
+                            'Dibuat Pada' => optional($item->created_at)->format('Y-m-d H:i'),
+                            'Diverifikasi Oleh' => optional($item->verifier)->name,
+                            'Diverifikasi Pada' => optional($item->verified_at)->format('Y-m-d H:i'),
+                            'Pembayar' => $user->name,
+                            'NIM' => $user->nim,
+                            'Divisi' => $divisi,
+                            'Deskripsi' => $item->deskripsi,
+                            'Keterangan' => $item->keterangan,
+                        ];
+                    })->values();
+
+                $spreadsheet->createSheet();
+                $spreadsheet->setActiveSheetIndex(1);
+                $makeSheet($spreadsheet, 'Pemasukan', $pemasukanRows);
+
+                $queryPengeluaran = Pengeluaran::whereIn('status', [Pengeluaran::STATUS_APPROVED, Pengeluaran::STATUS_PAID])
+                    ->with(['creator', 'approver', 'payer']);
+                if ($periode === 'custom' && $tanggalMulai && $tanggalSelesai) {
+                    $queryPengeluaran->whereBetween('tanggal_pengeluaran', [$tanggalMulai, $tanggalSelesai]);
+                } else {
+                    $queryPengeluaran->whereMonth('tanggal_pengeluaran', $bulan)->whereYear('tanggal_pengeluaran', $tahun);
+                }
+                $pengeluaranRows = $queryPengeluaran->orderBy('tanggal_pengeluaran')
+                    ->get()
+                    ->map(function ($item) {
+                        return [
+                            'Kode Transaksi' => $item->kode_transaksi,
+                            'Tanggal' => optional($item->tanggal_pengeluaran)->format('Y-m-d'),
+                            'Keperluan' => $item->keperluan,
+                            'Kategori' => $item->getKategoriLabel(),
+                            'Jumlah' => (float) $item->jumlah,
+                            'Metode' => $item->getMetodePembayaranLabel(),
+                            'Nomor Referensi' => $item->nomor_referensi,
+                            'Penerima' => $item->penerima,
+                            'Status' => $item->getStatusLabel(),
+                            'Dibuat Oleh' => optional($item->creator)->name,
+                            'Disetujui Oleh' => optional($item->approver)->name,
+                            'Disetujui Pada' => optional($item->approved_at)->format('Y-m-d H:i'),
+                            'Dibayar Oleh' => optional($item->payer)->name,
+                            'Dibayar Pada' => optional($item->paid_at)->format('Y-m-d H:i'),
+                            'Deskripsi' => $item->deskripsi,
+                            'Keterangan' => $item->keterangan,
+                        ];
+                    })->values();
+
+                $spreadsheet->createSheet();
+                $spreadsheet->setActiveSheetIndex(2);
+                $makeSheet($spreadsheet, 'Pengeluaran', $pengeluaranRows);
+
+                $bulanMap = [
+                    1 => 'januari', 2 => 'februari', 3 => 'maret', 4 => 'april', 5 => 'mei', 6 => 'juni',
+                    7 => 'juli', 8 => 'agustus', 9 => 'september', 10 => 'oktober', 11 => 'november', 12 => 'desember'
+                ];
+                $periodeKas = $bulanMap[$bulan] ?? strtolower(now()->format('F'));
+                $standardAmount = \App\Models\KasSetting::getJumlahKasAnggota();
+                $kasRows = KasAnggota::with(['user', 'creator', 'updater'])
+                    ->where('tahun', $tahun)
+                    ->where('periode', $periodeKas)
+                    ->orderBy('user_id')
+                    ->get()
+                    ->map(function ($item) use ($standardAmount) {
+                        $user = optional($item->user);
+                        $divisi = method_exists($user, 'getDivision') ? ucfirst(str_replace('_',' ', $user->getDivision())) : '';
+                        $kekurangan = max(0, (float) $standardAmount - (float) $item->jumlah_terbayar);
+                        return [
+                            'Nama' => $user->name,
+                            'NIM' => $user->nim,
+                            'Divisi' => $divisi,
+                            'Tahun' => (int) $item->tahun,
+                            'Periode' => ucfirst($item->periode),
+                            'Status Pembayaran' => $item->status_pembayaran,
+                            'Jumlah Terbayar' => (float) $item->jumlah_terbayar,
+                            'Jumlah Seharusnya' => (float) $standardAmount,
+                            'Kekurangan' => (float) $kekurangan,
+                            'Tanggal Pembayaran' => optional($item->tanggal_pembayaran)->format('Y-m-d'),
+                            'Dibuat Oleh' => optional($item->creator)->name,
+                            'Terakhir Diperbarui Oleh' => optional($item->updater)->name,
+                            'Keterangan' => $item->keterangan,
+                        ];
+                    })->values();
+
+                $spreadsheet->createSheet();
+                $spreadsheet->setActiveSheetIndex(3);
+                $makeSheet($spreadsheet, 'Kas Anggota', $kasRows);
+
+                $filename = $filenameBase . ($zipAvailable ? '.xlsx' : '.xls');
+                $writer = $zipAvailable
+                    ? new \PhpOffice\PhpSpreadsheet\Writer\Xlsx($spreadsheet)
+                    : new \PhpOffice\PhpSpreadsheet\Writer\Xls($spreadsheet);
+                $contentType = $zipAvailable ? 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' : 'application/vnd.ms-excel';
+                $spreadsheet->setActiveSheetIndex(0);
+
+                return new StreamedResponse(function () use ($writer) {
+                    $writer->save('php://output');
+                }, 200, [
+                    'Content-Type' => $contentType,
+                    'Content-Disposition' => 'attachment;filename="' . $filename . '"',
+                    'Cache-Control' => 'max-age=0',
+                ]);
             }
-            $rowIndex++;
-        }
 
-        // Format kolom angka 'Jumlah' jika ada
-        foreach ($headers as $idx => $header) {
-            if (stripos($header, 'Jumlah') !== false) {
-                $colLetter = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex($idx + 1);
-                $sheet->getStyle($colLetter . '2:' . $colLetter . ($rowIndex - 1))
-                    ->getNumberFormat()->setFormatCode(\PhpOffice\PhpSpreadsheet\Style\NumberFormat::FORMAT_NUMBER_COMMA_SEPARATED1);
+            $sheet = $spreadsheet->getActiveSheet();
+            $headers = array_keys($rows->first() ?? []);
+            $title = 'Laporan ' . str_replace('-', ' ', ucfirst($type));
+            $lastCol = $headers ? \PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex(count($headers)) : 'A';
+            $sheet->setCellValue('A1', $title);
+            $sheet->mergeCells('A1:' . $lastCol . '1');
+            $sheet->getStyle('A1')->getFont()->setBold(true)->setSize(14);
+            $sheet->getStyle('A1')->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
+
+            foreach ($headers as $colIndex => $header) {
+                $sheet->setCellValueByColumnAndRow($colIndex + 1, 2, $header);
             }
+
+            $rowIndex = 3;
+            foreach ($rows as $row) {
+                $colIndex = 1;
+                foreach ($headers as $header) {
+                    $sheet->setCellValueByColumnAndRow($colIndex, $rowIndex, $row[$header] ?? '');
+                    $colIndex++;
+                }
+                $rowIndex++;
+            }
+
+            $headerRange = 'A2:' . $lastCol . '2';
+            $dataRange = 'A2:' . $lastCol . ($rowIndex - 1);
+            $sheet->getStyle($headerRange)->getFont()->setBold(true);
+            $sheet->getStyle($headerRange)->getFill()->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID)->getStartColor()->setARGB('FFF3F4F6');
+            $sheet->getStyle($dataRange)->getBorders()->getAllBorders()->setBorderStyle(\PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN);
+            $sheet->freezePane('A3');
+            $sheet->setAutoFilter($headerRange);
+
+            for ($i = 1; $i <= count($headers); $i++) {
+                $sheet->getColumnDimension(\PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex($i))->setAutoSize(true);
+            }
+
+            foreach ($headers as $idx => $header) {
+                $needle = ['Jumlah', 'Nilai', 'Total'];
+                foreach ($needle as $n) {
+                    if (stripos($header, $n) !== false) {
+                        $colLetter = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex($idx + 1);
+                        $sheet->getStyle($colLetter . '3:' . $colLetter . ($rowIndex - 1))->getNumberFormat()->setFormatCode(\PhpOffice\PhpSpreadsheet\Style\NumberFormat::FORMAT_NUMBER_COMMA_SEPARATED1);
+                        break;
+                    }
+                }
+            }
+
+            if (in_array($type, ['kas-anggota', 'pemasukan', 'pengeluaran'], true) && $rows->count() > 0) {
+                $sumColIndex = null;
+                foreach ($headers as $idx => $h) {
+                    if (stripos($h, 'Jumlah') !== false) {
+                        $sumColIndex = $idx + 1;
+                        break;
+                    }
+                }
+                if ($sumColIndex) {
+                    $sumColLetter = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex($sumColIndex);
+                    $sheet->setCellValue('A' . $rowIndex, 'Total');
+                    $sheet->setCellValue($sumColLetter . $rowIndex, '=SUM(' . $sumColLetter . '3:' . $sumColLetter . ($rowIndex - 1) . ')');
+                    $sheet->getStyle('A' . $rowIndex . ':' . $lastCol . $rowIndex)->getFont()->setBold(true);
+                }
+            }
+
+            $filename = $filenameBase . ($zipAvailable ? '.xlsx' : '.xls');
+            $writer = $zipAvailable
+                ? new \PhpOffice\PhpSpreadsheet\Writer\Xlsx($spreadsheet)
+                : new \PhpOffice\PhpSpreadsheet\Writer\Xls($spreadsheet);
+            $contentType = $zipAvailable ? 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' : 'application/vnd.ms-excel';
+
+            return new StreamedResponse(function () use ($writer) {
+                $writer->save('php://output');
+            }, 200, [
+                'Content-Type' => $contentType,
+                'Content-Disposition' => 'attachment;filename="' . $filename . '"',
+                'Cache-Control' => 'max-age=0',
+            ]);
         }
 
-        $filename = 'laporan-' . $type . '-' . $tahun . '-' . str_pad((string) $bulan, 2, '0', STR_PAD_LEFT) . '.xlsx';
-        $writer = new \PhpOffice\PhpSpreadsheet\Writer\Xlsx($spreadsheet);
+        $headersArr = array_keys($rows->first() ?? []);
+        $filename = $filenameBase . '.csv';
 
-        return new StreamedResponse(function () use ($writer) {
-            $writer->save('php://output');
+        return new StreamedResponse(function () use ($rows, $headersArr) {
+            $out = fopen('php://output', 'w');
+            if (!empty($headersArr)) {
+                fputcsv($out, $headersArr);
+            }
+            foreach ($rows as $row) {
+                $line = [];
+                foreach ($headersArr as $h) {
+                    $line[] = $row[$h] ?? '';
+                }
+                fputcsv($out, $line);
+            }
+            fclose($out);
         }, 200, [
-            'Content-Type' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+            'Content-Type' => 'text/csv',
             'Content-Disposition' => 'attachment;filename="' . $filename . '"',
             'Cache-Control' => 'max-age=0',
         ]);

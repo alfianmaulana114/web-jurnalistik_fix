@@ -18,9 +18,11 @@ use App\Http\Controllers\KoordinatorHumas\ContentController as KoordinatorHumasC
 use App\Http\Controllers\KoordinatorHumas\PenjadwalanController as KoordinatorHumasPenjadwalanController;
 use App\Http\Controllers\KoordinatorLitbang\BriefController as KoordinatorLitbangBriefController;
 use App\Http\Controllers\Sekretaris\SekretarisController;
+use App\Http\Controllers\Sekretaris\ReadOnlyController as SekretarisReadOnlyController;
 use App\Http\Controllers\Sekretaris\AbsenController;
 use App\Http\Controllers\Bendahara\BendaharaController;
 use App\Http\Controllers\Bendahara\ReadOnlyController;
+use App\Http\Controllers\KoordinatorRedaksi\ReadOnlyController as KoordinatorRedaksiReadOnlyController;
 use App\Http\Controllers\Public\HomeController;
 use App\Http\Controllers\TempImageController;
 use App\Models\News;
@@ -42,6 +44,16 @@ Route::middleware('auth')->group(function () {
 // Koordinator Jurnalistik Routes
 Route::prefix('koordinator-jurnalistik')->name('koordinator-jurnalistik.')->middleware(['auth', 'role:koordinator_jurnalistik'])->group(function () {
     Route::get('/dashboard', [KoordinatorJurnalistikController::class, 'dashboard'])->name('dashboard');
+
+    // Finance: Riwayat Kas Anggota & Laporan Keuangan (read-only)
+    Route::get('/kas-anggota/riwayat', [KoordinatorJurnalistikController::class, 'kasAnggotaRiwayat'])->name('kas-anggota.riwayat');
+    Route::get('/laporan', [KoordinatorJurnalistikController::class, 'laporanKeuangan'])->name('laporan.index');
+    Route::get('/laporan/export-excel', [KoordinatorJurnalistikController::class, 'exportExcel'])->name('laporan.export-excel');
+    // Sekretaris (Read-Only): Notulensi & Absen
+    Route::get('/sekretaris/notulensi', [KoordinatorJurnalistikController::class, 'sekretarisNotulensiIndex'])->name('sekretaris.notulensi.index');
+    Route::get('/sekretaris/notulensi/{notulensi}', [KoordinatorJurnalistikController::class, 'sekretarisNotulensiShow'])->name('sekretaris.notulensi.show');
+    Route::get('/sekretaris/notulensi/{notulensi}/download', [KoordinatorJurnalistikController::class, 'sekretarisNotulensiDownload'])->name('sekretaris.notulensi.download');
+    Route::get('/sekretaris/absen', [KoordinatorJurnalistikController::class, 'sekretarisAbsenIndex'])->name('sekretaris.absen.index');
     
     // News Routes
     Route::get('/news', [KoordinatorJurnalistikController::class, 'newsIndex'])->name('news.index');
@@ -58,6 +70,7 @@ Route::prefix('koordinator-jurnalistik')->name('koordinator-jurnalistik.')->midd
     
     // Brief Routes
     Route::resource('briefs', BriefController::class);
+    Route::resource('brief-humas', \App\Http\Controllers\KoordinatorJurnalistik\BriefHumasController::class);
     
     // Content Routes
     Route::resource('contents', ContentController::class);
@@ -107,6 +120,50 @@ Route::prefix('koordinator-redaksi')->name('koordinator-redaksi.')->middleware([
     // Temp Image Routes
     Route::post('/temp-images', [TempImageController::class, 'store'])->name('temp-images.store');
     Route::delete('/temp-images/{tempImage}', [TempImageController::class, 'destroy'])->name('temp-images.destroy');
+
+    // Read-Only Routes untuk melihat fitur koordinator-jurnalistik
+    Route::prefix('view')->name('view.')->group(function () {
+        // Keuangan (Read-Only)
+        Route::get('/laporan', [KoordinatorRedaksiReadOnlyController::class, 'laporanKeuangan'])->name('laporan.index');
+        Route::get('/laporan/export-excel', [KoordinatorJurnalistikController::class, 'exportExcel'])->name('laporan.export-excel');
+
+        // News Routes (Read-Only)
+        Route::get('/news', [KoordinatorRedaksiReadOnlyController::class, 'newsIndex'])->name('news.index');
+        Route::get('/news/{id}', [KoordinatorRedaksiReadOnlyController::class, 'newsShow'])->name('news.show');
+
+        // Proker Routes (Read-Only)
+        Route::get('/prokers', [KoordinatorRedaksiReadOnlyController::class, 'prokersIndex'])->name('prokers.index');
+        Route::get('/prokers/{proker}', [KoordinatorRedaksiReadOnlyController::class, 'prokersShow'])->name('prokers.show');
+
+        // Brief Routes (Read-Only)
+        Route::get('/briefs', [KoordinatorRedaksiReadOnlyController::class, 'briefsIndex'])->name('briefs.index');
+        Route::get('/briefs/{brief}', [KoordinatorRedaksiReadOnlyController::class, 'briefsShow'])->name('briefs.show');
+
+        // Content Routes (Read-Only)
+        Route::get('/contents', [KoordinatorRedaksiReadOnlyController::class, 'contentsIndex'])->name('contents.index');
+        Route::get('/contents/{content}', [KoordinatorRedaksiReadOnlyController::class, 'contentsShow'])->name('contents.show');
+
+        // Design Routes (Read-Only)
+        Route::get('/designs', [KoordinatorRedaksiReadOnlyController::class, 'designsIndex'])->name('designs.index');
+        Route::get('/designs/{design}', [KoordinatorRedaksiReadOnlyController::class, 'designsShow'])->name('designs.show');
+
+        // Funfact Routes (Read-Only)
+        Route::get('/funfacts', [KoordinatorRedaksiReadOnlyController::class, 'funfactsIndex'])->name('funfacts.index');
+        Route::get('/funfacts/{funfact}', [KoordinatorRedaksiReadOnlyController::class, 'funfactsShow'])->name('funfacts.show');
+
+        // User Routes (Read-Only)
+        Route::get('/users', [KoordinatorRedaksiReadOnlyController::class, 'usersIndex'])->name('users.index');
+        Route::get('/users/{user}', [KoordinatorRedaksiReadOnlyController::class, 'usersShow'])->name('users.show');
+
+        // Brief Humas Routes (Read-Only)
+        Route::get('/brief-humas', [KoordinatorRedaksiReadOnlyController::class, 'briefHumasIndex'])->name('brief-humas.index');
+        Route::get('/brief-humas/{briefHumas}', [KoordinatorRedaksiReadOnlyController::class, 'briefHumasShow'])->name('brief-humas.show');
+
+        // Sekretaris: Notulensi (Read-Only)
+        Route::get('/sekretaris/notulensi', [KoordinatorRedaksiReadOnlyController::class, 'sekretarisNotulensiIndex'])->name('sekretaris.notulensi.index');
+        Route::get('/sekretaris/notulensi/{notulensi}', [KoordinatorRedaksiReadOnlyController::class, 'sekretarisNotulensiShow'])->name('sekretaris.notulensi.show');
+        Route::get('/sekretaris/notulensi/{notulensi}/download', [KoordinatorRedaksiReadOnlyController::class, 'sekretarisNotulensiDownload'])->name('sekretaris.notulensi.download');
+    });
 });
 
 // Koordinator Litbang Routes
@@ -147,6 +204,11 @@ Route::prefix('anggota-litbang')->name('anggota-litbang.')->middleware(['auth', 
 // Sekretaris Routes
 Route::prefix('sekretaris')->name('sekretaris.')->middleware(['auth', 'role:sekretaris'])->group(function () {
     Route::get('/dashboard', [SekretarisController::class, 'dashboard'])->name('dashboard');
+
+    // Finance: Riwayat Kas Anggota & Laporan Keuangan (read-only)
+    Route::get('/kas-anggota/riwayat', [SekretarisController::class, 'kasAnggotaRiwayat'])->name('kas-anggota.riwayat');
+    Route::get('/laporan', [SekretarisController::class, 'laporanKeuangan'])->name('laporan.index');
+    Route::get('/laporan/export-excel', [SekretarisController::class, 'exportExcel'])->name('laporan.export-excel');
     
     // Notulensi Routes
     Route::get('/notulensi', [SekretarisController::class, 'notulensiIndex'])->name('notulensi.index');
@@ -156,6 +218,7 @@ Route::prefix('sekretaris')->name('sekretaris.')->middleware(['auth', 'role:sekr
     Route::get('/notulensi/{notulensi}/edit', [SekretarisController::class, 'notulensiEdit'])->name('notulensi.edit');
     Route::put('/notulensi/{notulensi}', [SekretarisController::class, 'notulensiUpdate'])->name('notulensi.update');
     Route::delete('/notulensi/{notulensi}', [SekretarisController::class, 'notulensiDestroy'])->name('notulensi.destroy');
+    Route::get('/notulensi/{notulensi}/download', [SekretarisController::class, 'notulensiDownload'])->name('notulensi.download');
     
     // Proker Routes
     Route::get('/proker', [SekretarisController::class, 'prokerIndex'])->name('proker.index');
@@ -172,6 +235,41 @@ Route::prefix('sekretaris')->name('sekretaris.')->middleware(['auth', 'role:sekr
     Route::post('/absen/bulk', [AbsenController::class, 'storeBulk'])->name('absen.store-bulk');
     Route::put('/absen/{absen}', [AbsenController::class, 'update'])->name('absen.update');
     Route::delete('/absen/{absen}', [AbsenController::class, 'destroy'])->name('absen.destroy');
+
+    // Read-Only Routes untuk melihat fitur koordinator-jurnalistik
+    Route::prefix('view')->name('view.')->group(function () {
+        // News Routes (Read-Only)
+        Route::get('/news', [SekretarisReadOnlyController::class, 'newsIndex'])->name('news.index');
+        Route::get('/news/{id}', [SekretarisReadOnlyController::class, 'newsShow'])->name('news.show');
+
+        // Proker Routes (Read-Only)
+        Route::get('/prokers', [SekretarisReadOnlyController::class, 'prokersIndex'])->name('prokers.index');
+        Route::get('/prokers/{proker}', [SekretarisReadOnlyController::class, 'prokersShow'])->name('prokers.show');
+
+        // Brief Routes (Read-Only)
+        Route::get('/briefs', [SekretarisReadOnlyController::class, 'briefsIndex'])->name('briefs.index');
+        Route::get('/briefs/{brief}', [SekretarisReadOnlyController::class, 'briefsShow'])->name('briefs.show');
+
+        // Content Routes (Read-Only)
+        Route::get('/contents', [SekretarisReadOnlyController::class, 'contentsIndex'])->name('contents.index');
+        Route::get('/contents/{content}', [SekretarisReadOnlyController::class, 'contentsShow'])->name('contents.show');
+
+        // Design Routes (Read-Only)
+        Route::get('/designs', [SekretarisReadOnlyController::class, 'designsIndex'])->name('designs.index');
+        Route::get('/designs/{design}', [SekretarisReadOnlyController::class, 'designsShow'])->name('designs.show');
+
+        // Funfact Routes (Read-Only)
+        Route::get('/funfacts', [SekretarisReadOnlyController::class, 'funfactsIndex'])->name('funfacts.index');
+        Route::get('/funfacts/{funfact}', [SekretarisReadOnlyController::class, 'funfactsShow'])->name('funfacts.show');
+
+        // User Routes (Read-Only)
+        Route::get('/users', [SekretarisReadOnlyController::class, 'usersIndex'])->name('users.index');
+        Route::get('/users/{user}', [SekretarisReadOnlyController::class, 'usersShow'])->name('users.show');
+
+        // Brief Humas Routes (Read-Only)
+        Route::get('/brief-humas', [SekretarisReadOnlyController::class, 'briefHumasIndex'])->name('brief-humas.index');
+        Route::get('/brief-humas/{briefHumas}', [SekretarisReadOnlyController::class, 'briefHumasShow'])->name('brief-humas.show');
+    });
 });
 
 // Bendahara Routes
@@ -212,6 +310,7 @@ Route::prefix('bendahara')->name('bendahara.')->middleware(['auth', 'role:bendah
     // Laporan Routes
     Route::get('/laporan', [BendaharaController::class, 'laporanKeuangan'])->name('laporan.index');
     Route::get('/laporan/kas-anggota', [BendaharaController::class, 'laporanKasAnggota'])->name('laporan.kas-anggota');
+    Route::get('/laporan/export-excel', [BendaharaController::class, 'exportExcel'])->name('laporan.export-excel');
     
     // Kas Settings Routes
     Route::get('/kas-settings', [BendaharaController::class, 'kasSettingsIndex'])->name('kas-settings.index');
@@ -249,6 +348,16 @@ Route::prefix('bendahara')->name('bendahara.')->middleware(['auth', 'role:bendah
         // User Routes (Read-Only)
         Route::get('/users', [ReadOnlyController::class, 'usersIndex'])->name('users.index');
         Route::get('/users/{user}', [ReadOnlyController::class, 'usersShow'])->name('users.show');
+
+        // Brief Humas Routes (Read-Only)
+        Route::get('/brief-humas', [ReadOnlyController::class, 'briefHumasIndex'])->name('brief-humas.index');
+        Route::get('/brief-humas/{briefHumas}', [ReadOnlyController::class, 'briefHumasShow'])->name('brief-humas.show');
+
+        // Sekretaris: Notulensi & Absen (Read-Only)
+        Route::get('/sekretaris/notulensi', [ReadOnlyController::class, 'sekretarisNotulensiIndex'])->name('sekretaris.notulensi.index');
+        Route::get('/sekretaris/notulensi/{notulensi}', [ReadOnlyController::class, 'sekretarisNotulensiShow'])->name('sekretaris.notulensi.show');
+        Route::get('/sekretaris/notulensi/{notulensi}/download', [ReadOnlyController::class, 'sekretarisNotulensiDownload'])->name('sekretaris.notulensi.download');
+        Route::get('/sekretaris/absen', [ReadOnlyController::class, 'sekretarisAbsenIndex'])->name('sekretaris.absen.index');
     });
 });
 

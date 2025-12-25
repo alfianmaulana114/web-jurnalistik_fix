@@ -1,4 +1,4 @@
-@extends('layouts.bendahara')
+@extends($layout ?? 'layouts.bendahara')
 
 @section('title', 'Detail User')
 @section('header', 'Detail User (Read-Only)')
@@ -46,7 +46,7 @@
                     </div>
                 </div>
                 <div class="flex items-center space-x-3">
-                    <a href="{{ route('bendahara.view.users.index') }}" class="inline-flex items-center px-3 py-2 border border-gray-300 rounded-lg shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50">
+                    <a href="{{ route(($routePrefix ?? 'bendahara.view').'.users.index') }}" class="inline-flex items-center px-3 py-2 border border-gray-300 rounded-lg shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50">
                         <i class="fas fa-arrow-left mr-2"></i>
                         Kembali
                     </a>

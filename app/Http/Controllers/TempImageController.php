@@ -28,8 +28,8 @@ class TempImageController extends Controller
     {
         try {
             $request->validate([
-                'image' => 'required|image|max:2048',  // Max 2MB
-                'original_name' => 'required|string'
+                'image' => 'required|image|max:2048|mimes:jpeg,jpg,png,gif,webp',  // Max 2MB, specific mime types
+                'original_name' => 'required|string|max:255'
             ]);
             
             if (!$request->hasFile('image')) {
@@ -41,11 +41,17 @@ class TempImageController extends Controller
                 throw new \Exception('File gambar tidak valid.');
             }
             
+            // Generate secure filename - prevent path traversal
             $filename = time() . '_' . Str::random(10) . '.webp';
+            
+            // Sanitize original_name to prevent XSS and path traversal
+            $originalName = basename(strip_tags($request->original_name));
+            $originalName = preg_replace('/[^a-zA-Z0-9._-]/', '_', $originalName);
+            $originalName = substr($originalName, 0, 255); // Limit length
             
             $path = public_path('images/temp');
             if (!file_exists($path)) {
-                if (!mkdir($path, 0775, true)) {
+                if (!mkdir($path, 0755, true)) { // More secure permissions (0755 instead of 0775)
                     throw new \Exception('Gagal membuat direktori temp.');
                 }
             }
@@ -62,7 +68,7 @@ class TempImageController extends Controller
             $tempImage = TempImage::create([
                 'filename' => $filename,
                 'path' => 'images/temp/' . $filename,
-                'original_name' => $request->original_name
+                'original_name' => $originalName // Sanitized original name
             ]);
             
             return response()->json([
@@ -83,6 +89,40 @@ class TempImageController extends Controller
             return response()->json([
                 'status' => 'error',
                 'message' => 'Gagal menyimpan gambar: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+
+    /**
+     * Menghapus gambar sementara (temp).
+     * 
+     * Hanya user yang terautentikasi yang bisa menghapus temp image.
+     * Memastikan file dihapus dari filesystem dan record dihapus dari database.
+     *
+     * @param TempImage $tempImage
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function destroy(TempImage $tempImage)
+    {
+        try {
+            // Hapus file dari filesystem jika ada
+            $filePath = public_path($tempImage->path);
+            if (file_exists($filePath)) {
+                @unlink($filePath);
+            }
+            
+            // Hapus record dari database
+            $tempImage->delete();
+            
+            return response()->json([
+                'status' => 'success',
+                'message' => 'Gambar berhasil dihapus'
+            ]);
+        } catch (\Exception $e) {
+            Log::error('Temp image delete error: ' . $e->getMessage());
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Gagal menghapus gambar: ' . $e->getMessage()
             ], 500);
         }
     }

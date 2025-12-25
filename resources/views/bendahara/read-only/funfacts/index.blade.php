@@ -1,4 +1,4 @@
-@extends('layouts.bendahara')
+@extends($layout ?? 'layouts.bendahara')
 
 @section('title', 'Funfact')
 @section('header', 'Funfact (Read-Only)')
@@ -53,7 +53,7 @@
 
     {{-- Filters --}}
     <div class="bg-white rounded-lg border border-[#D8C4B6]/40 shadow-sm hover:shadow-md transition-all p-6">
-        <form method="GET" action="{{ route('bendahara.view.funfacts.index') }}" class="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <form method="GET" action="{{ route(($routePrefix ?? 'bendahara.view').'.funfacts.index') }}" class="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div>
                 <label for="search" class="block text-sm font-medium text-gray-700">Cari</label>
                 <input type="text" name="search" id="search" value="{{ request('search') }}" placeholder="Judul atau isi funfact..." class="mt-1 block w-full border-[#D8C4B6]/40 rounded-lg shadow-sm focus:ring-[#f9b61a] focus:border-[#f9b61a] sm:text-sm">
@@ -63,7 +63,7 @@
                     <i class="fas fa-search mr-2"></i>
                     Terapkan Filter
                 </button>
-                <a href="{{ route('bendahara.view.funfacts.index') }}" class="px-4 py-2 bg-white text-[#1b334e] border border-[#D8C4B6]/40 rounded-lg font-semibold text-xs uppercase tracking-widest hover:bg-[#f9b61a]/10 focus:outline-none transition-all duration-150">
+                <a href="{{ route(($routePrefix ?? 'bendahara.view').'.funfacts.index') }}" class="px-4 py-2 bg-white text-[#1b334e] border border-[#D8C4B6]/40 rounded-lg font-semibold text-xs uppercase tracking-widest hover:bg-[#f9b61a]/10 focus:outline-none transition-all duration-150">
                     <i class="fas fa-times mr-2"></i>
                     Reset
                 </a>
@@ -107,7 +107,7 @@
                     <span class="text-xs text-gray-600">{{ $funfact->creator->name ?? '-' }}</span>
                 </div>
                 <div class="flex items-center gap-1">
-                    <a href="{{ route('bendahara.view.funfacts.show', $funfact) }}" class="rounded-lg p-1.5 text-[#1b334e] hover:bg-[#f9b61a]/10 transition-all" title="Lihat">
+                    <a href="{{ route(($routePrefix ?? 'bendahara.view').'.funfacts.show', $funfact) }}" class="rounded-lg p-1.5 text-[#1b334e] hover:bg-[#f9b61a]/10 transition-all" title="Lihat">
                         <i class="fas fa-eye"></i>
                     </a>
                 </div>

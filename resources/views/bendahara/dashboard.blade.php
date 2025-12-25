@@ -35,7 +35,7 @@
     </div>
 
     <!-- Financial Overview -->
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
         <!-- Total Saldo -->
         <div class="group relative overflow-hidden rounded-xl border border-[#D8C4B6]/40 bg-white p-5 shadow-sm transition-all hover:shadow-md">
             <div class="flex items-center justify-between">
@@ -93,46 +93,16 @@
         </div>
     </div>
 
-    <!-- Additional Stats Row -->
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4">
-        <!-- Total Anggota -->
+        <!-- Total Anggota (moved up) -->
         <div class="group relative overflow-hidden rounded-xl border border-[#D8C4B6]/40 bg-white p-5 shadow-sm transition-all hover:shadow-md">
             <div class="flex items-center justify-between">
                 <div class="flex-1">
                     <p class="text-sm font-medium text-gray-600">Total Anggota</p>
-                    <p class="mt-2 text-xl font-bold tracking-tight text-[#1b334e]">{{ $totalAnggota }}</p>
+                    <p class="mt-2 text-2xl font-bold tracking-tight text-[#1b334e]">{{ $totalAnggota }}</p>
                     <p class="text-xs text-gray-500 mt-1">Anggota aktif</p>
                 </div>
-                <div class="flex h-10 w-10 items-center justify-center rounded-lg bg-[#f9b61a]/10 text-[#f9b61a]">
-                    <i class="fas fa-users text-lg"></i>
-                </div>
-            </div>
-        </div>
-
-        <!-- Kas Lunas -->
-        <div class="group relative overflow-hidden rounded-xl border border-[#D8C4B6]/40 bg-white p-5 shadow-sm transition-all hover:shadow-md">
-            <div class="flex items-center justify-between">
-                <div class="flex-1">
-                    <p class="text-sm font-medium text-gray-600">Kas Lunas</p>
-                    <p class="mt-2 text-xl font-bold tracking-tight text-[#1b334e]">{{ $kasStats['lunas'] }}</p>
-                    <p class="text-xs text-gray-500 mt-1">Anggota yang sudah lunas</p>
-                </div>
-                <div class="flex h-10 w-10 items-center justify-center rounded-lg bg-green-50 text-green-600">
-                    <i class="fas fa-check-circle text-lg"></i>
-                </div>
-            </div>
-        </div>
-
-        <!-- Kas Belum Lunas -->
-        <div class="group relative overflow-hidden rounded-xl border border-[#D8C4B6]/40 bg-white p-5 shadow-sm transition-all hover:shadow-md">
-            <div class="flex items-center justify-between">
-                <div class="flex-1">
-                    <p class="text-sm font-medium text-gray-600">Kas Belum Lunas</p>
-                    <p class="mt-2 text-xl font-bold tracking-tight text-[#1b334e]">{{ $kasStats['belum_lunas'] }}</p>
-                    <p class="text-xs text-gray-500 mt-1">Anggota belum bayar</p>
-                </div>
-                <div class="flex h-10 w-10 items-center justify-center rounded-lg bg-yellow-50 text-yellow-600">
-                    <i class="fas fa-clock text-lg"></i>
+                <div class="flex h-12 w-12 items-center justify-center rounded-lg bg-[#f9b61a]/10 text-[#f9b61a]">
+                    <i class="fas fa-users text-xl"></i>
                 </div>
             </div>
         </div>
@@ -169,67 +139,25 @@
 
     <!-- Kas Anggota Overview -->
     <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
-        <!-- Statistik Kas Anggota -->
         <div class="rounded-xl border border-[#D8C4B6]/40 bg-white shadow-sm">
             <div class="border-b border-[#D8C4B6]/40 p-5">
                 <div>
-                    <h3 class="text-base font-semibold text-[#1b334e]">Statistik Kas Anggota</h3>
-                    <p class="mt-0.5 text-xs text-gray-600">Ringkasan status pembayaran kas</p>
+                    <h3 class="text-base font-semibold text-[#1b334e]">Grafik Pemasukan & Pengeluaran</h3>
+                    <p class="mt-0.5 text-xs text-gray-600">Pemasukan (kas + pemasukan) dibanding pengeluaran</p>
                 </div>
             </div>
             <div class="p-5">
-                <div class="grid grid-cols-3 gap-3 mb-4">
-                    <div class="rounded-lg border border-gray-100 bg-gray-50 p-3 text-center">
-                        <p class="text-xl font-bold text-gray-900">{{ $kasStats['lunas'] }}</p>
-                        <p class="text-xs text-gray-600 mt-0.5">Lunas</p>
-                    </div>
-                    <div class="rounded-lg border border-gray-100 bg-gray-50 p-3 text-center">
-                        <p class="text-xl font-bold text-gray-900">{{ $kasStats['belum_lunas'] }}</p>
-                        <p class="text-xs text-gray-600 mt-0.5">Belum Lunas</p>
-                    </div>
-                    <div class="rounded-lg border border-gray-100 bg-gray-50 p-3 text-center">
-                        <p class="text-xl font-bold text-gray-900">{{ $kasStats['nunggak'] }}</p>
-                        <p class="text-xs text-gray-600 mt-0.5">Nunggak</p>
-                    </div>
+                <div class="h-64">
+                    <canvas id="financialChart"></canvas>
                 </div>
-                
-                <!-- Ringkasan Per Divisi -->
-                <div>
-                    <h4 class="text-xs font-semibold text-gray-900 mb-2.5">Ringkasan Per Divisi</h4>
-                    <div class="space-y-2">
-                        @foreach($ringkasanDivisi as $divisi => $data)
-                        <div class="flex items-center justify-between rounded-lg border border-[#D8C4B6]/40 bg-white p-3 shadow-sm transition-all hover:shadow-md">
-                            <div class="flex items-center">
-                                <div class="p-2 rounded-lg bg-[#f9b61a]/10 text-[#f9b61a] mr-2.5">
-                                    @switch($divisi)
-                                        @case('redaksi')
-                                            <i class="fas fa-pen text-sm"></i>
-                                            @break
-                                        @case('litbang')
-                                            <i class="fas fa-search text-sm"></i>
-                                            @break
-                                        @case('humas')
-                                            <i class="fas fa-bullhorn text-sm"></i>
-                                            @break
-                                        @case('media_kreatif')
-                                            <i class="fas fa-palette text-sm"></i>
-                                            @break
-                                        @case('pengurus')
-                                            <i class="fas fa-crown text-sm"></i>
-                                            @break
-                                    @endswitch
-                                </div>
-                                <div>
-                                    <p class="text-xs font-semibold text-[#1b334e] capitalize">{{ str_replace('_', ' ', $divisi) }}</p>
-                                    <p class="text-xs text-gray-600">{{ $data['total'] }} anggota</p>
-                                </div>
-                            </div>
-                            <div class="text-right">
-                                <p class="text-xs text-gray-600">Lunas: <span class="font-semibold text-[#1b334e]">{{ $data['lunas'] }}</span></p>
-                                <p class="text-xs text-gray-600">Belum: <span class="font-semibold text-[#1b334e]">{{ $data['belum_lunas'] }}</span></p>
-                            </div>
-                        </div>
-                        @endforeach
+                <div class="mt-4 rounded-lg border border-gray-100 bg-gray-50 p-4 flex items-center justify-between">
+                    <div class="flex items-center gap-2 text-[#1b334e]">
+                        <i class="fas fa-wallet text-[#f9b61a]"></i>
+                        <span class="text-sm font-medium">Total Saldo Sekarang</span>
+                    </div>
+                    <div class="text-right">
+                        <p class="text-lg font-bold tracking-tight text-[#1b334e]">Rp {{ number_format($totalSaldo, 0, ',', '.') }}</p>
+                        <p class="text-xs text-gray-500">Kas + Pemasukan - Pengeluaran</p>
                     </div>
                 </div>
             </div>
@@ -243,7 +171,7 @@
                         <h3 class="text-base font-semibold text-[#1b334e]">Anggota Belum Bayar</h3>
                         <p class="mt-0.5 text-xs text-gray-600">Daftar anggota yang belum membayar kas</p>
                     </div>
-                    <a href="{{ route('bendahara.kas-anggota.index', ['status' => 'belum_lunas']) }}" class="text-xs font-medium text-[#1b334e] hover:text-[#f9b61a]">
+                    <a href="{{ route('bendahara.kas-anggota.riwayat') }}" class="text-xs font-medium text-[#1b334e] hover:text-[#f9b61a]">
                         Lihat Semua →
                     </a>
                 </div>
@@ -251,8 +179,8 @@
             <div class="p-5">
                 <div class="space-y-2">
                     @forelse($anggotaBelumBayar as $kas)
-                    <div class="flex items-center justify-between rounded-lg border border-[#D8C4B6]/40 bg-white p-3 shadow-sm transition-all hover:shadow-md hover:bg-[#f9b61a]/5 cursor-pointer" 
-                         onclick="window.location.href='{{ route('bendahara.kas-anggota.show', $kas->id) }}'">
+                    <div class="flex items-center justify-between rounded-lg border border-[#D8C4B6]/40 bg-white p-3 shadow-sm transition-all hover:shadow-md hover:bg-[#f9b61a]/5 cursor-pointer"
+                         @if(isset($kas->id)) onclick="window.location.href='{{ route('bendahara.kas-anggota.show', $kas->id) }}'" @endif>
                         <div class="flex items-center">
                             <div class="p-2 rounded-lg bg-[#f9b61a]/10 text-[#f9b61a] mr-2.5">
                                 <i class="fas fa-user text-xs"></i>
@@ -406,27 +334,21 @@
 
 @push('scripts')
 <script>
-    // Financial Chart
+    // Financial Chart (Income Combined vs Pengeluaran)
     const ctx = document.getElementById('financialChart').getContext('2d');
     const financialChart = new Chart(ctx, {
         type: 'line',
         data: {
             labels: {!! json_encode($chartData['labels']) !!},
             datasets: [{
-                label: 'Kas Anggota',
-                data: {!! json_encode($chartData['kas'] ?? []) !!},
-                borderColor: 'rgb(59, 130, 246)',
-                backgroundColor: 'rgba(59, 130, 246, 0.1)',
-                tension: 0.4
-            }, {
-                label: 'Pemasukan',
-                data: {!! json_encode($chartData['pemasukan']) !!},
+                label: 'Pemasukan (Kas + Pemasukan)',
+                data: {!! json_encode($chartData['income_combined'] ?? []) !!},
                 borderColor: 'rgb(34, 197, 94)',
                 backgroundColor: 'rgba(34, 197, 94, 0.1)',
                 tension: 0.4
             }, {
                 label: 'Pengeluaran',
-                data: {!! json_encode($chartData['pengeluaran']) !!},
+                data: {!! json_encode($chartData['pengeluaran'] ?? []) !!},
                 borderColor: 'rgb(239, 68, 68)',
                 backgroundColor: 'rgba(239, 68, 68, 0.1)',
                 tension: 0.4
@@ -446,9 +368,7 @@
                 }
             },
             plugins: {
-                legend: {
-                    position: 'top',
-                },
+                legend: { position: 'top' },
                 tooltip: {
                     callbacks: {
                         label: function(context) {

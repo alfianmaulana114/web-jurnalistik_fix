@@ -1,4 +1,4 @@
-@extends('layouts.bendahara')
+@extends($layout ?? 'layouts.bendahara')
 
 @section('title', 'Detail Brief Berita')
 @section('header', 'Detail Brief Berita (Read-Only)')
@@ -23,7 +23,7 @@
             <p class="mt-1 text-sm text-gray-600">Dibuat pada {{ $brief->created_at->format('d M Y') }}</p>
         </div>
         <div class="flex items-center space-x-3">
-            <a href="{{ route('bendahara.view.briefs.index') }}" class="inline-flex items-center px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition-colors">
+            <a href="{{ route(($routePrefix ?? 'bendahara.view').'.briefs.index') }}" class="inline-flex items-center px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition-colors">
                 <i class="fas fa-arrow-left mr-2"></i>
                 Kembali
             </a>
@@ -72,7 +72,7 @@
                         <div class="flex items-start justify-between mb-3">
                             <div class="flex-1">
                                 <h4 class="text-sm font-medium text-[#1b334e]">
-                                    <a href="{{ route('bendahara.view.contents.show', $content) }}" class="hover:text-[#f9b61a]">
+                                    <a href="{{ route(($routePrefix ?? 'bendahara.view').'.contents.show', $content) }}" class="hover:text-[#f9b61a]">
                                         {{ $content->judul }}
                                     </a>
                                 </h4>

@@ -7,33 +7,29 @@ use App\Models\Proker;
 use App\Models\News;
 use App\Models\Notulensi;
 use App\Models\Absen;
+use App\Models\KasAnggota;
+use App\Models\Pemasukan;
+use App\Models\Pengeluaran;
 use Carbon\Carbon;
 
 class DashboardService
 {
     public function getDashboardData(): array
     {
-        // Statistik umum
         $stats = $this->getStats();
-        
-        // Statistik per divisi
-        $divisiStats = $this->getDivisiStats();
-        
-        // Statistik proker
         $prokerStats = $this->getProkerStats();
-        
-        // Data bulanan untuk chart
-        $monthlyData = $this->getMonthlyData();
-        
-        // Aktivitas terbaru
         $recentActivities = $this->getRecentActivities();
+        $finance = $this->getFinanceOverview();
+        $financeChart = $this->getFinanceChart();
+        $topAbsent = $this->getTopAbsent();
 
         return compact(
             'stats',
-            'divisiStats',
             'prokerStats',
-            'monthlyData',
-            'recentActivities'
+            'recentActivities',
+            'finance',
+            'financeChart',
+            'topAbsent'
         );
     }
 
@@ -48,48 +44,88 @@ class DashboardService
         ];
     }
 
-    private function getDivisiStats(): array
+    private function getFinanceOverview(): array
     {
-        $divisi = [
-            'redaksi' => 'Divisi Redaksi',
-            'litbang' => 'Divisi Litbang',
-            'humas' => 'Divisi Humas',
-            'media_kreatif' => 'Divisi Media Kreatif',
-            'pengurus' => 'Pengurus',
-        ];
+        $totalPemasukan = (float) Pemasukan::verified()
+            ->whereYear('tanggal_pemasukan', now()->year)
+            ->whereMonth('tanggal_pemasukan', now()->month)
+            ->sum('jumlah');
 
-        $stats = [];
+        $totalPengeluaran = (float) Pengeluaran::whereIn('status', [Pengeluaran::STATUS_APPROVED, Pengeluaran::STATUS_PAID])
+            ->whereYear('tanggal_pengeluaran', now()->year)
+            ->whereMonth('tanggal_pengeluaran', now()->month)
+            ->sum('jumlah');
 
-        foreach ($divisi as $key => $nama) {
-            $users = User::where(function ($query) use ($key) {
-                switch ($key) {
-                    case 'redaksi':
-                        $query->whereIn('role', [User::ROLE_KOORDINATOR_REDAKSI, User::ROLE_ANGGOTA_REDAKSI]);
-                        break;
-                    case 'litbang':
-                        $query->whereIn('role', [User::ROLE_KOORDINATOR_LITBANG, User::ROLE_ANGGOTA_LITBANG]);
-                        break;
-                    case 'humas':
-                        $query->whereIn('role', [User::ROLE_KOORDINATOR_HUMAS, User::ROLE_ANGGOTA_HUMAS]);
-                        break;
-                    case 'media_kreatif':
-                        $query->whereIn('role', [User::ROLE_KOORDINATOR_MEDIA_KREATIF, User::ROLE_ANGGOTA_MEDIA_KREATIF]);
-                        break;
-                    case 'pengurus':
-                        $query->whereIn('role', [User::ROLE_KOORDINATOR_JURNALISTIK, User::ROLE_SEKRETARIS, User::ROLE_BENDAHARA]);
-                        break;
-                }
-            })->pluck('id');
+        $overallKas = (float) KasAnggota::where('status_pembayaran', KasAnggota::STATUS_LUNAS)->sum('jumlah_terbayar');
+        $overallPemasukan = (float) Pemasukan::verified()->sum('jumlah');
+        $overallPengeluaran = (float) Pengeluaran::whereIn('status', [Pengeluaran::STATUS_APPROVED, Pengeluaran::STATUS_PAID])->sum('jumlah');
+        $totalSaldo = ($overallKas + $overallPemasukan) - $overallPengeluaran;
 
-            $stats[$key] = [
-                'nama' => $nama,
-                'total' => $users->count(),
-                'news' => News::whereIn('user_id', $users)->count(),
-                'prokers' => Proker::whereIn('created_by', $users)->count(),
-            ];
+        return compact('totalPemasukan', 'totalPengeluaran', 'totalSaldo');
+    }
+
+    private function getFinanceChart(): array
+    {
+        $labels = [];
+        $pemasukan = [];
+        $kas = [];
+        $pengeluaran = [];
+        
+        for ($i = 5; $i >= 0; $i--) {
+            $date = now()->subMonths($i);
+            $labels[] = $date->format('M Y');
+            
+            $pemasukanBulan = (float) Pemasukan::verified()
+                ->whereYear('tanggal_pemasukan', $date->year)
+                ->whereMonth('tanggal_pemasukan', $date->month)
+                ->sum('jumlah');
+
+            $kasBulan = (float) KasAnggota::where('status_pembayaran', KasAnggota::STATUS_LUNAS)
+                ->whereNotNull('tanggal_pembayaran')
+                ->whereYear('tanggal_pembayaran', $date->year)
+                ->whereMonth('tanggal_pembayaran', $date->month)
+                ->sum('jumlah_terbayar');
+
+            $pengeluaranBulan = (float) Pengeluaran::whereIn('status', [Pengeluaran::STATUS_APPROVED, Pengeluaran::STATUS_PAID])
+                ->whereYear('tanggal_pengeluaran', $date->year)
+                ->whereMonth('tanggal_pengeluaran', $date->month)
+                ->sum('jumlah');
+
+            $pemasukan[] = $pemasukanBulan;
+            $kas[] = $kasBulan;
+            $pengeluaran[] = $pengeluaranBulan;
         }
 
-        return $stats;
+        $income_combined = [];
+        for ($i = 0; $i < count($labels); $i++) {
+            $income_combined[$i] = ($pemasukan[$i] ?? 0) + ($kas[$i] ?? 0);
+        }
+
+        return compact('labels', 'pemasukan', 'kas', 'pengeluaran', 'income_combined');
+    }
+
+    private function getTopAbsent(): array
+    {
+        // Ambil 5 anggota dengan jumlah tidak hadir terbanyak
+        $top = Absen::selectRaw('user_id, COUNT(*) as total_tidak_hadir')
+            ->where('status', Absen::STATUS_TIDAK_HADIR)
+            ->whereYear('tanggal', '>=', 2025)
+            ->groupBy('user_id')
+            ->orderByDesc('total_tidak_hadir')
+            ->limit(5)
+            ->get();
+
+        // Map ke data dengan nama pengguna
+        return $top->map(function ($row) {
+            $user = User::find($row->user_id);
+            return [
+                'user_id' => $row->user_id,
+                'name' => $user?->name ?? 'Anggota',
+                'nim' => $user?->nim ?? null,
+                'divisi' => $user?->getDivision() ?? null,
+                'total' => (int) $row->total_tidak_hadir,
+            ];
+        })->toArray();
     }
 
     private function getProkerStats(): array
@@ -102,29 +138,7 @@ class DashboardService
         ];
     }
 
-    private function getMonthlyData(): array
-    {
-        $months = [];
-        $news = [];
-        
-
-        for ($i = 5; $i >= 0; $i--) {
-            $date = now()->subMonths($i);
-            $months[] = $date->format('M Y');
-            
-            $news[] = News::whereYear('created_at', $date->year)
-                ->whereMonth('created_at', $date->month)
-                ->count();
-            
-            
-        }
-
-        return [
-            'labels' => $months,
-            'news' => $news,
-            
-        ];
-    }
+    
 
     private function getRecentActivities(): array
     {

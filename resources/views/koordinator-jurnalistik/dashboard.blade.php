@@ -111,229 +111,38 @@
         </div>
     </div>
 
-    {{-- Financial Overview & Kas Status --}}
-    <div class="grid gap-4 lg:grid-cols-3">
-        {{-- Financial Card --}}
-        <div class="rounded-xl border border-[#D8C4B6]/40 bg-white shadow-sm">
-            <div class="border-b border-gray-100 p-5">
-                <h3 class="text-base font-semibold text-[#1b334e]">Ringkasan Keuangan</h3>
-                <p class="mt-0.5 text-xs text-gray-600">Overview saldo & transaksi</p>
-            </div>
-            <div class="p-5">
-                <div class="mb-4">
-                    <p class="text-xs font-medium text-gray-600">Total Saldo</p>
-                    <p class="mt-1.5 text-2xl font-bold tracking-tight text-[#1b334e]">
-                        Rp {{ number_format($saldo, 0, ',', '.') }}
-                    </p>
+    <!-- Financial Overview: Total Saldo -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
+        <div class="group relative overflow-hidden rounded-xl border border-[#D8C4B6]/40 bg-white p-5 shadow-sm transition-all hover:shadow-md">
+            <div class="flex items-center justify-between">
+                <div class="flex-1">
+                    <p class="text-sm font-medium text-gray-600">Total Saldo</p>
+                    <p class="mt-2 text-2xl font-bold tracking-tight text-[#1b334e]">Rp {{ number_format($totalSaldo, 0, ',', '.') }}</p>
+                    <p class="text-xs text-gray-500 mt-1">Kas + Pemasukan - Pengeluaran</p>
                 </div>
-                
-                <div class="space-y-2">
-                    <div class="flex items-center justify-between rounded-lg border border-gray-100 p-3">
-                        <div class="flex items-center gap-2.5">
-                            <div class="flex h-9 w-9 items-center justify-center rounded-lg bg-green-50">
-                                <svg class="h-5 w-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
-                                </svg>
-                            </div>
-                            <div>
-                                <p class="text-xs text-gray-600">Pemasukan</p>
-                                <p class="text-sm font-semibold text-gray-900">Rp {{ number_format($totalPemasukan, 0, ',', '.') }}</p>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div class="flex items-center justify-between rounded-lg border border-gray-100 p-3">
-                        <div class="flex items-center gap-2.5">
-                            <div class="flex h-9 w-9 items-center justify-center rounded-lg bg-red-50">
-                                <svg class="h-5 w-5 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 12H4"></path>
-                                </svg>
-                            </div>
-                            <div>
-                                <p class="text-xs text-gray-600">Pengeluaran</p>
-                                <p class="text-sm font-semibold text-gray-900">Rp {{ number_format($totalPengeluaran, 0, ',', '.') }}</p>
-                            </div>
-                        </div>
-                    </div>
+                <div class="flex h-12 w-12 items-center justify-center rounded-lg bg-[#f9b61a]/10 text-[#f9b61a] transition-colors group-hover:bg-[#f9b61a] group-hover:text-white">
+                    <i class="fas fa-wallet text-xl"></i>
                 </div>
-
-                @if($pendingPemasukan > 0 || $pendingPengeluaran > 0)
-                <div class="mt-3 rounded-lg border border-[#f9b61a]/20 bg-[#f9b61a]/5 p-3">
-                    <p class="text-xs font-medium text-[#1b334e]">Menunggu Verifikasi</p>
-                    <div class="mt-2 space-y-1 text-sm text-gray-700">
-                        @if($pendingPemasukan > 0)
-                        <p>• Pemasukan: Rp {{ number_format($pendingPemasukan, 0, ',', '.') }}</p>
-                        @endif
-                        @if($pendingPengeluaran > 0)
-                        <p>• Pengeluaran: Rp {{ number_format($pendingPengeluaran, 0, ',', '.') }}</p>
-                        @endif
-                    </div>
-                </div>
-                @endif
-            </div>
-        </div>
-
-        {{-- Kas Status --}}
-        <div class="lg:col-span-2 rounded-xl border border-[#D8C4B6]/40 bg-white shadow-sm">
-            <div class="flex items-center justify-between border-b border-gray-100 p-5">
-                <div>
-                    <h3 class="text-base font-semibold text-[#1b334e]">Status Kas Anggota</h3>
-                    <p class="mt-0.5 text-xs text-gray-600">Monitoring pembayaran kas UKM</p>
-                </div>
-                <button onclick="openUnpaidKasModal()" class="inline-flex items-center gap-1.5 rounded-lg border border-[#D8C4B6]/40 bg-white px-3 py-1.5 text-xs font-medium text-[#1b334e] shadow-sm transition-all hover:shadow-md hover:bg-[#f9b61a]/10">
-                    <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path>
-                    </svg>
-                    Lihat Detail
-                </button>
-            </div>
-            <div class="p-5">
-                <div class="grid grid-cols-2 gap-3 md:grid-cols-4">
-                    <div class="rounded-lg border border-gray-100 bg-gray-50 p-3 text-center">
-                        <div class="mx-auto mb-2 flex h-9 w-9 items-center justify-center rounded-lg bg-red-100">
-                            <svg class="h-5 w-5 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
-                            </svg>
-                        </div>
-                        <p class="text-2xl font-bold text-gray-900">{{ $kasStats['belum_bayar'] }}</p>
-                        <p class="mt-1 text-xs text-gray-600">Belum Bayar</p>
-                    </div>
-                    
-                    <div class="rounded-lg border border-gray-100 bg-gray-50 p-3 text-center">
-                        <div class="mx-auto mb-2 flex h-9 w-9 items-center justify-center rounded-lg bg-amber-100">
-                            <svg class="h-5 w-5 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                            </svg>
-                        </div>
-                        <p class="text-2xl font-bold text-gray-900">{{ $kasStats['sebagian'] }}</p>
-                        <p class="mt-1 text-xs text-gray-600">Sebagian</p>
-                    </div>
-                    
-                    <div class="rounded-lg border border-gray-100 bg-gray-50 p-3 text-center">
-                        <div class="mx-auto mb-2 flex h-9 w-9 items-center justify-center rounded-lg bg-green-100">
-                            <svg class="h-5 w-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                            </svg>
-                        </div>
-                        <p class="text-2xl font-bold text-gray-900">{{ $kasStats['lunas'] }}</p>
-                        <p class="mt-1 text-xs text-gray-600">Lunas</p>
-                    </div>
-                    
-                    <div class="rounded-lg border border-gray-100 bg-gray-50 p-3 text-center">
-                        <div class="mx-auto mb-2 flex h-9 w-9 items-center justify-center rounded-lg bg-orange-100">
-                            <svg class="h-5 w-5 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                            </svg>
-                        </div>
-                        <p class="text-2xl font-bold text-gray-900">{{ $kasStats['terlambat'] }}</p>
-                        <p class="mt-1 text-xs text-gray-600">Terlambat</p>
-                    </div>
-                </div>
-
-                @if($kasStats['belum_bayar'] > 0 || $kasStats['terlambat'] > 0)
-                <div class="mt-3 rounded-lg border border-[#f9b61a]/20 bg-[#f9b61a]/5 p-3">
-                    <div class="flex gap-3">
-                        <svg class="h-5 w-5 flex-shrink-0 text-[#f9b61a]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                        </svg>
-                        <div class="flex-1">
-                            <p class="text-sm font-medium text-[#1b334e]">Perhatian Diperlukan</p>
-                            <p class="mt-1 text-sm text-gray-700">
-                                Ada {{ $kasStats['belum_bayar'] + $kasStats['terlambat'] }} anggota yang belum/terlambat membayar kas.
-                            </p>
-                        </div>
-                    </div>
-                </div>
-                @endif
             </div>
         </div>
     </div>
 
-    {{-- Charts --}}
-    <div class="grid gap-4 lg:grid-cols-2">
-        {{-- News Chart --}}
-        <div class="rounded-xl border border-[#D8C4B6]/40 bg-white shadow-sm">
-            <div class="border-b border-gray-100 p-5">
-                <h3 class="text-base font-semibold text-[#1b334e]">Tren Berita Bulanan</h3>
-                <p class="mt-0.5 text-xs text-gray-600">Grafik publikasi berita tahun {{ date('Y') }}</p>
+    <div class="rounded-xl border border-[#D8C4B6]/40 bg-white shadow-sm mt-4">
+        <div class="border-b border-[#D8C4B6]/40 p-5">
+            <div>
+                <h3 class="text-base font-semibold text-[#1b334e]">Grafik Pemasukan & Pengeluaran</h3>
+                <p class="mt-0.5 text-xs text-gray-600">Pemasukan (kas + pemasukan) dibanding pengeluaran</p>
             </div>
-            <div class="p-5">
-                <canvas id="newsChart" class="w-full" height="250"></canvas>
-            </div>
-        </div>
-
-        {{-- Financial Chart --}}
-        <div class="rounded-xl border border-[#D8C4B6]/40 bg-white shadow-sm">
-            <div class="border-b border-gray-100 p-5">
-                <h3 class="text-base font-semibold text-[#1b334e]">Tren Keuangan Bulanan</h3>
-                <p class="mt-0.5 text-xs text-gray-600">Grafik pemasukan & pengeluaran tahun {{ date('Y') }}</p>
-            </div>
-            <div class="p-5">
-                <canvas id="financialChart" class="w-full" height="250"></canvas>
-            </div>
-        </div>
-    </div>
-
-    {{-- Division Stats --}}
-    <div class="rounded-xl border border-[#D8C4B6]/40 bg-white shadow-sm">
-        <div class="border-b border-gray-100 p-5">
-            <h3 class="text-base font-semibold text-[#1b334e]">Statistik Per Divisi</h3>
-            <p class="mt-0.5 text-xs text-gray-600">Ringkasan aktivitas setiap divisi</p>
         </div>
         <div class="p-5">
-            <div class="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-                @foreach($divisionStats as $division => $stats)
-                <div class="rounded-lg border border-[#D8C4B6]/40 bg-white p-4 shadow-sm transition-all hover:shadow-md">
-                    <div class="mb-3 flex items-center gap-2.5">
-                        <div class="flex h-9 w-9 items-center justify-center rounded-lg bg-[#f9b61a]/10">
-                            @switch($division)
-                                @case('redaksi')
-                                    <svg class="h-5 w-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path>
-                                    </svg>
-                                    @break
-                                @case('litbang')
-                                    <svg class="h-5 w-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
-                                    </svg>
-                                    @break
-                                @case('humas')
-                                    <svg class="h-5 w-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5.882V19.24a1.76 1.76 0 01-3.417.592l-2.147-6.15M18 13a3 3 0 100-6M5.436 13.683A4.001 4.001 0 017 6h1.832c4.1 0 7.625-1.234 9.168-3v14c-1.543-1.766-5.067-3-9.168-3H7a3.988 3.988 0 01-1.564-.317z"></path>
-                                    </svg>
-                                    @break
-                                @case('media_kreatif')
-                                    <svg class="h-5 w-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01"></path>
-                                    </svg>
-                                    @break
-                                @default
-                                    <svg class="h-5 w-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z"></path>
-                                    </svg>
-                            @endswitch
-                        </div>
-                        <h4 class="text-sm font-semibold text-[#1b334e] capitalize">{{ str_replace('_', ' ', $division) }}</h4>
-                    </div>
-                    <div class="space-y-1.5">
-                        <div class="flex items-center justify-between text-xs">
-                            <span class="text-gray-600">Koordinator</span>
-                            <span class="font-semibold text-gray-900">{{ $stats['coordinators'] }}</span>
-                        </div>
-                        <div class="flex items-center justify-between text-xs">
-                            <span class="text-gray-600">Anggota</span>
-                            <span class="font-semibold text-gray-900">{{ $stats['members'] }}</span>
-                        </div>
-                        <div class="flex items-center justify-between text-xs">
-                            <span class="text-gray-600">Output</span>
-                            <span class="font-semibold text-gray-900">{{ ($stats['content'] ?? 0) + ($stats['briefs'] ?? 0) + ($stats['designs'] ?? 0) }}</span>
-                        </div>
-                    </div>
-                </div>
-                @endforeach
+            <div class="h-64">
+                <canvas id="financialChart"></canvas>
             </div>
         </div>
     </div>
+    
+
+    
 
     {{-- Proker & Briefs --}}
     <div class="grid gap-4 lg:grid-cols-2">
@@ -386,47 +195,7 @@
             </div>
         </div>
 
-        {{-- Urgent Briefs --}}
-        <div class="rounded-xl border border-[#D8C4B6]/40 bg-white shadow-sm">
-            <div class="flex items-center justify-between border-b border-gray-100 p-5">
-                <div>
-                    <h3 class="text-base font-semibold text-[#1b334e]">Brief Mendesak</h3>
-                    <p class="mt-0.5 text-xs text-gray-600">Prioritas tinggi & urgent</p>
-                </div>
-                <a href="{{ route('koordinator-jurnalistik.briefs.index') }}" class="text-xs font-medium text-[#1b334e] hover:text-[#f9b61a]">
-                    Lihat Semua →
-                </a>
-            </div>
-            <div class="p-5">
-                <div class="space-y-2">
-                    @forelse($urgentBriefs as $brief)
-                    <div class="rounded-lg border border-[#D8C4B6]/40 bg-white p-3 shadow-sm transition-all hover:shadow-md">
-                        <a href="{{ route('koordinator-jurnalistik.briefs.show', $brief) }}" class="block">
-                            <div class="flex items-start justify-between gap-3">
-                                <div class="flex-1 min-w-0">
-                                    <p class="truncate font-medium text-gray-900 hover:text-[#f9b61a]">{{ $brief->judul }}</p>
-                                    <p class="mt-1 line-clamp-2 text-sm text-gray-600">{{ $brief->deskripsi }}</p>
-                                    <p class="mt-2 text-xs text-gray-500">
-                                        Deadline: {{ $brief->deadline ? $brief->deadline->format('d M Y') : 'Tidak ada deadline' }}
-                                    </p>
-                                </div>
-                                <span class="inline-flex items-center rounded-full bg-amber-500 px-2.5 py-0.5 text-xs font-medium text-white">
-                                    {{ ucfirst($brief->prioritas) }}
-                                </span>
-                            </div>
-                        </a>
-                    </div>
-                    @empty
-                    <div class="rounded-lg border border-dashed border-gray-200 p-8 text-center">
-                        <svg class="mx-auto h-8 w-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                        </svg>
-                        <p class="mt-2 text-sm text-gray-500">Tidak ada brief mendesak</p>
-                    </div>
-                    @endforelse
-                </div>
-            </div>
-        </div>
+        
     </div>
 
     {{-- Recent News --}}
@@ -604,72 +373,25 @@
 
 @push('scripts')
 <script>
-// Charts with modern styling
-const newsCtx = document.getElementById('newsChart').getContext('2d');
-new Chart(newsCtx, {
-    type: 'line',
-    data: {
-        labels: {!! json_encode($monthlyLabels) !!},
-        datasets: [{
-            label: 'Berita Dipublikasi',
-            data: {!! json_encode($newsData) !!},
-            borderColor: '#2563eb',
-            backgroundColor: 'rgba(37, 99, 235, 0.05)',
-            tension: 0.4,
-            fill: true,
-            pointBackgroundColor: '#3b82f6',
-            pointBorderColor: '#1e40af',
-            pointBorderWidth: 2,
-            pointRadius: 4,
-            pointHoverRadius: 6
-        }]
-    },
-    options: {
-        responsive: true,
-        maintainAspectRatio: false,
-        plugins: {
-            legend: { display: false },
-            tooltip: {
-                backgroundColor: 'rgba(0, 0, 0, 0.8)',
-                padding: 12,
-                cornerRadius: 8,
-                titleColor: '#fff',
-                bodyColor: '#fff'
-            }
-        },
-        scales: {
-            y: {
-                beginAtZero: true,
-                border: { display: false },
-                grid: { color: 'rgba(0, 0, 0, 0.05)' },
-                ticks: { color: '#6B7280', stepSize: 1 }
-            },
-            x: {
-                border: { display: false },
-                grid: { display: false },
-                ticks: { color: '#6B7280' }
-            }
-        }
-    }
-});
-
 const financialCtx = document.getElementById('financialChart').getContext('2d');
 new Chart(financialCtx, {
-    type: 'bar',
+    type: 'line',
     data: {
-        labels: {!! json_encode($monthlyLabels) !!},
+        labels: {!! json_encode($chartData['labels'] ?? []) !!},
         datasets: [
             {
-                label: 'Pemasukan',
-                data: {!! json_encode($pemasukanData) !!},
-                backgroundColor: 'rgba(34, 197, 94, 0.8)',
-                borderRadius: 6
+                label: 'Pemasukan (Kas + Pemasukan)',
+                data: {!! json_encode($chartData['income_combined'] ?? []) !!},
+                borderColor: 'rgb(34, 197, 94)',
+                backgroundColor: 'rgba(34, 197, 94, 0.1)',
+                tension: 0.4
             },
             {
                 label: 'Pengeluaran',
-                data: {!! json_encode($pengeluaranData) !!},
-                backgroundColor: 'rgba(239, 68, 68, 0.8)',
-                borderRadius: 6
+                data: {!! json_encode($chartData['pengeluaran'] ?? []) !!},
+                borderColor: 'rgb(239, 68, 68)',
+                backgroundColor: 'rgba(239, 68, 68, 0.1)',
+                tension: 0.4
             }
         ]
     },

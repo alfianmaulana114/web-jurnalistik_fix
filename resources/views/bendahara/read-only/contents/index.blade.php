@@ -1,4 +1,4 @@
-@extends('layouts.bendahara')
+@extends($layout ?? 'layouts.bendahara')
 
 @section('title', 'Daftar Caption')
 @section('header', 'Daftar Caption (Read-Only)')
@@ -24,7 +24,7 @@
         <div class="p-6">
             <!-- Filters -->
             <div class="mb-6 p-4 bg-[#f9b61a]/5 rounded-lg border border-[#D8C4B6]/40">
-                <form method="GET" action="{{ route('bendahara.view.contents.index') }}" class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <form method="GET" action="{{ route(($routePrefix ?? 'bendahara.view').'.contents.index') }}" class="grid grid-cols-1 md:grid-cols-3 gap-4">
                     <div>
                         <label for="jenis_konten" class="block text-sm font-medium text-gray-700 mb-2">Jenis Caption</label>
                         <select name="jenis_konten" id="jenis_konten" class="w-full border border-[#D8C4B6]/40 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#f9b61a]">
@@ -46,7 +46,7 @@
                             <i class="fas fa-search mr-2"></i>
                             Terapkan Filter
                         </button>
-                        <a href="{{ route('bendahara.view.contents.index') }}" class="bg-white text-[#1b334e] border border-[#D8C4B6]/40 px-4 py-2 rounded-lg text-sm hover:bg-[#f9b61a]/10 transition-all">
+                        <a href="{{ route(($routePrefix ?? 'bendahara.view').'.contents.index') }}" class="bg-white text-[#1b334e] border border-[#D8C4B6]/40 px-4 py-2 rounded-lg text-sm hover:bg-[#f9b61a]/10 transition-all">
                             <i class="fas fa-times mr-2"></i>
                             Reset
                         </a>
@@ -111,7 +111,7 @@
                                     <div class="text-xs text-gray-500">{{ $content->created_at->format('H:i') }}</div>
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                                    <a href="{{ route('bendahara.view.contents.show', $content) }}" 
+                                    <a href="{{ route(($routePrefix ?? 'bendahara.view').'.contents.show', $content) }}" 
                                        class="text-[#1b334e] hover:bg-[#f9b61a]/10 p-2 rounded-lg transition-all" title="Lihat Detail">
                                         <i class="fas fa-eye"></i>
                                     </a>

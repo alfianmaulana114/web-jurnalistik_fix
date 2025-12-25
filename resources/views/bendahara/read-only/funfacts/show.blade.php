@@ -1,4 +1,4 @@
-@extends('layouts.bendahara')
+@extends($layout ?? 'layouts.bendahara')
 
 @section('title', 'Detail Funfact')
 @section('header', 'Detail Funfact (Read-Only)')
@@ -23,7 +23,7 @@
             <p class="mt-1 text-sm text-gray-600">Dibuat pada {{ $funfact->created_at->format('d M Y') }} oleh {{ $funfact->creator->name ?? '-' }}</p>
         </div>
         <div class="flex items-center space-x-3">
-            <a href="{{ route('bendahara.view.funfacts.index') }}" class="inline-flex items-center px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition-colors">
+            <a href="{{ route(($routePrefix ?? 'bendahara.view').'.funfacts.index') }}" class="inline-flex items-center px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition-colors">
                 <i class="fas fa-arrow-left mr-2"></i>
                 Kembali
             </a>

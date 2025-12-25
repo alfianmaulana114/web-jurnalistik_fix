@@ -1,4 +1,4 @@
-@extends('layouts.bendahara')
+@extends($layout ?? 'layouts.bendahara')
 
 @section('title', 'Brief Berita')
 @section('header', 'Brief Berita (Read-Only)')
@@ -57,7 +57,7 @@
 
     <!-- Filters -->
     <div class="bg-white rounded-lg border border-[#D8C4B6]/40 shadow-sm hover:shadow-md transition-all p-6">
-        <form method="GET" action="{{ route('bendahara.view.briefs.index') }}" class="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <form method="GET" action="{{ route(($routePrefix ?? 'bendahara.view').'.briefs.index') }}" class="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div>
                 <label for="search" class="block text-sm font-medium text-gray-700">Pencarian</label>
                 <input type="text" name="search" id="search" value="{{ request('search') }}" class="mt-1 block w-full border-[#D8C4B6]/40 rounded-lg shadow-sm focus:ring-[#f9b61a] focus:border-[#f9b61a] sm:text-sm" placeholder="Cari judul atau isi brief...">
@@ -71,7 +71,7 @@
                     <i class="fas fa-search mr-2"></i>
                     Terapkan Filter
                 </button>
-                <a href="{{ route('bendahara.view.briefs.index') }}" class="inline-flex items-center px-4 py-2 border border-[#D8C4B6]/40 rounded-lg shadow-sm text-sm font-medium text-[#1b334e] bg-white hover:bg-[#f9b61a]/10 transition-all">
+                <a href="{{ route(($routePrefix ?? 'bendahara.view').'.briefs.index') }}" class="inline-flex items-center px-4 py-2 border border-[#D8C4B6]/40 rounded-lg shadow-sm text-sm font-medium text-[#1b334e] bg-white hover:bg-[#f9b61a]/10 transition-all">
                     <i class="fas fa-times mr-2"></i>
                     Reset
                 </a>
@@ -111,7 +111,7 @@
                                 </div>
                                 <div class="ml-4">
                                     <div class="text-sm font-medium text-[#1b334e]">
-                                        <a href="{{ route('bendahara.view.briefs.show', $brief) }}" class="hover:text-[#f9b61a]">
+                                        <a href="{{ route(($routePrefix ?? 'bendahara.view').'.briefs.show', $brief) }}" class="hover:text-[#f9b61a]">
                                             {{ $brief->judul }}
                                         </a>
                                     </div>
@@ -133,7 +133,7 @@
                             @endif
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                            <a href="{{ route('bendahara.view.briefs.show', $brief) }}" class="text-[#1b334e] hover:bg-[#f9b61a]/10 p-2 rounded-lg transition-all" title="Lihat Detail">
+                            <a href="{{ route(($routePrefix ?? 'bendahara.view').'.briefs.show', $brief) }}" class="text-[#1b334e] hover:bg-[#f9b61a]/10 p-2 rounded-lg transition-all" title="Lihat Detail">
                                 <i class="fas fa-eye"></i>
                             </a>
                         </td>

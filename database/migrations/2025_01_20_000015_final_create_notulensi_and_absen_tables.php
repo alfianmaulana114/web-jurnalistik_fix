@@ -21,6 +21,7 @@ return new class extends Migration
             $table->time('waktu_mulai');
             $table->time('waktu_selesai')->nullable();
             $table->text('isi_notulensi');
+            $table->string('pdf_path')->nullable();
             $table->string('tempat')->nullable();
             $table->text('peserta')->nullable();
             $table->text('kesimpulan')->nullable();

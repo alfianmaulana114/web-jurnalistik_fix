@@ -1,4 +1,4 @@
-@extends('layouts.bendahara')
+@extends($layout ?? 'layouts.bendahara')
 
 @section('title', 'Detail Program Kerja')
 @section('header', 'Detail Program Kerja (Read-Only)')
@@ -23,7 +23,7 @@
             <p class="mt-1 text-sm text-gray-600">Dibuat oleh {{ $proker->creator->name }} pada {{ $proker->created_at->format('d M Y') }}</p>
         </div>
         <div class="flex items-center space-x-3">
-            <a href="{{ route('bendahara.view.prokers.index') }}" class="inline-flex items-center px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition-colors">
+            <a href="{{ route(($routePrefix ?? 'bendahara.view').'.prokers.index') }}" class="inline-flex items-center px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition-colors">
                 <i class="fas fa-arrow-left mr-2"></i>
                 Kembali
             </a>

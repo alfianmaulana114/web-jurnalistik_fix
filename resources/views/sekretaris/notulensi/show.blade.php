@@ -68,6 +68,16 @@
             </div>
         </div>
 
+        <!-- File PDF -->
+        @if($notulensi->pdf_path)
+        <div class="mb-6">
+            <p class="text-sm font-medium text-gray-700 mb-2">Dokumen PDF</p>
+            <a href="{{ route('sekretaris.notulensi.download', $notulensi) }}" class="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700">
+                <i class="fas fa-file-pdf mr-2"></i>Unduh PDF
+            </a>
+        </div>
+        @endif
+
         <!-- Kesimpulan -->
         @if($notulensi->kesimpulan)
         <div class="mb-6">

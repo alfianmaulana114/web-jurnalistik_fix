@@ -79,8 +79,7 @@ class DashboardService
 
     private function getTotalPengeluaran(): float
     {
-        // Menggunakan scope paid() untuk memastikan hanya yang sudah dibayar
-        return (float) Pengeluaran::paid()->sum('jumlah');
+        return (float) Pengeluaran::whereIn('status', [Pengeluaran::STATUS_APPROVED, Pengeluaran::STATUS_PAID])->sum('jumlah');
     }
 
     private function getPemasukanBulanIni(): float
@@ -105,10 +104,7 @@ class DashboardService
 
     private function getPengeluaranBulanIni(): float
     {
-        // Pengeluaran bulan ini berdasarkan tanggal_pengeluaran
-        // Pastikan tanggal_pengeluaran tidak null
-        return (float) Pengeluaran::paid()
-            ->whereNotNull('tanggal_pengeluaran')
+        return (float) Pengeluaran::whereIn('status', [Pengeluaran::STATUS_APPROVED, Pengeluaran::STATUS_PAID])
             ->whereYear('tanggal_pengeluaran', now()->year)
             ->whereMonth('tanggal_pengeluaran', now()->month)
             ->sum('jumlah');
@@ -131,6 +127,7 @@ class DashboardService
         $pemasukan = [];
         $kas = [];
         $pengeluaran = [];
+        $incomeCombined = [];
 
         for ($i = 5; $i >= 0; $i--) {
             $date = now()->subMonths($i);
@@ -150,8 +147,7 @@ class DashboardService
                 ->sum('jumlah_terbayar');
             
             // Pengeluaran - menggunakan scope paid()
-            $pengeluaranBulan = (float) Pengeluaran::paid()
-                ->whereNotNull('tanggal_pengeluaran')
+            $pengeluaranBulan = (float) Pengeluaran::whereIn('status', [Pengeluaran::STATUS_APPROVED, Pengeluaran::STATUS_PAID])
                 ->whereYear('tanggal_pengeluaran', $date->year)
                 ->whereMonth('tanggal_pengeluaran', $date->month)
                 ->sum('jumlah');
@@ -159,6 +155,7 @@ class DashboardService
             $pemasukan[] = $pemasukanBulan;
             $kas[] = $kasBulan;
             $pengeluaran[] = $pengeluaranBulan;
+            $incomeCombined[] = $pemasukanBulan + $kasBulan;
         }
 
         return [
@@ -166,6 +163,7 @@ class DashboardService
             'pemasukan' => $pemasukan,
             'kas' => $kas,
             'pengeluaran' => $pengeluaran,
+            'income_combined' => $incomeCombined,
         ];
     }
 
@@ -227,74 +225,44 @@ class DashboardService
     {
         $currentMonth = now()->month;
         $currentYear = now()->year;
-        $startYear = 2025; // Kas mulai dari tahun 2025
-        
-        // Mapping bulan ke periode
-        $periodeMap = [
-            1 => 'januari', 2 => 'februari', 3 => 'maret', 4 => 'april',
-            5 => 'mei', 6 => 'juni', 7 => 'juli', 8 => 'agustus',
-            9 => 'september', 10 => 'oktober', 11 => 'november', 12 => 'desember'
-        ];
-        
-        $currentPeriode = $periodeMap[$currentMonth];
-        $allPeriodes = array_keys(KasAnggota::getAllPeriode());
-        $currentPeriodeIndex = array_search($currentPeriode, $allPeriodes);
-        
-        // Ambil semua user yang aktif
-        $users = User::where('id', '>', 0)->get();
-        
-        $anggotaBelumBayar = collect();
-        
+        $startYear = 2025;
+        $periodeOrder = ['januari','februari','maret','april','mei','juni','juli','agustus','september','oktober','november','desember'];
+        $users = User::where('role', '!=', 'admin')->get();
+        $records = KasAnggota::whereBetween('tahun', [$startYear, $currentYear])->get()->groupBy(function($r){ return $r->user_id.'-'.$r->tahun; });
+        $standardAmount = KasAnggota::getStandardAmount();
+        $list = collect();
         foreach ($users as $user) {
-            // Cek apakah user punya kas yang belum lunas di bulan ini atau sebelumnya, mulai dari tahun 2025
-            // Cari kas pertama yang belum lunas (mulai dari tahun 2025 sampai bulan ini)
-            $unpaidKas = KasAnggota::where('user_id', $user->id)
-                ->where('tahun', '>=', $startYear)
-                ->where(function($query) use ($currentYear, $currentPeriodeIndex, $allPeriodes) {
-                    // Tahun ini, periode bulan ini atau sebelumnya
-                    $query->where(function($q) use ($currentYear, $currentPeriodeIndex, $allPeriodes) {
-                        if ($currentPeriodeIndex !== false) {
-                            $previousPeriodes = array_slice($allPeriodes, 0, $currentPeriodeIndex + 1);
-                            $q->where('tahun', $currentYear)
-                              ->whereIn('periode', $previousPeriodes);
-                        } else {
-                            $q->where('tahun', $currentYear);
-                        }
-                    })->orWhere('tahun', '<', $currentYear);
-                })
-                ->whereNotIn('status_pembayaran', [KasAnggota::STATUS_LUNAS])
-                ->orderBy('tahun', 'asc')
-                ->orderByRaw("FIELD(periode, 'januari', 'februari', 'maret', 'april', 'mei', 'juni', 'juli', 'agustus', 'september', 'oktober', 'november', 'desember')")
-                ->first();
-            
-            if ($unpaidKas) {
-                $unpaidKas->user = $user;
-                $unpaidKas->jumlah_belum_bayar = KasAnggota::getStandardAmount() - $unpaidKas->jumlah_terbayar;
-                $unpaidKas->bulan_tahun = ucfirst($unpaidKas->periode) . ' ' . $unpaidKas->tahun;
-                
-                // Hitung "belum bayar dari kapan" - cari kas pertama yang belum lunas
-                $firstUnpaid = KasAnggota::where('user_id', $user->id)
-                    ->where('tahun', '>=', $startYear)
-                    ->whereNotIn('status_pembayaran', [KasAnggota::STATUS_LUNAS])
-                    ->orderBy('tahun', 'asc')
-                    ->orderByRaw("FIELD(periode, 'januari', 'februari', 'maret', 'april', 'mei', 'juni', 'juli', 'agustus', 'september', 'oktober', 'november', 'desember')")
-                    ->first();
-                
-                if ($firstUnpaid) {
-                    $unpaidKas->belum_bayar_dari = ucfirst($firstUnpaid->periode) . ' ' . $firstUnpaid->tahun;
-                } else {
-                    $unpaidKas->belum_bayar_dari = ucfirst($unpaidKas->periode) . ' ' . $unpaidKas->tahun;
+            $firstUnpaid = null;
+            for ($year = $startYear; $year <= $currentYear; $year++) {
+                $months = $periodeOrder;
+                if ($year === $currentYear) {
+                    $months = array_slice($periodeOrder, 0, $currentMonth);
                 }
-                
-                $anggotaBelumBayar->push($unpaidKas);
+                $key = $user->id.'-'.$year;
+                $byYear = $records->get($key);
+                foreach ($months as $m) {
+                    $rec = $byYear ? $byYear->firstWhere('periode', $m) : null;
+                    $isLunas = $rec && $rec->status_pembayaran === KasAnggota::STATUS_LUNAS;
+                    if (!$isLunas) {
+                        $firstUnpaid = $rec ?: (object) ['periode' => $m, 'tahun' => $year, 'jumlah_terbayar' => 0];
+                        break 2;
+                    }
+                }
+            }
+            if ($firstUnpaid) {
+                $item = $firstUnpaid;
+                $item->user = $user;
+                $item->jumlah_belum_bayar = $standardAmount - (float) ($item->jumlah_terbayar ?? 0);
+                $item->bulan_tahun = ucfirst($item->periode) . ' ' . $item->tahun;
+                $item->belum_bayar_dari = $item->bulan_tahun;
+                $list->push($item);
             }
         }
-        
-        return $anggotaBelumBayar->sortByDesc(function($kas) {
-            $periodeOrder = ['januari', 'februari', 'maret', 'april', 'mei', 'juni', 'juli', 'agustus', 'september', 'oktober', 'november', 'desember'];
-            $periodeIndex = array_search($kas->periode, $periodeOrder);
-            return $kas->tahun . '-' . str_pad($periodeIndex !== false ? $periodeIndex : 0, 2, '0', STR_PAD_LEFT);
-        })->take(5);
+        return $list->sortBy(function($kas) use ($periodeOrder) {
+            $i = array_search($kas->periode, $periodeOrder);
+            $monthIndex = $i !== false ? $i : 0;
+            return ($kas->tahun * 12) + $monthIndex;
+        })->take(5)->values();
     }
 
     private function getRecentTransactions()
@@ -311,10 +279,8 @@ class DashboardService
                 return $item;
             });
 
-        // Pengeluaran terbaru (paid) - menggunakan scope paid()
-        $recentPengeluaran = Pengeluaran::paid()
+        $recentPengeluaran = Pengeluaran::whereIn('status', [Pengeluaran::STATUS_APPROVED, Pengeluaran::STATUS_PAID])
             ->with('creator')
-            ->whereNotNull('tanggal_pengeluaran')
             ->latest('tanggal_pengeluaran')
             ->limit(10)
             ->get()
